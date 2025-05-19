@@ -21,6 +21,13 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "commandLineArgs": "new hello-world"
+    },
+    "help": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "commandLineArgs": "--help"
     }
   }
 }
