@@ -17,26 +17,32 @@ public class TemplateCommands(
     NewCommandHandler newCommandHandler
 )
 {
+    private const int Success = 0;
+    private const int Error = 1;
+
     [Command("info", Description = "Prints the template information."), UsedImplicitly]
     public void Info()
         => infoCommandHandler.PrintInfo();
 
     [Command("browse", Description = "Opens the template repository in the default browser."), UsedImplicitly]
-    public void Browse([Argument(Description = "The template name")] string? templateName)
+    public int Browse([Argument(Description = "The template name")] string? templateName)
     {
         try
         {
             browseCommandHandler.Browse(templateName);
+
+            return Success;
         }
         catch (KeyNotFoundException ex)
         {
             Console.Error.WriteLine(ex.Message);
-            Environment.ExitCode = 1;
+
+            return Error;
         }
     }
 
     [Command("new", Description = "Creates a new project from a template."), UsedImplicitly]
-    public void New(
+    public int New(
         [Argument(Description = "The name of the new project, also used as its root directory")] string name,
         [Option(Description = "The template name")] string? templateName
     )
@@ -44,11 +50,14 @@ public class TemplateCommands(
         try
         {
             newCommandHandler.CreateNew(name, templateName);
+
+            return Success;
         }
         catch (KeyNotFoundException ex)
         {
             Console.Error.WriteLine(ex.Message);
-            Environment.ExitCode = 1;
+
+            return Error;
         }
     }
 }
