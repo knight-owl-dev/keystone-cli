@@ -22,7 +22,7 @@ public class CliEntryPoint(
     /// <param name="args">The command line arguments.</param>
     public async Task RunAsync(string[] args)
     {
-        var builder = CoconaApp.CreateBuilder(args, options => options.EnableShellCompletionSupport = true);
+        var builder = CoconaApp.CreateBuilder(args);
         builder.Services.AddSingleton(browseCommand);
         builder.Services.AddSingleton(infoCommand);
         builder.Services.AddSingleton(newCommand);
