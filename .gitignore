@@ -1,0 +1,14 @@
+**/artifacts/
+**/obj/
+**/bin/
+**/.idea/
+**/.vscode/
+**/.vs/
+.nuget/
+**/*/out
+_ReSharper.*
+*.user
+*.suo
+*.userprefs
+*DS_Store
+*.sln.ide
