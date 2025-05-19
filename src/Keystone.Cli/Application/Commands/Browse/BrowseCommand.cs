@@ -10,7 +10,7 @@ namespace Keystone.Cli.Application.Commands.Browse;
 [UsedImplicitly]
 public class BrowseCommand(BrowseHandler handler)
 {
-    [Command("browse", Description = "Browse the template repository."), UsedImplicitly]
+    [Command("browse", Description = "Opens the template repository in the default browser."), UsedImplicitly]
     public void Execute([Argument(Description = "The template name")] string? templateName)
     {
         try
