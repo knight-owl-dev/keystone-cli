@@ -17,5 +17,5 @@ var host = Host.CreateDefaultBuilder(args)
         .AddSingleton<CliEntryPoint>()
     ).Build();
 
-var cliApp = host.Services.GetRequiredService<CliEntryPoint>();
-await cliApp.RunAsync(args);
+var cli = host.Services.GetRequiredService<CliEntryPoint>();
+await cli.RunAsync(args);
