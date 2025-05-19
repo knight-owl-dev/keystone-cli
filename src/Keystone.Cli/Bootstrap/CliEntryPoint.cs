@@ -28,8 +28,8 @@ public class CliEntryPoint(
         builder.Services.AddSingleton(newCommand);
 
         var app = builder.Build();
-        app.AddCommands<InfoCommand>();
         app.AddCommands<BrowseCommand>();
+        app.AddCommands<InfoCommand>();
         app.AddCommands<NewCommand>();
 
         await app.RunAsync();
