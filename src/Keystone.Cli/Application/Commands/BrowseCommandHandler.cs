@@ -2,13 +2,13 @@ using JetBrains.Annotations;
 using Keystone.Cli.Application.Utility;
 
 
-namespace Keystone.Cli.Application.Commands.Browse;
+namespace Keystone.Cli.Application.Commands;
 
 /// <summary>
 /// The "browse" command handler.
 /// </summary>
 [UsedImplicitly]
-public class BrowseHandler(IProcessService processService, ITemplateService templateService)
+public class BrowseCommandHandler(IProcessService processService, ITemplateService templateService)
 {
     /// <summary>
     /// Executes the "browse" command.

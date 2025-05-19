@@ -2,13 +2,13 @@ using System.Reflection;
 using JetBrains.Annotations;
 
 
-namespace Keystone.Cli.Application.Commands.Info;
+namespace Keystone.Cli.Application.Commands;
 
 /// <summary>
 /// The "info" command handler.
 /// </summary>
 [UsedImplicitly]
-public class InfoHandler(ITemplateService templateService)
+public class InfoCommandHandler(ITemplateService templateService)
 {
     /// <summary>
     /// Executes the command.

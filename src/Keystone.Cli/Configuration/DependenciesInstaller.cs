@@ -1,7 +1,5 @@
 using Keystone.Cli.Application;
-using Keystone.Cli.Application.Commands.Browse;
-using Keystone.Cli.Application.Commands.Info;
-using Keystone.Cli.Application.Commands.New;
+using Keystone.Cli.Application.Commands;
 using Keystone.Cli.Application.Data;
 using Keystone.Cli.Application.Utility;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,28 +16,12 @@ public static class DependenciesInstaller
     /// Adds the services to the service collection.
     /// </summary>
     /// <param name="services">The destination services collection to update.</param>
-    /// <returns>
-    /// The original collection with the services added.
-    /// </returns>
-    public static IServiceCollection AddDependencies(this IServiceCollection services)
+    public static void AddDependencies(this IServiceCollection services)
         => services
             .AddSingleton<ITemplateService, TemplateService>()
             .AddSingleton<ITemplateTargetsRepository, TemplateTargetsRepository>()
-            .AddSingleton<IProcessService, ProcessService>();
-
-    /// <summary>
-    /// Adds the commands to the service collection.
-    /// </summary>
-    /// <param name="services">Teh destination services collection to update.</param>
-    /// <returns>
-    /// The original collection with the commands added.
-    /// </returns>
-    public static IServiceCollection AddCommands(this IServiceCollection services)
-        => services
-            .AddSingleton<BrowseCommand>()
-            .AddSingleton<BrowseHandler>()
-            .AddSingleton<InfoCommand>()
-            .AddSingleton<InfoHandler>()
-            .AddSingleton<NewCommand>()
-            .AddSingleton<NewHandler>();
+            .AddSingleton<IProcessService, ProcessService>()
+            .AddSingleton<BrowseCommandHandler>()
+            .AddSingleton<InfoCommandHandler>()
+            .AddSingleton<NewCommandHandler>();
 }

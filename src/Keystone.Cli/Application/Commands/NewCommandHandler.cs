@@ -1,13 +1,13 @@
 using JetBrains.Annotations;
 
 
-namespace Keystone.Cli.Application.Commands.New;
+namespace Keystone.Cli.Application.Commands;
 
 /// <summary>
 /// The "new" command handler.
 /// </summary>
 [UsedImplicitly]
-public class NewHandler(ITemplateService templateService)
+public class NewCommandHandler(ITemplateService templateService)
 {
     /// <summary>
     /// Creates a new project.
