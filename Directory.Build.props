@@ -1,0 +1,28 @@
+<Project>
+    <PropertyGroup>
+        <!-- Compile time platform (simplified to avoid mismatch) -->
+        <Platforms>AnyCPU</Platforms>
+
+        <!-- Target RIDs -->
+        <RuntimeIdentifiers>
+            osx-arm64;osx-x64;
+            win-x64;win-arm64;win-x86;
+            linux-x64;linux-arm64;linux-arm;linux-musl-x64;linux-musl-arm64
+        </RuntimeIdentifiers>
+
+        <!-- Enable self-contained single-file publish -->
+        <SelfContained>true</SelfContained>
+        <PublishSingleFile>true</PublishSingleFile>
+        <PublishTrimmed>true</PublishTrimmed>
+
+        <!-- Centralize build outputs -->
+        <BaseOutputPath>$(MSBuildThisFileDirectory)artifacts\bin\</BaseOutputPath>
+        <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)artifacts\obj\</BaseIntermediateOutputPath>
+
+        <!-- Use consistent language version -->
+        <LangVersion>latest</LangVersion>
+
+        <!-- Set deterministic builds -->
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+</Project>
