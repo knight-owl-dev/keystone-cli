@@ -1,5 +1,12 @@
 <Project>
     <PropertyGroup>
+        <!-- Use consistent language features and framework -->
+        <LangVersion>latest</LangVersion>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
         <!-- Compile time platform (simplified to avoid mismatch) -->
         <Platforms>AnyCPU</Platforms>
 
@@ -13,9 +20,6 @@
         <!-- Centralize build outputs -->
         <BaseOutputPath>$(MSBuildThisFileDirectory)artifacts\bin\$(MSBuildProjectName)\</BaseOutputPath>
         <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)artifacts\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-
-        <!-- Use consistent language version -->
-        <LangVersion>latest</LangVersion>
 
         <!-- Set deterministic builds -->
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
