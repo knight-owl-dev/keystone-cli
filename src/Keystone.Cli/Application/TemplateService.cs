@@ -22,7 +22,7 @@ public class TemplateService(
     /// <summary>
     /// The default template name as specified in the configuration.
     /// </summary>
-    private string DefaultTemplateName { get; } = configuration.GetValue<string>(DefaultTemplateKey)
+    private string DefaultTemplateName { get; } = configuration.GetSection(DefaultTemplateKey).Value
         ?? throw new InvalidOperationException($"The '{DefaultTemplateKey}' key is not set in the configuration.");
 
     /// <inheritdoc />
