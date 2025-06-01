@@ -10,14 +10,9 @@
             linux-x64;linux-arm64;linux-arm;linux-musl-x64;linux-musl-arm64
         </RuntimeIdentifiers>
 
-        <!-- Enable self-contained single-file publish -->
-        <SelfContained>true</SelfContained>
-        <PublishSingleFile>true</PublishSingleFile>
-        <PublishTrimmed>true</PublishTrimmed>
-
         <!-- Centralize build outputs -->
-        <BaseOutputPath>$(MSBuildThisFileDirectory)artifacts\bin\</BaseOutputPath>
-        <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)artifacts\obj\</BaseIntermediateOutputPath>
+        <BaseOutputPath>$(MSBuildThisFileDirectory)artifacts\bin\$(MSBuildProjectName)\</BaseOutputPath>
+        <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)artifacts\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 
         <!-- Use consistent language version -->
         <LangVersion>latest</LangVersion>
