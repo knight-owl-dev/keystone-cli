@@ -1,8 +1,9 @@
 using Cocona;
 using JetBrains.Annotations;
+using Keystone.Cli.Application.Commands.Info;
 
 
-namespace Keystone.Cli.Application.Commands.Info;
+namespace Keystone.Cli.Presentation;
 
 /// <summary>
 /// The "info" command controller.

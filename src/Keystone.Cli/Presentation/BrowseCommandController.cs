@@ -1,9 +1,10 @@
 using Cocona;
 using JetBrains.Annotations;
+using Keystone.Cli.Application.Commands.Browse;
 using Keystone.Cli.Domain;
 
 
-namespace Keystone.Cli.Application.Commands.Browse;
+namespace Keystone.Cli.Presentation;
 
 /// <summary>
 /// The "browse" command controller.

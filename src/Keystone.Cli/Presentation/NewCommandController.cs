@@ -1,9 +1,10 @@
 using Cocona;
 using JetBrains.Annotations;
+using Keystone.Cli.Application.Commands.New;
 using Keystone.Cli.Domain;
 
 
-namespace Keystone.Cli.Application.Commands.New;
+namespace Keystone.Cli.Presentation;
 
 /// <summary>
 /// The "new" command controller.
