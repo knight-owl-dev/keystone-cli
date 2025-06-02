@@ -23,7 +23,7 @@
         <!-- Enable self-contained single-file publish -->
         <SelfContained>true</SelfContained>
         <PublishSingleFile>true</PublishSingleFile>
-        <PublishTrimmed>true</PublishTrimmed>
+        <PublishTrimmed>false</PublishTrimmed>
     </PropertyGroup>
 
     <ItemGroup>
