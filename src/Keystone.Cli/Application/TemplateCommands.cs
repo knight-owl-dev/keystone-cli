@@ -1,6 +1,7 @@
 using Cocona;
 using JetBrains.Annotations;
 using Keystone.Cli.Application.Commands;
+using Keystone.Cli.Domain;
 
 
 namespace Keystone.Cli.Application;
@@ -17,9 +18,6 @@ public class TemplateCommands(
     NewCommandHandler newCommandHandler
 )
 {
-    private const int Success = 0;
-    private const int Error = 1;
-
     [Command("info", Description = "Prints the template information."), UsedImplicitly]
     public void Info()
         => infoCommandHandler.PrintInfo();
@@ -31,13 +29,13 @@ public class TemplateCommands(
         {
             browseCommandHandler.Browse(templateName);
 
-            return Success;
+            return CliCommandResults.Success;
         }
         catch (KeyNotFoundException ex)
         {
             Console.Error.WriteLine(ex.Message);
 
-            return Error;
+            return CliCommandResults.Error;
         }
     }
 
@@ -51,13 +49,13 @@ public class TemplateCommands(
         {
             newCommandHandler.CreateNew(name, templateName);
 
-            return Success;
+            return CliCommandResults.Success;
         }
         catch (KeyNotFoundException ex)
         {
             Console.Error.WriteLine(ex.Message);
 
-            return Error;
+            return CliCommandResults.Error;
         }
     }
 }
