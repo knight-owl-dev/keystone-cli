@@ -1,5 +1,7 @@
 ﻿using Cocona;
-using Keystone.Cli.Application;
+using Keystone.Cli.Application.Commands.Browse;
+using Keystone.Cli.Application.Commands.Info;
+using Keystone.Cli.Application.Commands.New;
 using Keystone.Cli.Configuration;
 using Microsoft.Extensions.Configuration;
 
@@ -14,6 +16,9 @@ builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddDependencies();
 
 var app = builder.Build();
-app.AddCommands<TemplateCommands>();
+
+app.AddCommands<BrowseCommandController>();
+app.AddCommands<InfoCommandController>();
+app.AddCommands<NewCommandController>();
 
 await app.RunAsync();

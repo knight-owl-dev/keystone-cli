@@ -1,5 +1,7 @@
 using Keystone.Cli.Application;
-using Keystone.Cli.Application.Commands;
+using Keystone.Cli.Application.Commands.Browse;
+using Keystone.Cli.Application.Commands.Info;
+using Keystone.Cli.Application.Commands.New;
 using Keystone.Cli.Application.Data;
 using Keystone.Cli.Application.Utility;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +23,7 @@ public static class DependenciesInstaller
             .AddSingleton<ITemplateService, TemplateService>()
             .AddSingleton<ITemplateTargetsRepository, TemplateTargetsRepository>()
             .AddSingleton<IProcessService, ProcessService>()
-            .AddSingleton<BrowseCommandHandler>()
-            .AddSingleton<InfoCommandHandler>()
-            .AddSingleton<NewCommandHandler>();
+            .AddSingleton<IBrowseCommand, BrowseCommand>()
+            .AddSingleton<IInfoCommand, InfoCommand>()
+            .AddSingleton<INewCommand, NewCommand>();
 }

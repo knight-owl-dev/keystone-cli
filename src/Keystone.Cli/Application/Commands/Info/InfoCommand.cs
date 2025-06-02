@@ -1,18 +1,15 @@
 using System.Reflection;
-using JetBrains.Annotations;
 
 
-namespace Keystone.Cli.Application.Commands;
+namespace Keystone.Cli.Application.Commands.Info;
 
 /// <summary>
-/// The "info" command handler.
+/// The "info" command implementation.
 /// </summary>
-[UsedImplicitly]
-public class InfoCommandHandler(ITemplateService templateService)
+public class InfoCommand(ITemplateService templateService)
+    : IInfoCommand
 {
-    /// <summary>
-    /// Executes the command.
-    /// </summary>
+    /// <inheritdoc />
     public void PrintInfo()
     {
         var assembly = Assembly.GetExecutingAssembly();
