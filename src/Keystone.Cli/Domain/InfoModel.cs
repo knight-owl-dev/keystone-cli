@@ -1,3 +1,6 @@
+using System.Text;
+
+
 namespace Keystone.Cli.Domain;
 
 /// <summary>
@@ -14,4 +17,35 @@ public record InfoModel(
     string? Copyright,
     TemplateTargetModel DefaultTemplateTarget,
     IReadOnlyList<TemplateTargetModel> TemplateTargets
-);
+)
+{
+    /// <summary>
+    /// Gets the formatted text representation of the info model.
+    /// </summary>
+    /// <returns>
+    /// The formated test representation of the info model.
+    /// </returns>
+    public string GetFormattedText()
+    {
+        var version = this.Version ?? "unknown";
+        var description = this.Description ?? "No description available.";
+        var copyright = this.Copyright ?? "No copyright information available.";
+
+        var buffer = new StringBuilder();
+
+        buffer.AppendLine($"Keystone CLI v{version}. {copyright}");
+        buffer.AppendLine($"{description}");
+        buffer.AppendLine();
+
+        buffer.AppendLine("Available Keystone template targets:");
+        foreach (var (name, repositoryUrl) in this.TemplateTargets)
+        {
+            buffer.AppendLine($" - {name,10}: {repositoryUrl}");
+        }
+
+        buffer.AppendLine();
+        buffer.AppendLine($"Default template: {this.DefaultTemplateTarget.Name}");
+
+        return buffer.ToString();
+    }
+}
