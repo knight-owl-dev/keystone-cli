@@ -1,3 +1,6 @@
+using Keystone.Cli.Domain;
+
+
 namespace Keystone.Cli.Application.Commands.Info;
 
 /// <summary>
@@ -6,7 +9,10 @@ namespace Keystone.Cli.Application.Commands.Info;
 public interface IInfoCommand
 {
     /// <summary>
-    /// Executes the command.
+    /// Executes the command to produce the info.
     /// </summary>
-    void PrintInfo();
+    /// <returns>
+    /// The info to be displayed to the user.
+    /// </returns>
+    InfoModel GetInfo();
 }

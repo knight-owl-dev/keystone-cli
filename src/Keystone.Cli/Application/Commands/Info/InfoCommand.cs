@@ -1,4 +1,5 @@
 using System.Reflection;
+using Keystone.Cli.Domain;
 
 
 namespace Keystone.Cli.Application.Commands.Info;
@@ -10,25 +11,16 @@ public class InfoCommand(ITemplateService templateService)
     : IInfoCommand
 {
     /// <inheritdoc />
-    public void PrintInfo()
+    public InfoModel GetInfo()
     {
         var assembly = Assembly.GetExecutingAssembly();
-        var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "unknown";
-        var description = assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description ?? "unknown";
-        var copyright = assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright ?? "unknown";
-        var defaultTemplateTarget = templateService.GetTemplateTarget(name: null);
 
-        Console.WriteLine($"Keystone CLI v{version}. {copyright}");
-        Console.WriteLine($"{description}");
-        Console.WriteLine();
-
-        Console.WriteLine("Available Keystone template targets:");
-        foreach (var (name, repositoryUrl) in templateService.GetTemplateTargets())
-        {
-            Console.WriteLine($" - {name,10}: {repositoryUrl}");
-        }
-
-        Console.WriteLine();
-        Console.WriteLine($"Default template: {defaultTemplateTarget.Name}");
+        return new InfoModel(
+            Version: assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion,
+            Description: assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description,
+            Copyright: assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright,
+            DefaultTemplateTarget: templateService.GetTemplateTarget(name: null),
+            TemplateTargets: [..templateService.GetTemplateTargets()]
+        );
     }
 }
