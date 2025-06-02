@@ -14,7 +14,7 @@ public class BrowseCommand(IProcessService processService, ITemplateService temp
     {
         var templateTarget = templateService.GetTemplateTarget(templateName);
 
-        Console.WriteLine($"Opening {templateTarget.RepositoryUrl}...");
+        Console.WriteLine($"Opening {templateTarget.RepositoryUrl}");
         processService.OpenBrowser(templateTarget.RepositoryUrl);
     }
 }
