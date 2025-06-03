@@ -30,6 +30,7 @@ public record InfoModel(
         var version = this.Version ?? "unknown";
         var description = this.Description ?? "No description available.";
         var copyright = this.Copyright ?? "No copyright information available.";
+        var maxTemplateNameLength = GetMaxTemplateNameLength();
 
         var buffer = new StringBuilder();
 
@@ -40,7 +41,7 @@ public record InfoModel(
         buffer.AppendLine("Available Keystone template targets:");
         foreach (var (name, repositoryUrl) in this.TemplateTargets)
         {
-            buffer.AppendLine($" - {name,10}: {repositoryUrl}");
+            buffer.AppendLine($" - {name.PadLeft(maxTemplateNameLength, ' ')}: {repositoryUrl}");
         }
 
         buffer.AppendLine();
@@ -48,4 +49,7 @@ public record InfoModel(
 
         return buffer.ToString();
     }
+
+    private int GetMaxTemplateNameLength()
+        => this.TemplateTargets.Count > 0 ? this.TemplateTargets.Max(target => target.Name.Length) : 0;
 }
