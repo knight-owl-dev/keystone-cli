@@ -40,6 +40,7 @@ public class DependenciesInstallerTests
 
         var services = new ServiceCollection();
         services.AddSingleton<IConfiguration>(configuration);
+        services.AddLogging();
         services.AddDependencies();
 
         var serviceProvider = services.BuildServiceProvider();

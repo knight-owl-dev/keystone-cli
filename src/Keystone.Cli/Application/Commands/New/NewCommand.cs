@@ -1,9 +1,12 @@
+using Microsoft.Extensions.Logging;
+
+
 namespace Keystone.Cli.Application.Commands.New;
 
 /// <summary>
 /// The "new" command handler.
 /// </summary>
-public class NewCommand(ITemplateService templateService)
+public class NewCommand(ILogger<NewCommand> logger, ITemplateService templateService)
     : INewCommand
 {
     /// <summary>
@@ -18,7 +21,7 @@ public class NewCommand(ITemplateService templateService)
     {
         var templateTarget = templateService.GetTemplateTarget(templateName);
 
-        Console.WriteLine($"Creating project '{name}' from {templateTarget.RepositoryUrl}");
+        logger.LogInformation("Creating project '{ProjectName}' from {RepositoryUrl}", name, templateTarget.RepositoryUrl);
 
         // TODO: clone from appropriate GitHub repo
     }

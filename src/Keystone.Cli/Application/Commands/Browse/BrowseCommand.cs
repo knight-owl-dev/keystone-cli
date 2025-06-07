@@ -1,4 +1,5 @@
 using Keystone.Cli.Application.Utility;
+using Microsoft.Extensions.Logging;
 
 
 namespace Keystone.Cli.Application.Commands.Browse;
@@ -6,7 +7,7 @@ namespace Keystone.Cli.Application.Commands.Browse;
 /// <summary>
 /// The "browse" command implementation.
 /// </summary>
-public class BrowseCommand(IProcessService processService, ITemplateService templateService)
+public class BrowseCommand(ILogger<BrowseCommand> logger, IProcessService processService, ITemplateService templateService)
     : IBrowseCommand
 {
     /// <inheritdoc />
@@ -14,7 +15,7 @@ public class BrowseCommand(IProcessService processService, ITemplateService temp
     {
         var templateTarget = templateService.GetTemplateTarget(templateName);
 
-        Console.WriteLine($"Opening {templateTarget.RepositoryUrl}");
+        logger.LogInformation("Opening {RepositoryUrl}", templateTarget.RepositoryUrl);
         processService.OpenBrowser(templateTarget.RepositoryUrl);
     }
 }
