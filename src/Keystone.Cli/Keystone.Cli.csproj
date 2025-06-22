@@ -8,7 +8,7 @@
         <AssemblyName>keystone-cli</AssemblyName>
         <RootNamespace>Keystone.Cli</RootNamespace>
         <Authors>Oleksandr Akhtyrskiy</Authors>
-        <Company>Knigh Owl LLC</Company>
+        <Company>Knight Owl LLC</Company>
         <Copyright>© 2025 Knight Owl LLC. All rights reserved.</Copyright>
         <Description>A command-line interface for Keystone.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
