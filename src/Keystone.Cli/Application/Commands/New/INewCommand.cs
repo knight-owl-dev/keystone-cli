@@ -10,8 +10,15 @@ public interface INewCommand
     /// </summary>
     /// <param name="name">The new project name, also used as its root directory.</param>
     /// <param name="templateName">The optional template name.</param>
+    /// <param name="fullPathToProject">The full path to the new project directory.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
     /// <exception cref="KeyNotFoundException">
     /// Thrown when the template target is not found.
     /// </exception>
-    void CreateNew(string name, string? templateName);
+    Task CreateNewAsync(
+        string name,
+        string? templateName,
+        string fullPathToProject,
+        CancellationToken cancellationToken
+    );
 }

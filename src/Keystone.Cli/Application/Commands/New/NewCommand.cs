@@ -1,3 +1,4 @@
+using Keystone.Cli.Application.Utility;
 using Microsoft.Extensions.Logging;
 
 
@@ -6,23 +7,27 @@ namespace Keystone.Cli.Application.Commands.New;
 /// <summary>
 /// The "new" command handler.
 /// </summary>
-public class NewCommand(ILogger<NewCommand> logger, ITemplateService templateService)
+public class NewCommand(IGitHubService gitHubService, ILogger<NewCommand> logger, ITemplateService templateService)
     : INewCommand
 {
-    /// <summary>
-    /// Creates a new project.
-    /// </summary>
-    /// <param name="name">The new project name, also used as its root directory.</param>
-    /// <param name="templateName">The optional template name.</param>
-    /// <exception cref="KeyNotFoundException">
-    /// Thrown when the template target is not found.
-    /// </exception>
-    public void CreateNew(string name, string? templateName)
+    /// <inheritdoc />
+    public async Task CreateNewAsync(string name, string? templateName, string fullPathToProject, CancellationToken cancellationToken)
     {
         var templateTarget = templateService.GetTemplateTarget(templateName);
 
-        logger.LogInformation("Creating project '{ProjectName}' from {RepositoryUrl}", name, templateTarget.RepositoryUrl);
+        logger.LogInformation(
+            "Creating project '{ProjectName}' from {RepositoryUrl} in {Path}",
+            name,
+            templateTarget.RepositoryUrl,
+            fullPathToProject
+        );
 
-        // TODO: clone from appropriate GitHub repo
+        await gitHubService.CopyPublicRepositoryAsync(
+            templateTarget.RepositoryUrl,
+            branchName: templateTarget.BranchName,
+            destinationPath: fullPathToProject,
+            overwrite: true,
+            cancellationToken: cancellationToken
+        );
     }
 }

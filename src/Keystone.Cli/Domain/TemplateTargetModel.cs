@@ -5,4 +5,5 @@ namespace Keystone.Cli.Domain;
 /// </summary>
 /// <param name="Name">The name associated with the template target.</param>
 /// <param name="RepositoryUrl">The repository URL.</param>
-public record TemplateTargetModel(string Name, Uri RepositoryUrl);
+/// <param name="BranchName">The target branch name.</param>
+public record TemplateTargetModel(string Name, Uri RepositoryUrl, string BranchName = "main");

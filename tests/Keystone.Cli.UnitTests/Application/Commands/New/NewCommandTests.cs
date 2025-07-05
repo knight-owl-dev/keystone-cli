@@ -1,5 +1,6 @@
 using Keystone.Cli.Application;
 using Keystone.Cli.Application.Commands.New;
+using Keystone.Cli.Application.Utility;
 using Keystone.Cli.Domain;
 using Keystone.Cli.UnitTests.Logging;
 using Microsoft.Extensions.Logging;
@@ -13,37 +14,41 @@ namespace Keystone.Cli.UnitTests.Application.Commands.New;
 public class NewCommandTests
 {
     private static NewCommand Ctor(
+        IGitHubService? gitHubService = null,
         ILogger<NewCommand>? logger = null,
         ITemplateService? templateService = null
     )
         => new(
+            gitHubService ?? Substitute.For<IGitHubService>(),
             logger ?? Substitute.For<ILogger<NewCommand>>(),
             templateService ?? Substitute.For<ITemplateService>()
         );
 
     [Test]
-    public void CreateNew_ResolvesTemplateTarget()
+    public async Task CreateNewAsync_ResolvesTemplateTargetAsync()
     {
         const string name = "project-name";
         const string templateName = "template-name";
+        const string path = $"./{name}";
 
         var templateService = Substitute.For<ITemplateService>();
         templateService.GetTemplateTarget(templateName).Throws<KeyNotFoundException>();
 
         var sut = Ctor(templateService: templateService);
 
-        Assert.That(
-            () => sut.CreateNew(name, templateName),
+        await Assert.ThatAsync(
+            () => sut.CreateNewAsync(name, templateName, path, CancellationToken.None),
             Throws.TypeOf<KeyNotFoundException>()
         );
     }
 
     [Test]
-    public void CreateNew_LogsProjectNameWithRepositoryUrl()
+    public async Task CreateNewAsync_LogsProjectNameWithRepositoryUrlAsync()
     {
         const string name = "project-name";
         const string templateName = "template-name";
         const string repositoryUrl = "https://github.com/knight-owl-dev/template-a";
+        const string path = $"./{name}";
 
         var templateTarget = new TemplateTargetModel(
             Name: templateName,
@@ -55,8 +60,8 @@ public class NewCommandTests
         var templateService = Substitute.For<ITemplateService>();
         templateService.GetTemplateTarget(templateName).Returns(templateTarget);
 
-        var sut = Ctor(logger, templateService);
-        sut.CreateNew(name, templateName);
+        var sut = Ctor(logger: logger, templateService: templateService);
+        await sut.CreateNewAsync(name, templateName, path, CancellationToken.None);
 
         Assert.That(
             logger.CapturedLogEntries,

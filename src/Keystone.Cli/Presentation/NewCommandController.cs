@@ -12,20 +12,32 @@ namespace Keystone.Cli.Presentation;
 public class NewCommandController(INewCommand newCommand)
 {
     [Command("new", Description = "Creates a new project from a template."), UsedImplicitly]
-    public int New(
-        [Argument(Description = "The name of the new project, also used as its root directory")] string name,
-        [Option(Description = "The template name")] string? templateName
+    public async Task<int> NewAsync(
+        [Argument(Description = "The name of the new project, also used as its root directory unless the full path is provided")] string name,
+        [Option(Description = "The template name")] string? templateName,
+        [Option(Description = "The full path where to create the new project")] string? path
     )
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
+        var fullPath = string.IsNullOrWhiteSpace(path)
+            ? Path.Combine(Path.GetFullPath("."), ProjectNamePolicy.GetProjectDirectoryName(name))
+            : Path.GetFullPath(path);
+
         try
         {
-            newCommand.CreateNew(name, templateName);
+            await newCommand.CreateNewAsync(
+                name,
+                templateName,
+                fullPath,
+                CancellationToken.None
+            );
 
             return CliCommandResults.Success;
         }
         catch (KeyNotFoundException ex)
         {
-            Console.Error.WriteLine(ex.Message);
+            await Console.Error.WriteLineAsync(ex.Message);
 
             return CliCommandResults.Error;
         }

@@ -39,7 +39,7 @@ public record InfoModel(
         buffer.AppendLine();
 
         buffer.AppendLine("Available Keystone template targets:");
-        foreach (var (name, repositoryUrl) in this.TemplateTargets)
+        foreach (var (name, repositoryUrl, _) in this.TemplateTargets)
         {
             buffer.AppendLine($" - {name.PadLeft(maxTemplateNameLength, ' ')}: {repositoryUrl}");
         }
