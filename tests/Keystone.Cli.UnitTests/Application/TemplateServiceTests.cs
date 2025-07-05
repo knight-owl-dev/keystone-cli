@@ -172,6 +172,6 @@ public class TemplateServiceTests
 
     private static IConfiguration FakeConfiguration(string defaultTemplateName)
         => new ConfigurationBuilder()
-            .AddInMemoryCollection([new KeyValuePair<string, string>("DefaultTemplate", defaultTemplateName)])
+            .AddInMemoryCollection([new KeyValuePair<string, string?>("DefaultTemplate", defaultTemplateName)])
             .Build();
 }

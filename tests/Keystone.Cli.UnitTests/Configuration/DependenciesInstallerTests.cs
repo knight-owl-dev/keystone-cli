@@ -27,7 +27,7 @@ public class DependenciesInstallerTests
     [TestCaseSource(nameof(ExpectedTypes))]
     public void ResolvesExpectedTypes(Type type)
     {
-        var settings = new Dictionary<string, string>
+        var settings = new Dictionary<string, string?>
         {
             ["Templates:core"] = "https://github.com/knight-owl-dev/keystone-template-core",
             ["Templates:core-slim"] = "https://github.com/knight-owl-dev/keystone-template-core-slim",

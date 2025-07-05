@@ -14,7 +14,8 @@ public class TemplateTargetsRepository(IConfiguration configuration)
     private readonly ImmutableDictionary<string, TemplateTargetModel> _templateTargets = configuration
         .GetSection("Templates")
         .GetChildren()
-        .Select(child => new TemplateTargetModel(Name: child.Key, RepositoryUrl: new Uri(child.Value)))
+        .Where(child => child.Value is not null)
+        .Select(child => new TemplateTargetModel(Name: child.Key, RepositoryUrl: new Uri(child.Value!)))
         .ToImmutableDictionary(model => model.Name, StringComparer.OrdinalIgnoreCase);
 
     /// <inheritdoc />

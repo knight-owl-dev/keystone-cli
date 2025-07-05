@@ -24,7 +24,7 @@ public class TemplateTargetsRepositoryTests
     [Test]
     public void GetTemplateTargets_ReturnsAllTemplateTargets()
     {
-        var settings = new Dictionary<string, string>
+        var settings = new Dictionary<string, string?>
         {
             ["Templates:template-a"] = "https://github.com/knight-owl-dev/template-a",
             ["Templates:template-b"] = "https://github.com/knight-owl-dev/template-b",
@@ -60,7 +60,7 @@ public class TemplateTargetsRepositoryTests
     [Test]
     public void GetTemplateTarget_HasFound_ReturnsTemplateTarget()
     {
-        var settings = new Dictionary<string, string>
+        var settings = new Dictionary<string, string?>
         {
             ["Templates:template-a"] = "https://github.com/knight-owl-dev/template-a",
             ["Templates:template-b"] = "https://github.com/knight-owl-dev/template-b",
