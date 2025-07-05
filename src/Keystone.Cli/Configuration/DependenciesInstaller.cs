@@ -20,6 +20,7 @@ public static class DependenciesInstaller
     /// <param name="services">The destination services collection to update.</param>
     public static void AddDependencies(this IServiceCollection services)
         => services
+            .AddHttpClient()
             .AddSingleton<IBrowseCommand, BrowseCommand>()
             .AddSingleton<IInfoCommand, InfoCommand>()
             .AddSingleton<INewCommand, NewCommand>()
