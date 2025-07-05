@@ -16,12 +16,12 @@ public class DependenciesInstallerTests
 {
     private static readonly Type[] ExpectedTypes =
     [
-        typeof(ITemplateService),
-        typeof(ITemplateTargetsRepository),
-        typeof(IProcessService),
         typeof(IBrowseCommand),
         typeof(IInfoCommand),
         typeof(INewCommand),
+        typeof(IProcessService),
+        typeof(ITemplateService),
+        typeof(ITemplateTargetsRepository),
     ];
 
     [TestCaseSource(nameof(ExpectedTypes))]

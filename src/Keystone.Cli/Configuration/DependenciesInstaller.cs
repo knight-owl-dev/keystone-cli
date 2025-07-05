@@ -20,10 +20,10 @@ public static class DependenciesInstaller
     /// <param name="services">The destination services collection to update.</param>
     public static void AddDependencies(this IServiceCollection services)
         => services
-            .AddSingleton<ITemplateService, TemplateService>()
-            .AddSingleton<ITemplateTargetsRepository, TemplateTargetsRepository>()
-            .AddSingleton<IProcessService, ProcessService>()
             .AddSingleton<IBrowseCommand, BrowseCommand>()
             .AddSingleton<IInfoCommand, InfoCommand>()
-            .AddSingleton<INewCommand, NewCommand>();
+            .AddSingleton<INewCommand, NewCommand>()
+            .AddSingleton<IProcessService, ProcessService>()
+            .AddSingleton<ITemplateService, TemplateService>()
+            .AddSingleton<ITemplateTargetsRepository, TemplateTargetsRepository>();
 }
