@@ -46,7 +46,7 @@ public sealed class GitHubZipEntryProvider(ZipArchive archive)
         => GetEnumerator();
 
     /// <inheritdoc />
-    public async Task CopyToAsync(EntryModel entry, Stream destination, CancellationToken cancellationToken = default)
+    public Stream Open(EntryModel entry)
     {
         if (entry.Type != EntryType.File)
         {
@@ -58,11 +58,7 @@ public sealed class GitHubZipEntryProvider(ZipArchive archive)
             throw new InvalidOperationException($"The '{entry.Name}' entry does not exist in the zip archive at {entry.RelativePath}.");
         }
 
-        await using var archiveEntryStream = archiveEntry.Open();
-
-        await archiveEntryStream
-            .CopyToAsync(destination, cancellationToken)
-            .ConfigureAwait(false);
+        return archiveEntry.Open();
     }
 
     /// <summary>

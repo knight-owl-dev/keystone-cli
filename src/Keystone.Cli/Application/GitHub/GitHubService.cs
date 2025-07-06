@@ -126,6 +126,8 @@ public class GitHubService(
 
             logger.LogDebug("Writing file {DestinationEntryPath}", destinationEntryPath);
 
+            await using var sourceStream = entryProvider.Open(entry);
+
             await using var destinationStream = fileSystemService.OpenFile(
                 destinationEntryPath,
                 FileMode.Create,
@@ -133,7 +135,8 @@ public class GitHubService(
                 FileShare.None
             );
 
-            await entryProvider.CopyToAsync(entry, destinationStream, cancellationToken)
+            await sourceStream
+                .CopyToAsync(destinationStream, cancellationToken)
                 .ConfigureAwait(false);
         }
     }

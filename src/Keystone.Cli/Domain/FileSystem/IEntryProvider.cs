@@ -7,11 +7,9 @@ public interface IEntryProvider
     : IDisposable, IReadOnlyCollection<EntryModel>
 {
     /// <summary>
-    /// Copies the specified file entry to the provided destination stream.
+    /// Opens the file entry for reading.
     /// </summary>
     /// <param name="entry">The file entry to copy.</param>
-    /// <param name="destination">The destination stream to which the entry's content will be written.</param>
-    /// <param name="cancellationToken">The cancellation token used to cancel the copy operation if needed.</param>
     /// <returns>
     /// A task that represents the asynchronous copy operation.
     /// </returns>
@@ -21,5 +19,5 @@ public interface IEntryProvider
     /// <exception cref="InvalidOperationException">
     /// Thrown if the entry type does not exist in the provider.
     /// </exception>
-    Task CopyToAsync(EntryModel entry, Stream destination, CancellationToken cancellationToken = default);
+    Stream Open(EntryModel entry);
 }
