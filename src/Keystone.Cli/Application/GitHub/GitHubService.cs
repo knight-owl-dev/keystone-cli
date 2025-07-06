@@ -77,7 +77,7 @@ public class GitHubService(
             if (! fileSystemService.DirectoryExists(destinationEntryPath))
             {
                 logger.LogDebug("Creating directory {DestinationEntryPath}", destinationEntryPath);
-                fileSystemService.CreateDirectory(destinationEntryPath);
+                _ = fileSystemService.CreateDirectory(destinationEntryPath);
             }
             else
             {
