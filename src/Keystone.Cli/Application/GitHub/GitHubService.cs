@@ -3,7 +3,7 @@ using Keystone.Cli.Domain.FileSystem;
 using Microsoft.Extensions.Logging;
 
 
-namespace Keystone.Cli.Application.Utility;
+namespace Keystone.Cli.Application.GitHub;
 
 /// <summary>
 /// Implementation of <see cref="IGitHubService"/> for basic GitHub operations.
@@ -34,27 +34,12 @@ public class GitHubService(IHttpClientFactory httpClientFactory, ILogger<GitHubS
             destinationPath
         );
 
-        var tempZipPath = Path.GetTempFileName();
-        try
-        {
-            using var httpClient = httpClientFactory.CreateClient(HttpClientName);
+        var zipUrl = GetZipUrl(repositoryUrl, branchName);
+        using var httpClient = httpClientFactory.CreateClient(HttpClientName);
+        await using var zipStream = await httpClient.GetStreamAsync(zipUrl, cancellationToken);
 
-            var zipUrl = GetZipUrl(repositoryUrl, branchName);
-            var bytes = await httpClient.GetByteArrayAsync(zipUrl, cancellationToken);
-            await File.WriteAllBytesAsync(tempZipPath, bytes, cancellationToken);
-
-            logger.LogDebug("Extracting zip archive {TempZipPath} to {DestinationPath}", tempZipPath, destinationPath);
-            using var archive = ZipFile.OpenRead(tempZipPath);
-
-            CopyFiles(archive, destinationPath, overwrite, predicate);
-        }
-        finally
-        {
-            if (File.Exists(tempZipPath))
-            {
-                File.Delete(tempZipPath);
-            }
-        }
+        using var archive = new ZipArchive(zipStream, ZipArchiveMode.Read, leaveOpen: true);
+        CopyFiles(archive, destinationPath, overwrite, predicate);
     }
 
     private void CopyFiles(ZipArchive archive, string destinationPath, bool overwrite, Func<EntryModel, bool>? predicate)

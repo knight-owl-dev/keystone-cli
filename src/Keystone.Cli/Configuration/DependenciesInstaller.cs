@@ -3,6 +3,7 @@ using Keystone.Cli.Application.Commands.Browse;
 using Keystone.Cli.Application.Commands.Info;
 using Keystone.Cli.Application.Commands.New;
 using Keystone.Cli.Application.Data;
+using Keystone.Cli.Application.GitHub;
 using Keystone.Cli.Application.Utility;
 using Microsoft.Extensions.DependencyInjection;
 

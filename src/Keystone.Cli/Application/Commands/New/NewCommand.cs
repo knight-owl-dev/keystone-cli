@@ -1,4 +1,4 @@
-using Keystone.Cli.Application.Utility;
+using Keystone.Cli.Application.GitHub;
 using Microsoft.Extensions.Logging;
 
 

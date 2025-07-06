@@ -1,7 +1,7 @@
 using Keystone.Cli.Domain.FileSystem;
 
 
-namespace Keystone.Cli.Application.Utility;
+namespace Keystone.Cli.Application.GitHub;
 
 /// <summary>
 /// Basic interface for GitHub service.

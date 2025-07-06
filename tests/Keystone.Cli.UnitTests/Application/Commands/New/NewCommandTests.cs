@@ -1,6 +1,6 @@
 using Keystone.Cli.Application;
 using Keystone.Cli.Application.Commands.New;
-using Keystone.Cli.Application.Utility;
+using Keystone.Cli.Application.GitHub;
 using Keystone.Cli.Domain;
 using Keystone.Cli.UnitTests.Logging;
 using Microsoft.Extensions.Logging;
