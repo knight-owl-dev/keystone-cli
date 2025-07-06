@@ -23,9 +23,7 @@ public sealed class GitHubZipEntryProvider(ZipArchive archive)
 
     /// <inheritdoc />
     public void Dispose()
-    {
-        Dispose(true);
-    }
+        => Dispose(true);
 
     private void Dispose(bool disposing)
     {
