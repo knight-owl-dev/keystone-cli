@@ -108,6 +108,8 @@ public class GitHubService(
 
         foreach (var entry in fileEntries)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (predicate?.Invoke(entry) == false)
             {
                 logger.LogDebug("Skipping file based on predicate {RelativePath}", entry.RelativePath);
