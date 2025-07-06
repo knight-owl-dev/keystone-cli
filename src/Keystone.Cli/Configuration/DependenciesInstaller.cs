@@ -23,7 +23,9 @@ public static class DependenciesInstaller
         => services
             .AddHttpClient()
             .AddSingleton<IBrowseCommand, BrowseCommand>()
+            .AddSingleton<IFileSystemService, FileSystemService>()
             .AddSingleton<IGitHubService, GitHubService>()
+            .AddSingleton<IGitHubZipEntryProviderFactory, GitHubZipEntryProviderFactory>()
             .AddSingleton<IInfoCommand, InfoCommand>()
             .AddSingleton<INewCommand, NewCommand>()
             .AddSingleton<IProcessService, ProcessService>()

@@ -1,4 +1,4 @@
-using System.IO.Compression;
+using Keystone.Cli.Application.Utility;
 using Keystone.Cli.Domain.FileSystem;
 using Microsoft.Extensions.Logging;
 
@@ -8,11 +8,13 @@ namespace Keystone.Cli.Application.GitHub;
 /// <summary>
 /// Implementation of <see cref="IGitHubService"/> for basic GitHub operations.
 /// </summary>
-public class GitHubService(IHttpClientFactory httpClientFactory, ILogger<GitHubService> logger)
+public class GitHubService(
+    IFileSystemService fileSystemService,
+    IGitHubZipEntryProviderFactory gitHubZipEntryProviderFactory,
+    ILogger<GitHubService> logger
+)
     : IGitHubService
 {
-    private const string HttpClientName = "GitHub";
-
     /// <inheritdoc />
     public async Task CopyPublicRepositoryAsync(
         Uri repositoryUrl,
@@ -34,65 +36,103 @@ public class GitHubService(IHttpClientFactory httpClientFactory, ILogger<GitHubS
             destinationPath
         );
 
-        var zipUrl = GetZipUrl(repositoryUrl, branchName);
-        using var httpClient = httpClientFactory.CreateClient(HttpClientName);
-        await using var zipStream = await httpClient.GetStreamAsync(zipUrl, cancellationToken);
+        using var entryProvider = await gitHubZipEntryProviderFactory
+            .CreateAsync(repositoryUrl, branchName, cancellationToken)
+            .ConfigureAwait(false);
 
-        using var archive = new ZipArchive(zipStream, ZipArchiveMode.Read, leaveOpen: true);
-        CopyFiles(archive, destinationPath, overwrite, predicate);
+        CreateDirectoryTree(destinationPath, entryProvider, predicate);
+
+        await CopyFilesAsync(destinationPath, entryProvider, overwrite, predicate, cancellationToken)
+            .ConfigureAwait(false);
     }
 
-    private void CopyFiles(ZipArchive archive, string destinationPath, bool overwrite, Func<EntryModel, bool>? predicate)
+    /// <summary>
+    /// Creates the directory tree based on the entries provided by the <paramref name="entryProvider"/>.
+    /// </summary>
+    /// <param name="destinationPath">The destination root path.</param>
+    /// <param name="entryProvider">The entry provider.</param>
+    /// <param name="predicate">The entry predicate.</param>
+    private void CreateDirectoryTree(string destinationPath, IEntryProvider entryProvider, Func<EntryModel, bool>? predicate)
     {
-        // GitHub zips wrap content in a top-level folder
-        var rootArchiveEntry = archive.Entries[0];
-
-        if (! Directory.Exists(destinationPath))
+        if (! fileSystemService.DirectoryExists(destinationPath))
         {
             logger.LogDebug("Creating directory {DestinationPath}", destinationPath);
-            Directory.CreateDirectory(destinationPath);
+            fileSystemService.CreateDirectory(destinationPath);
         }
 
-        foreach (var archiveEntry in archive.Entries.Skip(1))
-        {
-            var entryModel = new EntryModel(
-                GetEntryType(archiveEntry),
-                Path.GetFileName(archiveEntry.Name),
-                MakeRelative(rootArchiveEntry, archiveEntry.FullName)
-            );
+        var directoryEntries = entryProvider
+            .Where(e => e.Type == EntryType.Directory)
+            .OrderBy(e => e.RelativePath);
 
-            if (predicate?.Invoke(entryModel) == false)
+        foreach (var entry in directoryEntries)
+        {
+            if (predicate?.Invoke(entry) == false)
             {
-                logger.LogDebug("Skipping {EntryType} {EntryName} based on predicate", entryModel.Type, archiveEntry.FullName);
+                logger.LogDebug("Skipping directory based on predicate {RelativePath}", entry.RelativePath);
                 continue;
             }
 
-            var destinationEntryPath = entryModel.GetFullPath(destinationPath);
-            switch (entryModel.Type)
+            var destinationEntryPath = entry.GetFullPath(destinationPath);
+
+            if (! fileSystemService.DirectoryExists(destinationEntryPath))
             {
-                case EntryType.File:
-                    logger.LogDebug("Writing file {DestinationEntryPath}", destinationEntryPath);
-                    archiveEntry.ExtractToFile(destinationEntryPath, overwrite);
-                    break;
-
-                case EntryType.Directory when ! Directory.Exists(destinationEntryPath):
-                    logger.LogDebug("Creating directory {DestinationEntryPath}", destinationEntryPath);
-                    Directory.CreateDirectory(destinationEntryPath);
-                    break;
-
-                default:
-                    logger.LogDebug("Directory {DestinationEntryPath} already exists", destinationEntryPath);
-                    break;
+                logger.LogDebug("Creating directory {DestinationEntryPath}", destinationEntryPath);
+                fileSystemService.CreateDirectory(destinationEntryPath);
+            }
+            else
+            {
+                logger.LogDebug("Directory already exists {DestinationEntryPath}", destinationEntryPath);
             }
         }
     }
 
-    private static string MakeRelative(ZipArchiveEntry rootEntry, string path)
-        => path.StartsWith(rootEntry.FullName) ? path[rootEntry.FullName.Length..] : path;
+    /// <summary>
+    /// Copies files from the <paramref name="entryProvider"/> to the specified <paramref name="destinationPath"/>.
+    /// </summary>
+    /// <param name="destinationPath">The destination root path.</param>
+    /// <param name="entryProvider">The entry provider.</param>
+    /// <param name="overwrite">Indicates if overwriting existing files is permitted.</param>
+    /// <param name="predicate">The entry predicate.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    private async Task CopyFilesAsync(
+        string destinationPath,
+        IEntryProvider entryProvider,
+        bool overwrite,
+        Func<EntryModel, bool>? predicate,
+        CancellationToken cancellationToken
+    )
+    {
+        var fileEntries = entryProvider
+            .Where(e => e.Type == EntryType.File)
+            .OrderBy(e => e.RelativePath);
 
-    private static EntryType GetEntryType(ZipArchiveEntry entry)
-        => entry.FullName.EndsWith('/') ? EntryType.Directory : EntryType.File;
+        foreach (var entry in fileEntries)
+        {
+            if (predicate?.Invoke(entry) == false)
+            {
+                logger.LogDebug("Skipping file based on predicate {RelativePath}", entry.RelativePath);
+                continue;
+            }
 
-    private static Uri GetZipUrl(Uri repositoryUrl, string branchName)
-        => new($"{repositoryUrl}/archive/refs/heads/{branchName}.zip");
+            var destinationEntryPath = entry.GetFullPath(destinationPath);
+
+            if (! overwrite && fileSystemService.FileExists(destinationEntryPath))
+            {
+                logger.LogDebug("File already exists, skipping {DestinationEntryPath}", destinationEntryPath);
+                continue;
+            }
+
+            logger.LogDebug("Writing file {DestinationEntryPath}", destinationEntryPath);
+
+            await using var destinationStream = fileSystemService.OpenFile(
+                destinationEntryPath,
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.None
+            );
+
+            await entryProvider.CopyToAsync(entry, destinationStream, cancellationToken)
+                .ConfigureAwait(false);
+        }
+    }
 }

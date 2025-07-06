@@ -18,7 +18,9 @@ public class DependenciesInstallerTests
     private static readonly Type[] ExpectedTypes =
     [
         typeof(IBrowseCommand),
+        typeof(IFileSystemService),
         typeof(IGitHubService),
+        typeof(IGitHubZipEntryProviderFactory),
         typeof(IInfoCommand),
         typeof(INewCommand),
         typeof(IProcessService),
