@@ -15,8 +15,11 @@ public interface IEntryProvider
     /// <returns>
     /// A task that represents the asynchronous copy operation.
     /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown if the entry type is not <seealso cref="EntryType.File"/>.
+    /// </exception>
     /// <exception cref="InvalidOperationException">
-    /// Thrown if the entry type is not a file or is unsupported for copying.
+    /// Thrown if the entry type does not exist in the provider.
     /// </exception>
     Task CopyToAsync(EntryModel entry, Stream destination, CancellationToken cancellationToken = default);
 }
