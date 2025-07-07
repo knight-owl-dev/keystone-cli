@@ -46,7 +46,7 @@ public sealed class GitHubZipEntryProvider(ZipArchive archive)
         => GetEnumerator();
 
     /// <inheritdoc />
-    public Stream Open(EntryModel entry)
+    public void ExtractToFile(EntryModel entry, string destinationFileName)
     {
         if (entry.Type != EntryType.File)
         {
@@ -58,7 +58,7 @@ public sealed class GitHubZipEntryProvider(ZipArchive archive)
             throw new InvalidOperationException($"The '{entry.Name}' entry does not exist in the zip archive at {entry.RelativePath}.");
         }
 
-        return archiveEntry.Open();
+        archiveEntry.ExtractToFile(destinationFileName, overwrite: true);
     }
 
     /// <summary>

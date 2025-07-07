@@ -40,10 +40,8 @@ public class GitHubService(
             .CreateAsync(repositoryUrl, branchName, cancellationToken)
             .ConfigureAwait(false);
 
-        CreateDirectoryTree(destinationPath, entryProvider, predicate);
-
-        await CopyFilesAsync(destinationPath, entryProvider, overwrite, predicate, cancellationToken)
-            .ConfigureAwait(false);
+        CreateDirectoryTree(destinationPath, entryProvider, predicate, cancellationToken);
+        CopyFiles(destinationPath, entryProvider, overwrite, predicate, cancellationToken);
     }
 
     /// <summary>
@@ -52,7 +50,13 @@ public class GitHubService(
     /// <param name="destinationPath">The destination root path.</param>
     /// <param name="entryProvider">The entry provider.</param>
     /// <param name="predicate">The entry predicate.</param>
-    private void CreateDirectoryTree(string destinationPath, IEntryProvider entryProvider, Func<EntryModel, bool>? predicate)
+    /// <param name="cancellationToken">The cancellation token.</param>
+    private void CreateDirectoryTree(
+        string destinationPath,
+        IEntryProvider entryProvider,
+        Func<EntryModel, bool>? predicate,
+        CancellationToken cancellationToken
+    )
     {
         if (! fileSystemService.DirectoryExists(destinationPath))
         {
@@ -66,6 +70,8 @@ public class GitHubService(
 
         foreach (var entry in directoryEntries)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (predicate?.Invoke(entry) == false)
             {
                 logger.LogDebug("Skipping directory based on predicate {RelativePath}", entry.RelativePath);
@@ -94,7 +100,7 @@ public class GitHubService(
     /// <param name="overwrite">Indicates if overwriting existing files is permitted.</param>
     /// <param name="predicate">The entry predicate.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    private async Task CopyFilesAsync(
+    private void CopyFiles(
         string destinationPath,
         IEntryProvider entryProvider,
         bool overwrite,
@@ -125,19 +131,7 @@ public class GitHubService(
             }
 
             logger.LogDebug("Writing file {DestinationEntryPath}", destinationEntryPath);
-
-            await using var sourceStream = entryProvider.Open(entry);
-
-            await using var destinationStream = fileSystemService.OpenFile(
-                destinationEntryPath,
-                FileMode.Create,
-                FileAccess.Write,
-                FileShare.None
-            );
-
-            await sourceStream
-                .CopyToAsync(destinationStream, cancellationToken)
-                .ConfigureAwait(false);
+            entryProvider.ExtractToFile(entry, destinationEntryPath);
         }
     }
 }
