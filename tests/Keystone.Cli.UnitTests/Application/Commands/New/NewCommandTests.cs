@@ -68,4 +68,34 @@ public class NewCommandTests
             Has.Some.Matches<LogEntry>(entry => entry.Is(LogLevel.Information, $"Creating project '{name}' from {repositoryUrl}"))
         );
     }
+
+    [Test]
+    public async Task CreateNewAsync_CopiesPublicRepositoryAsync()
+    {
+        const string name = "project-name";
+        const string templateName = "template-name";
+        const string repositoryUrl = "https://github.com/knight-owl-dev/template-a";
+        const string path = $"./{name}";
+
+        var templateTarget = new TemplateTargetModel(
+            Name: templateName,
+            RepositoryUrl: new Uri(repositoryUrl)
+        );
+
+        var templateService = Substitute.For<ITemplateService>();
+        templateService.GetTemplateTarget(templateName).Returns(templateTarget);
+
+        var gitHubService = Substitute.For<IGitHubService>();
+
+        var sut = Ctor(gitHubService, templateService: templateService);
+        await sut.CreateNewAsync(name, templateName, path, CancellationToken.None);
+
+        await gitHubService.Received(1).CopyPublicRepositoryAsync(
+            templateTarget.RepositoryUrl,
+            branchName: templateTarget.BranchName,
+            destinationPath: path,
+            overwrite: true,
+            cancellationToken: CancellationToken.None
+        );
+    }
 }
