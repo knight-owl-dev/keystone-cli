@@ -17,8 +17,4 @@ public class FileSystemService
     /// <inheritdoc />
     public bool FileExists(string? path)
         => File.Exists(path);
-
-    /// <inheritdoc />
-    public Stream OpenFile(string path, FileMode mode, FileAccess access, FileShare share)
-        => File.Open(path, mode, access, share);
 }
