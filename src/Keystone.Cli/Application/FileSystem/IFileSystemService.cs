@@ -1,4 +1,4 @@
-namespace Keystone.Cli.Application.Utility;
+namespace Keystone.Cli.Application.FileSystem;
 
 /// <summary>
 /// Defines a service for performing basic file system operations.
