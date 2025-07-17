@@ -112,11 +112,8 @@ public sealed class GitHubZipEntryProvider
             },
             (acc, archiveEntry) =>
             {
-                var entryModel = new EntryModel(
-                    GetEntryType(archiveEntry),
-                    Path.GetFileName(archiveEntry.Name),
-                    MakeRelative(acc.RootEntry, archiveEntry.FullName)
-                );
+                var relativePath = MakeRelative(acc.RootEntry, archiveEntry.FullName);
+                var entryModel = EntryModel.Create(relativePath);
 
                 acc.Builder.Add(new EntryBinding(entryModel, archiveEntry));
 
@@ -135,19 +132,6 @@ public sealed class GitHubZipEntryProvider
     /// </returns>
     private static string MakeRelative(ZipArchiveEntry root, string path)
         => path.StartsWith(root.FullName) ? path[root.FullName.Length..] : path;
-
-    /// <summary>
-    /// Determines the type of the entry.
-    /// </summary>
-    /// <remarks>
-    /// GitHub zip entries ending with '/' are directories, others are files.
-    /// </remarks>
-    /// <param name="entry">The zip archive entry.</param>
-    /// <returns>
-    /// The type of the entry, either <see cref="EntryType.File"/> or <see cref="EntryType.Directory"/>.
-    /// </returns>
-    private static EntryType GetEntryType(ZipArchiveEntry entry)
-        => entry.FullName.EndsWith('/') ? EntryType.Directory : EntryType.File;
 
     /// <summary>
     /// Entry biding that maps <see cref="EntryModel"/> to <see cref="ZipArchiveEntry"/>.
