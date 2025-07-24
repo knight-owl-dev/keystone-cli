@@ -219,4 +219,62 @@ public class FileSystemCopyServiceTests
         entryProvider.DidNotReceive().ExtractToFile(fileEntry1, fileFullPath1);
         entryProvider.Received(1).ExtractToFile(fileEntry2, fileFullPath2);
     }
+
+    [Test]
+    public void Copy_PredicateSkipsDirectory_IgnoresSubdirectoryInSkippedDirectory()
+    {
+        const string destinationPath = "test/path";
+
+        var directoryEntry = EntryModel.Create("A/");
+        var subDirectoryEntry = EntryModel.Create("A/subdirectory/");
+        var directoryFullPath = directoryEntry.GetFullPath(destinationPath);
+        var subDirectoryFullPath = subDirectoryEntry.GetFullPath(destinationPath);
+
+        var fileSystemService = Substitute.For<IFileSystemService>();
+        fileSystemService.DirectoryExists(destinationPath).Returns(true);
+        fileSystemService.DirectoryExists(directoryFullPath).Returns(false);
+        fileSystemService.DirectoryExists(subDirectoryFullPath).Returns(false);
+
+        var entryProvider = EntryProvider.Fake([directoryEntry, subDirectoryEntry]);
+
+        var predicate = Substitute.For<Func<EntryModel, bool>>();
+        predicate.Invoke(directoryEntry).Returns(false); // Skip the main directory
+
+        var sut = Ctor(fileSystemService: fileSystemService);
+
+        sut.Copy(entryProvider, destinationPath, overwrite: false, predicate);
+
+        fileSystemService.DidNotReceive().CreateDirectory(directoryFullPath);
+        fileSystemService.DidNotReceive().CreateDirectory(subDirectoryFullPath);
+        predicate.DidNotReceive().Invoke(subDirectoryEntry);
+    }
+
+    [Test]
+    public void Copy_PredicateSkipsDirectory_IgnoresFilesInSkippedDirectory()
+    {
+        const string destinationPath = "test/path";
+
+        var directoryEntry = EntryModel.Create("A/");
+        var fileEntry = EntryModel.Create("A/file.txt");
+        var directoryFullPath = directoryEntry.GetFullPath(destinationPath);
+        var fileFullPath = fileEntry.GetFullPath(destinationPath);
+
+        var fileSystemService = Substitute.For<IFileSystemService>();
+        fileSystemService.DirectoryExists(destinationPath).Returns(true);
+        fileSystemService.DirectoryExists(directoryFullPath).Returns(false);
+        fileSystemService.FileExists(fileFullPath).Returns(false);
+
+        var entryProvider = EntryProvider.Fake([directoryEntry, fileEntry]);
+
+        var predicate = Substitute.For<Func<EntryModel, bool>>();
+        predicate.Invoke(directoryEntry).Returns(false); // Skip the main directory
+
+        var sut = Ctor(fileSystemService: fileSystemService);
+
+        sut.Copy(entryProvider, destinationPath, overwrite: false, predicate);
+
+        fileSystemService.DidNotReceive().CreateDirectory(directoryFullPath);
+        predicate.DidNotReceive().Invoke(fileEntry);
+        entryProvider.DidNotReceive().ExtractToFile(fileEntry, fileFullPath);
+    }
 }
