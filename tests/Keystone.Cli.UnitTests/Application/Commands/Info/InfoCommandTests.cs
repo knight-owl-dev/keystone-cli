@@ -31,14 +31,13 @@ public class InfoCommandTests
         var sut = Ctor(templateService);
         var actual = sut.GetInfo();
 
-        Assert.Multiple(() =>
-            {
-                Assert.That(actual.Version, Does.StartWith("0.1.0"));
-                Assert.That(actual.Description, Is.EqualTo("A command-line interface for Keystone."));
-                Assert.That(actual.Copyright, Is.EqualTo("© 2025 Knight Owl LLC. All rights reserved."));
-                Assert.That(actual.DefaultTemplateTarget, Is.EqualTo(defaultTemplateTarget));
-                Assert.That(actual.TemplateTargets, Is.EqualTo(templateTargets));
-            }
-        );
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(actual.Version, Does.StartWith("0.1.0"));
+            Assert.That(actual.Description, Is.EqualTo("A command-line interface for Keystone."));
+            Assert.That(actual.Copyright, Is.EqualTo("© 2025 Knight Owl LLC. All rights reserved."));
+            Assert.That(actual.DefaultTemplateTarget, Is.EqualTo(defaultTemplateTarget));
+            Assert.That(actual.TemplateTargets, Is.EqualTo(templateTargets));
+        }
     }
 }

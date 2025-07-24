@@ -58,11 +58,10 @@ public class InfoModelTests
 
         var actual = sut.GetFormattedText();
 
-        Assert.Multiple(() =>
-            {
-                Assert.That(actual, Does.Contain(" -              short: https://example.com/short"));
-                Assert.That(actual, Does.Contain(" - longer-target-name: https://example.com/longer-target-name"));
-            }
-        );
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(actual, Does.Contain(" -              short: https://example.com/short"));
+            Assert.That(actual, Does.Contain(" - longer-target-name: https://example.com/longer-target-name"));
+        }
     }
 }
