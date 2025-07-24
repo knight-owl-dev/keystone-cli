@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 
-namespace Keystone.Cli.UnitTests.Application.Utility;
+namespace Keystone.Cli.UnitTests.Application.FileSystem;
 
 [TestFixture, Parallelizable(ParallelScope.All)]
 public class FileSystemCopyServiceTests
