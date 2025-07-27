@@ -22,6 +22,26 @@ public record EntryModel(EntryType Type, string Name, string RelativePath)
         => Path.Combine(rootPath, this.RelativePath);
 
     /// <summary>
+    /// Returns the directory information for this entry.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// For file entries, this returns the directory containing the file, e.g., for <c>"A/B/C.txt"</c> returns <c>"A/B"</c>.
+    /// For the top-level file, this returns an empty string, e.g., for <c>"C.txt"</c> returns <c>""</c>.
+    /// </para>
+    /// <para>
+    /// For directory entries, this returns the directory itself without the trailing path delimiter, e.g., for <c>"A/B/"</c> returns <c>"A/B"</c>.
+    /// For a top-level directory, this still returns the directory itself, e.g., for <c>"A/"</c> returns <c>"A"</c>.
+    /// </para>
+    /// </remarks>
+    /// <returns>
+    /// The directory information for this entry.
+    /// </returns>
+    public string GetDirectoryName()
+        => Path.GetDirectoryName(this.RelativePath)
+            ?? throw new InvalidOperationException("Cannot get directory name for root entry.");
+
+    /// <summary>
     /// Creates an <see cref="EntryModel"/> based on the provided relative path.
     /// </summary>
     /// <param name="relativePath">The relative path to either a file or directory.</param>

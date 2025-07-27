@@ -107,4 +107,51 @@ public class EntryModelTests
 
         Assert.That(actual, Is.EqualTo(expected));
     }
+
+    [Test]
+    public void GetDirectoryName_ForFile_InRoot_ReturnsEmpty()
+    {
+        const string relativePath = "C.txt";
+
+        var entry = EntryModel.Create(relativePath);
+        var actual = entry.GetDirectoryName();
+
+        Assert.That(actual, Is.Empty);
+    }
+
+    [Test]
+    public void GetDirectoryName_ForFile_InSubDirectory_ReturnsDirectoryName()
+    {
+        const string relativePath = "A/B/C.txt";
+        const string expectedDirectoryName = "A/B";
+
+        var entry = EntryModel.Create(relativePath);
+        var actual = entry.GetDirectoryName();
+
+        Assert.That(actual, Is.EqualTo(expectedDirectoryName));
+    }
+
+    [Test]
+    public void GetDirectoryName_ForDirectory_InRoot_ReturnsSelf()
+    {
+        const string relativePath = "A/";
+        const string expectedDirectoryName = "A";
+
+        var entry = EntryModel.Create(relativePath);
+        var actual = entry.GetDirectoryName();
+
+        Assert.That(actual, Is.EqualTo(expectedDirectoryName));
+    }
+
+    [Test]
+    public void GetDirectoryName_ForDirectory_InSubDirectory_ReturnsSelf()
+    {
+        const string relativePath = "A/B/";
+        const string expectedDirectoryName = "A/B";
+
+        var entry = EntryModel.Create(relativePath);
+        var actual = entry.GetDirectoryName();
+
+        Assert.That(actual, Is.EqualTo(expectedDirectoryName));
+    }
 }
