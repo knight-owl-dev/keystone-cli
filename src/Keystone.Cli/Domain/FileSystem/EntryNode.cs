@@ -32,7 +32,7 @@ public class EntryNode(EntryModel entry)
     public override string ToString()
         => Aggregate(
             new StringBuilder(),
-            predicate: _ => true,
+            EntryModelPredicates.AcceptAll,
             (acc, item) => acc.AppendLine(item.RelativePath),
             acc => acc.ToString().TrimEnd()
         );
