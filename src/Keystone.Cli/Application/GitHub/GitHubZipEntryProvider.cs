@@ -24,19 +24,7 @@ public sealed class GitHubZipEntryProvider(ZipArchive archive)
 
     /// <inheritdoc />
     public void Dispose()
-        => Dispose(true);
-
-    /// <summary>
-    /// Disposes the resources used by the <see cref="GitHubZipEntryProvider"/>.
-    /// </summary>
-    /// <param name="disposing">Indicates if disposing explicitly.</param>
-    private void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            archive.Dispose();
-        }
-    }
+        => archive.Dispose();
 
     /// <inheritdoc />
     public IEnumerator<EntryModel> GetEnumerator()
