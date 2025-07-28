@@ -37,9 +37,12 @@ public record EntryModel(EntryType Type, string Name, string RelativePath)
     /// <returns>
     /// The directory information for this entry.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when trying to get the directory name for the root entry (i.e., when <see cref="RelativePath"/> is <c>"/"</c>).
+    /// </exception>
     public string GetDirectoryName()
         => Path.GetDirectoryName(this.RelativePath)
-            ?? throw new InvalidOperationException("Cannot get directory name for root entry.");
+            ?? throw new InvalidOperationException("Cannot get directory name for the root entry.");
 
     /// <summary>
     /// Creates an <see cref="EntryModel"/> based on the provided relative path.

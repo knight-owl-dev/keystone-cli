@@ -154,4 +154,17 @@ public class EntryModelTests
 
         Assert.That(actual, Is.EqualTo(expectedDirectoryName));
     }
+
+    [Test]
+    public void GetDirectoryName_IsRootEntry_ThrowsInvalidOperationException()
+    {
+        const string relativePath = "/";
+
+        var entry = EntryModel.Create(relativePath);
+
+        Assert.That(
+            () => entry.GetDirectoryName(),
+            Throws.InvalidOperationException.With.Message.EqualTo("Cannot get directory name for the root entry.")
+        );
+    }
 }
