@@ -28,7 +28,8 @@ public class FileSystemCopyService(IFileSystemService fileSystemService, ILogger
             fileSystemService.CreateDirectory(destinationPath);
         }
 
-        var entries = EntryNode.CreateNodes(entryProvider).SelectMany(node => node.Aggregate(
+        var entries = EntryNode.CreateNodes(entryProvider).SelectMany(node
+            => node.Aggregate(
                 ImmutableList.CreateBuilder<EntryModel>(),
                 predicate ?? EntryModelPredicates.AcceptAll,
                 (acc, entry) =>
