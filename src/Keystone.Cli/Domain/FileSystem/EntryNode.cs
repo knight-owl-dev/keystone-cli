@@ -14,7 +14,7 @@ public class EntryNode(EntryModel entry)
     /// <summary>
     /// Gets the file system entry model associated with this node.
     /// </summary>
-    public EntryModel Entry => entry;
+    private EntryModel Entry => entry;
 
     /// <summary>
     /// Gets the list of child nodes for this entry, or <c>null</c> if the entry is a file.
@@ -33,7 +33,7 @@ public class EntryNode(EntryModel entry)
             new StringBuilder(),
             predicate: _ => true,
             (acc, item) => acc.AppendLine(item.RelativePath),
-            acc => acc.ToString()
+            acc => acc.ToString().TrimEnd()
         );
 
     /// <summary>
@@ -70,10 +70,13 @@ public class EntryNode(EntryModel entry)
     /// Adds a child node to this entry node.
     /// </summary>
     /// <param name="child">A child node.</param>
+    /// <returns>
+    /// Returns this node after adding the child to its list of children.
+    /// </returns>
     /// <exception cref="InvalidOperationException">
     /// Thrown if this node does not represent a directory.
     /// </exception>
-    public void AddChild(EntryNode child)
+    public EntryNode AddChild(EntryNode child)
     {
         if (this.Children is null)
         {
@@ -81,6 +84,8 @@ public class EntryNode(EntryModel entry)
         }
 
         this.Children.Add(child);
+
+        return this;
     }
 
     /// <summary>
@@ -146,19 +151,19 @@ public class EntryNode(EntryModel entry)
     }
 
     /// <summary>
-    /// Creates a hierarchical <see cref="EntryNode"/> tree from a flat collection of <see cref="EntryModel"/> entries,
+    /// Creates a forest of <see cref="EntryNode"/> trees from a flat collection of <see cref="EntryModel"/> entries,
     /// without assuming any specific input order.
     /// </summary>
     /// <remarks>
-    /// This method constructs a tree structure where each node wraps a file or directory entry.
-    /// Directory nodes are connected to their children based on their relative paths.
-    /// Entries must have consistent and valid relative paths that imply their position in the hierarchy.
+    /// This method reconstructs a hierarchy of entry nodes by analyzing the relative paths of files and directories.
+    /// Each returned node represents a top-level directory or file. Child relationships are established by splitting
+    /// the relative paths and connecting nodes accordingly.
     /// </remarks>
-    /// <param name="entries">A flat collection of entry models representing both files and directories.</param>
+    /// <param name="entries">A flat collection of entry models representing files and directories.</param>
     /// <returns>
-    /// A root <see cref="EntryNode"/> instance representing the top-level (virtual) directory containing all provided entries.
+    /// A collection of top-level <see cref="EntryNode"/> instances representing the entry trees.
     /// </returns>
-    public static EntryNode CreateNode(IEnumerable<EntryModel> entries)
+    public static IEnumerable<EntryNode> CreateNodes(IEnumerable<EntryModel> entries)
     {
         throw new NotImplementedException();
     }
