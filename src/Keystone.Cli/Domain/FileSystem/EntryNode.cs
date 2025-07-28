@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Text;
+using JetBrains.Annotations;
 using Keystone.Cli.Domain.Helpers;
 
 
@@ -74,6 +75,9 @@ public class EntryNode(EntryModel entry)
     /// <returns>
     /// Returns this node after adding the child to its list of children.
     /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown if the child node is the same as this node.
+    /// </exception>
     /// <exception cref="InvalidOperationException">
     /// Thrown if this node does not represent a directory.
     /// </exception>
@@ -82,6 +86,11 @@ public class EntryNode(EntryModel entry)
         if (this.Children is null)
         {
             throw ErrorAddChildToFileEntry();
+        }
+
+        if (ReferenceEquals(this, child))
+        {
+            throw ErrorAddSelfAsChild(nameof(child));
         }
 
         this.Children.Add(child);
@@ -96,6 +105,9 @@ public class EntryNode(EntryModel entry)
     /// <returns>
     /// Returns this node after adding the children to its list of children.
     /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown if any child node is the same as this node.
+    /// </exception>
     /// <exception cref="InvalidOperationException">
     /// Thrown if this node does not represent a directory.
     /// </exception>
@@ -106,7 +118,13 @@ public class EntryNode(EntryModel entry)
             throw ErrorAddChildToFileEntry();
         }
 
-        this.Children.AddRange(children);
+        var childrenAsList = children as IReadOnlyCollection<EntryNode> ?? children.ToList();
+        if (childrenAsList.Any(child => ReferenceEquals(this, child)))
+        {
+            throw ErrorAddSelfAsChild(nameof(children));
+        }
+
+        this.Children.AddRange(childrenAsList);
 
         return this;
     }
@@ -178,9 +196,21 @@ public class EntryNode(EntryModel entry)
     /// without assuming any specific input order.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// This method reconstructs a hierarchy of entry nodes by analyzing the relative paths of files and directories.
     /// Each returned node represents a top-level directory or file. Child relationships are established by splitting
     /// the relative paths and connecting nodes accordingly.
+    /// </para>
+    /// <para>
+    /// All directories end with <c>"/"</c>, which guarantees that grouping by <see cref="EntryModel.GetDirectoryName"/>
+    /// yields exactly one directory per group, with its associated file entries. Consequently, top-level resolve their
+    /// parent directory to an empty string.
+    /// </para>
+    /// <para>
+    /// Using the <see cref="EntryModelSortPolicy.DirectoriesFirst"/> policy guarantees that parent directories are created
+    /// before any of their children are processed. This ensures correct construction of the parent-child relationships
+    /// as the tree is built incrementally one directory at a time.
+    /// </para>
     /// </remarks>
     /// <param name="entries">A flat collection of entry models representing files and directories.</param>
     /// <returns>
@@ -195,46 +225,47 @@ public class EntryNode(EntryModel entry)
             },
             (acc, group) =>
             {
+                var directoryName = group.Key;
                 var entriesByType = group.GroupBy(entry => entry.Type).ToImmutableDictionary(
                     entryTypeGroup => entryTypeGroup.Key,
                     entryTypeGroup => entryTypeGroup.ToList()
                 );
 
-                if (group.Key == string.Empty || ! entriesByType.TryGetValue(EntryType.Directory, out var directories))
+                if (directoryName == string.Empty || ! entriesByType.TryGetValue(EntryType.Directory, out var directories))
                 {
                     // all top-level files
                     acc.TopLevelNodes.AddRange(group.Select(entry => new EntryNode(entry)));
-
                     return acc;
                 }
 
                 var directory = new EntryNode(directories.Single());
-                acc.Directories[group.Key] = directory;
-
-                switch (Path.GetDirectoryName(group.Key))
-                {
-                    case "":
-                        acc.TopLevelNodes.Add(directory);
-                        break;
-
-                    case { } parentDirectoryName when acc.Directories.TryGetValue(parentDirectoryName, out var parentDirectory):
-                        parentDirectory.AddChild(directory);
-                        break;
-
-                    default:
-                        throw new InvalidOperationException($"Parent directory not found for: \"{group.Key}\".");
-                }
+                acc.Directories.Add(directoryName, directory);
 
                 if (entriesByType.TryGetValue(EntryType.File, out var fileEntries))
                 {
                     directory.AddChildren(fileEntries.Select(entry => new EntryNode(entry)));
                 }
 
-                return acc;
+                switch (Path.GetDirectoryName(directoryName))
+                {
+                    case "":
+                        acc.TopLevelNodes.Add(directory);
+                        return acc;
+
+                    case { } parentDirectoryName when acc.Directories.TryGetValue(parentDirectoryName, out var parentDirectory):
+                        parentDirectory.AddChild(directory);
+                        return acc;
+
+                    default:
+                        throw new InvalidOperationException($"Parent directory not found for: \"{directoryName}\".");
+                }
             },
             acc => acc.TopLevelNodes.ToImmutable()
         );
 
     private static InvalidOperationException ErrorAddChildToFileEntry()
         => new("Cannot add children to a file entry.");
+
+    private static ArgumentException ErrorAddSelfAsChild([InvokerParameterName] string paramName)
+        => new("Adding self as a child is not allowed.", paramName);
 }

@@ -142,6 +142,17 @@ public class EntryNodeTests
     }
 
     [Test]
+    public void AddChild_ChildIsSelf_ThrowsArgumentException()
+    {
+        var sut = new EntryNode(EntryModel.Create("A/"));
+
+        Assert.That(
+            () => sut.AddChild(sut),
+            Throws.ArgumentException.With.Message.Contains("Adding self as a child is not allowed.")
+        );
+    }
+
+    [Test]
     public void AddChildren_ForFileEntry_ThrowsInvalidOperationException()
     {
         var sut = new EntryNode(EntryModel.Create("file.txt"));
@@ -170,6 +181,19 @@ public class EntryNodeTests
             .AddChildren([new EntryNode(file3)]);
 
         Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void AddChildren_ChildrenContainsSelf_ThrowsArgumentException()
+    {
+        var file = new EntryNode(EntryModel.Create("A/file.txt"));
+
+        var sut = new EntryNode(EntryModel.Create("A/"));
+
+        Assert.That(
+            () => sut.AddChildren([file, sut]),
+            Throws.ArgumentException.With.Message.Contains("Adding self as a child is not allowed.")
+        );
     }
 
     [Test]
