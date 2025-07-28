@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text;
 using Keystone.Cli.Domain.Helpers;
 
@@ -80,10 +81,32 @@ public class EntryNode(EntryModel entry)
     {
         if (this.Children is null)
         {
-            throw new InvalidOperationException("Cannot add children to a file entry.");
+            throw ErrorAddChildToFileEntry();
         }
 
         this.Children.Add(child);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Adds multiple child nodes to this entry node.
+    /// </summary>
+    /// <param name="children">A collection of children nodes.</param>
+    /// <returns>
+    /// Returns this node after adding the children to its list of children.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if this node does not represent a directory.
+    /// </exception>
+    public EntryNode AddChildren(IEnumerable<EntryNode> children)
+    {
+        if (this.Children is null)
+        {
+            throw ErrorAddChildToFileEntry();
+        }
+
+        this.Children.AddRange(children);
 
         return this;
     }
@@ -163,8 +186,55 @@ public class EntryNode(EntryModel entry)
     /// <returns>
     /// A collection of top-level <see cref="EntryNode"/> instances representing the entry trees.
     /// </returns>
-    public static IEnumerable<EntryNode> CreateNodes(IEnumerable<EntryModel> entries)
-    {
-        throw new NotImplementedException();
-    }
+    public static ImmutableList<EntryNode> CreateNodes(IEnumerable<EntryModel> entries)
+        => EntryModelSortPolicy.DirectoriesFirst(entries).GroupBy(entry => entry.GetDirectoryName()).Aggregate(
+            new
+            {
+                TopLevelNodes = ImmutableList.CreateBuilder<EntryNode>(),
+                Directories = new Dictionary<string, EntryNode>(),
+            },
+            (acc, group) =>
+            {
+                var entriesByType = group.GroupBy(entry => entry.Type).ToImmutableDictionary(
+                    entryTypeGroup => entryTypeGroup.Key,
+                    entryTypeGroup => entryTypeGroup.ToList()
+                );
+
+                if (group.Key == string.Empty || ! entriesByType.TryGetValue(EntryType.Directory, out var directories))
+                {
+                    // all top-level files
+                    acc.TopLevelNodes.AddRange(group.Select(entry => new EntryNode(entry)));
+
+                    return acc;
+                }
+
+                var directory = new EntryNode(directories.Single());
+                acc.Directories[group.Key] = directory;
+
+                switch (Path.GetDirectoryName(group.Key))
+                {
+                    case "":
+                        acc.TopLevelNodes.Add(directory);
+                        break;
+
+                    case { } parentDirectoryName when acc.Directories.TryGetValue(parentDirectoryName, out var parentDirectory):
+                        parentDirectory.AddChild(directory);
+                        break;
+
+                    default:
+                        throw new InvalidOperationException($"Parent directory not found for: \"{group.Key}\".");
+                }
+
+                if (entriesByType.TryGetValue(EntryType.File, out var fileEntries))
+                {
+                    directory.AddChildren(fileEntries.Select(entry => new EntryNode(entry)));
+                }
+
+                return acc;
+            },
+            acc => acc.TopLevelNodes.ToImmutable()
+        );
+
+    private static InvalidOperationException ErrorAddChildToFileEntry()
+        => new("Cannot add children to a file entry.");
 }

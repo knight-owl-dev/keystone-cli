@@ -142,6 +142,37 @@ public class EntryNodeTests
     }
 
     [Test]
+    public void AddChildren_ForFileEntry_ThrowsInvalidOperationException()
+    {
+        var sut = new EntryNode(EntryModel.Create("file.txt"));
+
+        Assert.That(
+            () => sut.AddChildren([new EntryNode(EntryModel.Create("child.txt"))]),
+            Throws.InvalidOperationException.With.Message.EqualTo("Cannot add children to a file entry.")
+        );
+    }
+
+    [Test]
+    public void AddChildren_AddsChildrenToDirectoryEntry()
+    {
+        var dir = EntryModel.Create("A/");
+        var file1 = EntryModel.Create("A/file1.txt");
+        var file2 = EntryModel.Create("A/file2.txt");
+        var file3 = EntryModel.Create("A/file3.txt");
+
+        var expected = new EntryNode(dir)
+            .AddChild(new EntryNode(file1))
+            .AddChild(new EntryNode(file2))
+            .AddChild(new EntryNode(file3));
+
+        var actual = new EntryNode(EntryModel.Create("A/"))
+            .AddChildren([new EntryNode(file1), new EntryNode(file2)])
+            .AddChildren([new EntryNode(file3)]);
+
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Test]
     public void Aggregate_ReturnsFromResultSelector()
     {
         var sut = new EntryNode(EntryModel.Create("A/"))
