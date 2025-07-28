@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Keystone.Cli.Domain.FileSystem;
 using Microsoft.Extensions.Logging;
 
@@ -27,14 +28,20 @@ public class FileSystemCopyService(IFileSystemService fileSystemService, ILogger
             fileSystemService.CreateDirectory(destinationPath);
         }
 
-        foreach (var entry in entryProvider)
-        {
-            if (predicate?.Invoke(entry) == false)
-            {
-                logger.LogDebug("Skipping {EntryType} based on predicate {RelativePath}", entry.Type, entry.RelativePath);
-                continue;
-            }
+        var entries = EntryNode.CreateNodes(entryProvider).SelectMany(node => node.Aggregate(
+                ImmutableList.CreateBuilder<EntryModel>(),
+                predicate ?? EntryModelPredicates.AcceptAll,
+                (acc, entry) =>
+                {
+                    acc.Add(entry);
+                    return acc;
+                },
+                acc => acc.ToImmutable()
+            )
+        );
 
+        foreach (var entry in entries)
+        {
             var destinationEntryPath = entry.GetFullPath(destinationPath);
 
             switch (entry.Type)
