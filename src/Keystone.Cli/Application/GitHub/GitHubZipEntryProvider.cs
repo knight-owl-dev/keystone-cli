@@ -9,49 +9,18 @@ namespace Keystone.Cli.Application.GitHub;
 /// <summary>
 /// The GitHub zip entry provider.
 /// </summary>
-public sealed class GitHubZipEntryProvider
+public sealed class GitHubZipEntryProvider(ZipArchive archive)
     : IEntryProvider
 {
     /// <summary>
-    /// The zip archive downloaded from a GitHub project.
-    /// </summary>
-    private readonly ZipArchive _archive;
-
-    /// <summary>
-    /// Entry bindings that map <see cref="EntryModel"/> to <see cref="ZipArchiveEntry"/>,
-    /// stored in the same order as they appear in the zip archive.
-    /// </summary>
-    private ImmutableList<EntryBinding> Bindings { get; }
-
-    /// <summary>
     /// Maps <see cref="EntryModel"/> to <see cref="ZipArchiveEntry"/> for quick access to entries in the zip archive.
     /// </summary>
-    private ImmutableDictionary<EntryModel, ZipArchiveEntry> Entries { get; }
+    private ImmutableDictionary<EntryModel, ZipArchiveEntry> Entries { get; } = GetEntries(archive);
 
     /// <summary>
     /// Gets the total count of entries in the zip archive.
     /// </summary>
-    public int Count => this.Bindings.Count;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GitHubZipEntryProvider"/> class.
-    /// </summary>
-    /// <param name="archive">The zip archive downloaded from a GitHub project.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown if the <paramref name="archive"/> is <c>null</c>.
-    /// </exception>
-    public GitHubZipEntryProvider(ZipArchive archive)
-    {
-        ArgumentNullException.ThrowIfNull(archive);
-        _archive = archive;
-
-        this.Bindings = GetBindings(archive);
-
-        this.Entries = this.Bindings.ToImmutableDictionary(
-            binding => binding.EntryModel,
-            binding => binding.ArchiveEntry
-        );
-    }
+    public int Count => this.Entries.Count;
 
     /// <inheritdoc />
     public void Dispose()
@@ -65,13 +34,13 @@ public sealed class GitHubZipEntryProvider
     {
         if (disposing)
         {
-            _archive.Dispose();
+            archive.Dispose();
         }
     }
 
     /// <inheritdoc />
     public IEnumerator<EntryModel> GetEnumerator()
-        => this.Bindings.Select(binding => binding.EntryModel).GetEnumerator();
+        => this.Entries.Keys.GetEnumerator();
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator()
@@ -101,21 +70,21 @@ public sealed class GitHubZipEntryProvider
     /// </remarks>
     /// <param name="archive">The zip archive.</param>
     /// <returns>
-    /// Immutable list of bindings <see cref="EntryModel"/> to <see cref="ZipArchiveEntry"/>.
+    /// Immutable dictionary binding <see cref="EntryModel"/> to <see cref="ZipArchiveEntry"/>.
     /// </returns>
-    private static ImmutableList<EntryBinding> GetBindings(ZipArchive archive)
+    private static ImmutableDictionary<EntryModel, ZipArchiveEntry> GetEntries(ZipArchive archive)
         => archive.Entries.Skip(1).Aggregate(
             new
             {
                 RootEntry = archive.Entries[0],
-                Builder = ImmutableList.CreateBuilder<EntryBinding>(),
+                Builder = ImmutableDictionary.CreateBuilder<EntryModel, ZipArchiveEntry>(),
             },
             (acc, archiveEntry) =>
             {
                 var relativePath = MakeRelative(acc.RootEntry, archiveEntry.FullName);
                 var entryModel = EntryModel.Create(relativePath);
 
-                acc.Builder.Add(new EntryBinding(entryModel, archiveEntry));
+                acc.Builder.Add(entryModel, archiveEntry);
 
                 return acc;
             },
@@ -132,11 +101,4 @@ public sealed class GitHubZipEntryProvider
     /// </returns>
     private static string MakeRelative(ZipArchiveEntry root, string path)
         => path.StartsWith(root.FullName) ? path[root.FullName.Length..] : path;
-
-    /// <summary>
-    /// Entry biding that maps <see cref="EntryModel"/> to <see cref="ZipArchiveEntry"/>.
-    /// </summary>
-    /// <param name="EntryModel">The entry model.</param>
-    /// <param name="ArchiveEntry">The zip archive entry.</param>
-    private record EntryBinding(EntryModel EntryModel, ZipArchiveEntry ArchiveEntry);
 }
