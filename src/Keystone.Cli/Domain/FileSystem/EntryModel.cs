@@ -8,13 +8,18 @@ namespace Keystone.Cli.Domain.FileSystem;
 /// </remarks>
 /// <param name="Type">The type of entry.</param>
 /// <param name="Name">The name of the entry. Empty string for a directory.</param>
-/// <param name="RelativePath">Relative path for this entry. Ends with a <c>"/"</c> for a directory.</param>
+/// <param name="RelativePath">Relative path for this entry. Ends with a <see cref="PathSeparator"/> for a directory.</param>
 public record EntryModel(EntryType Type, string Name, string RelativePath)
 {
     /// <summary>
+    /// The only valid path separator for relative paths in this model.
+    /// </summary>
+    public const char PathSeparator = '/';
+
+    /// <summary>
     /// Gets the full path of the entry based on the provided root path.
     /// </summary>
-    /// <param name="rootPath">The root path.</param>
+    /// <param name="rootPath">The root path. May use OS-specific path delimiters.</param>
     /// <returns>
     /// The full path of the entry, combining the root path and the relative path.
     /// </returns>
@@ -47,7 +52,10 @@ public record EntryModel(EntryType Type, string Name, string RelativePath)
     /// <summary>
     /// Creates an <see cref="EntryModel"/> based on the provided relative path.
     /// </summary>
-    /// <param name="relativePath">The relative path to either a file or directory.</param>
+    /// <param name="relativePath">
+    /// The relative path to either a file or directory. Must use <see cref="PathSeparator"/> in composite paths,
+    /// e.g., <c>"A/B/C.txt"</c> for a file or <c>"A/B/"</c> for a directory.
+    /// </param>
     /// <returns>
     /// The <see cref="EntryModel"/> representing either a file or directory entry.
     /// </returns>
@@ -55,13 +63,21 @@ public record EntryModel(EntryType Type, string Name, string RelativePath)
     /// Thrown when <paramref name="relativePath"/> is <c>null</c>.
     /// </exception>
     /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="relativePath"/> is empty.
+    /// Thrown when <paramref name="relativePath"/> is empty or uses invalid path separator.
     /// </exception>
     public static EntryModel Create(string relativePath)
     {
         ArgumentException.ThrowIfNullOrEmpty(relativePath);
 
-        return relativePath.EndsWith('/')
+        if (relativePath.Contains('\\'))
+        {
+            throw new ArgumentException(
+                $"The relative path must use '{PathSeparator}' as the path separator.",
+                nameof(relativePath)
+            );
+        }
+
+        return relativePath.EndsWith(PathSeparator)
             ? Directory(relativePath)
             : File(relativePath);
     }

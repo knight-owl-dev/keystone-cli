@@ -52,6 +52,17 @@ public class EntryModelTests
     }
 
     [Test]
+    public void Create_UsesInvalidPathSeparator_ThrowsArgumentException()
+    {
+        const string invalidRelativePath = @"A\B\C.txt";
+
+        Assert.That(
+            () => EntryModel.Create(invalidRelativePath),
+            Throws.ArgumentException.With.Message.Contains("The relative path must use '/' as the path separator.")
+        );
+    }
+
+    [Test]
     public void GetFullPath_ForFile_InRoot_ReturnsFullPath()
     {
         const string rootPath = "./test";
@@ -158,7 +169,7 @@ public class EntryModelTests
     [Test]
     public void GetDirectoryName_IsRootEntry_ThrowsInvalidOperationException()
     {
-        const string relativePath = "/";
+        var relativePath = EntryModel.PathSeparator.ToString();
 
         var entry = EntryModel.Create(relativePath);
 
