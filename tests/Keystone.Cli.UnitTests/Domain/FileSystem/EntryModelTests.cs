@@ -58,7 +58,7 @@ public class EntryModelTests
 
         Assert.That(
             () => EntryModel.Create(invalidRelativePath),
-            Throws.ArgumentException.With.Message.Contains("The relative path must use '/' as the path separator.")
+            Throws.ArgumentException.With.Message.Contains("The relative path must use '/' as the directory separator.")
         );
     }
 
@@ -169,7 +169,7 @@ public class EntryModelTests
     [Test]
     public void GetDirectoryName_IsRootEntry_ThrowsInvalidOperationException()
     {
-        var relativePath = EntryModel.PathSeparator.ToString();
+        var relativePath = EntryModel.DirectorySeparatorChar.ToString();
 
         var entry = EntryModel.Create(relativePath);
 

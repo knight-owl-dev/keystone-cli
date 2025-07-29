@@ -8,13 +8,13 @@ namespace Keystone.Cli.Domain.FileSystem;
 /// </remarks>
 /// <param name="Type">The type of entry.</param>
 /// <param name="Name">The name of the entry. Empty string for a directory.</param>
-/// <param name="RelativePath">Relative path for this entry. Ends with a <see cref="PathSeparator"/> for a directory.</param>
+/// <param name="RelativePath">Relative path for this entry. Ends with a <see cref="DirectorySeparatorChar"/> for a directory.</param>
 public record EntryModel(EntryType Type, string Name, string RelativePath)
 {
     /// <summary>
-    /// The only valid path separator for relative paths in this model.
+    /// The only valid directory separator char for relative paths in this model.
     /// </summary>
-    public const char PathSeparator = '/';
+    public const char DirectorySeparatorChar = '/';
 
     /// <summary>
     /// Gets the full path of the entry based on the provided root path.
@@ -53,7 +53,7 @@ public record EntryModel(EntryType Type, string Name, string RelativePath)
     /// Creates an <see cref="EntryModel"/> based on the provided relative path.
     /// </summary>
     /// <param name="relativePath">
-    /// The relative path to either a file or directory. Must use <see cref="PathSeparator"/> in composite paths,
+    /// The relative path to either a file or directory. Must use <see cref="DirectorySeparatorChar"/> in composite paths,
     /// e.g., <c>"A/B/C.txt"</c> for a file or <c>"A/B/"</c> for a directory.
     /// </param>
     /// <returns>
@@ -72,12 +72,12 @@ public record EntryModel(EntryType Type, string Name, string RelativePath)
         if (relativePath.Contains('\\'))
         {
             throw new ArgumentException(
-                $"The relative path must use '{PathSeparator}' as the path separator.",
+                $"The relative path must use '{DirectorySeparatorChar}' as the directory separator.",
                 nameof(relativePath)
             );
         }
 
-        return relativePath.EndsWith(PathSeparator)
+        return relativePath.EndsWith(DirectorySeparatorChar)
             ? Directory(relativePath)
             : File(relativePath);
     }
