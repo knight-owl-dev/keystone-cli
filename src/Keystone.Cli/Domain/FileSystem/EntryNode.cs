@@ -202,7 +202,7 @@ public class EntryNode(EntryModel entry)
     /// the relative paths and connecting nodes accordingly.
     /// </para>
     /// <para>
-    /// All directories end with <c>"/"</c>, which guarantees that grouping by <see cref="EntryModel.GetDirectoryName"/>
+    /// All directories end with <c>"/"</c>, which guarantees that grouping by <see cref="EntryModel.DirectoryName"/>
     /// yields exactly one directory per group, with its associated file entries. Consequently, top-level resolve their
     /// parent directory to an empty string.
     /// </para>
@@ -217,7 +217,7 @@ public class EntryNode(EntryModel entry)
     /// A collection of top-level <see cref="EntryNode"/> instances representing the entry trees.
     /// </returns>
     public static ImmutableList<EntryNode> CreateNodes(IEnumerable<EntryModel> entries)
-        => EntryModelSortPolicy.DirectoriesFirst(entries).GroupBy(entry => entry.GetDirectoryName()).Aggregate(
+        => EntryModelSortPolicy.DirectoriesFirst(entries).GroupBy(entry => entry.DirectoryName).Aggregate(
             new
             {
                 TopLevelNodes = ImmutableList.CreateBuilder<EntryNode>(),

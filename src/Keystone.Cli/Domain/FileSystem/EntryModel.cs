@@ -14,20 +14,10 @@ public record EntryModel(EntryType Type, string Name, string RelativePath)
     /// <summary>
     /// The only valid directory separator char for relative paths in this model.
     /// </summary>
-    public const char DirectorySeparatorChar = '/';
+    private const char DirectorySeparatorChar = '/';
 
     /// <summary>
-    /// Gets the full path of the entry based on the provided root path.
-    /// </summary>
-    /// <param name="rootPath">The root path. May use OS-specific path delimiters.</param>
-    /// <returns>
-    /// The full path of the entry, combining the root path and the relative path.
-    /// </returns>
-    public string GetFullPath(string rootPath)
-        => Path.Combine(rootPath, this.RelativePath);
-
-    /// <summary>
-    /// Returns the directory information for this entry.
+    /// Returns the directory name for this entry.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -39,15 +29,17 @@ public record EntryModel(EntryType Type, string Name, string RelativePath)
     /// For a top-level directory, this still returns the directory itself, e.g., for <c>"A/"</c> returns <c>"A"</c>.
     /// </para>
     /// </remarks>
+    public string DirectoryName { get; } = Path.GetDirectoryName(RelativePath)!;
+
+    /// <summary>
+    /// Gets the full path of the entry based on the provided root path.
+    /// </summary>
+    /// <param name="rootPath">The root path. May use OS-specific path delimiters.</param>
     /// <returns>
-    /// The directory information for this entry.
+    /// The full path of the entry, combining the root path and the relative path.
     /// </returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when trying to get the directory name for the root entry (i.e., when <see cref="RelativePath"/> is <c>"/"</c>).
-    /// </exception>
-    public string GetDirectoryName()
-        => Path.GetDirectoryName(this.RelativePath)
-            ?? throw new InvalidOperationException("Cannot get directory name for the root entry.");
+    public string GetFullPath(string rootPath)
+        => Path.Combine(rootPath, this.RelativePath);
 
     /// <summary>
     /// Creates an <see cref="EntryModel"/> based on the provided relative path.
@@ -63,11 +55,19 @@ public record EntryModel(EntryType Type, string Name, string RelativePath)
     /// Thrown when <paramref name="relativePath"/> is <c>null</c>.
     /// </exception>
     /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="relativePath"/> is empty or uses invalid path separator.
+    /// Thrown when <paramref name="relativePath"/> is empty, uses invalid path separator or begins with <see cref="DirectorySeparatorChar"/>.
     /// </exception>
     public static EntryModel Create(string relativePath)
     {
         ArgumentException.ThrowIfNullOrEmpty(relativePath);
+
+        if (relativePath.StartsWith(DirectorySeparatorChar))
+        {
+            throw new ArgumentException(
+                $"The relative path must not start with '{DirectorySeparatorChar}'.",
+                nameof(relativePath)
+            );
+        }
 
         if (relativePath.Contains('\\'))
         {

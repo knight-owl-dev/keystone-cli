@@ -299,7 +299,7 @@ public class EntryNodeTests
 
         var actual = sut.Aggregate(
             ImmutableList<string>.Empty,
-            entry => entry.Type == EntryType.File || entry.GetDirectoryName() == "A",
+            entry => entry.Type == EntryType.File || entry.DirectoryName == "A",
             (acc, entry) => acc.Add(entry.RelativePath)
         );
 

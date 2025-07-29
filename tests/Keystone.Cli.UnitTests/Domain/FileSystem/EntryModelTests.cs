@@ -63,6 +63,28 @@ public class EntryModelTests
     }
 
     [Test]
+    public void Create_RelativePath_IsRoot_ThrowsArgumentException()
+    {
+        const string invalidRelativePath = "/";
+
+        Assert.That(
+            () => EntryModel.Create(invalidRelativePath),
+            Throws.ArgumentException.With.Message.Contains("The relative path must not start with '/'.")
+        );
+    }
+
+    [Test]
+    public void Create_RelativePath_IsRooted_ThrowsArgumentException()
+    {
+        const string invalidRelativePath = "/file.txt";
+
+        Assert.That(
+            () => EntryModel.Create(invalidRelativePath),
+            Throws.ArgumentException.With.Message.Contains("The relative path must not start with '/'.")
+        );
+    }
+
+    [Test]
     public void GetFullPath_ForFile_InRoot_ReturnsFullPath()
     {
         const string rootPath = "./test";
@@ -120,62 +142,45 @@ public class EntryModelTests
     }
 
     [Test]
-    public void GetDirectoryName_ForFile_InRoot_ReturnsEmpty()
+    public void DirectoryName_ForFile_InRoot_ReturnsEmpty()
     {
         const string relativePath = "C.txt";
 
         var entry = EntryModel.Create(relativePath);
-        var actual = entry.GetDirectoryName();
 
-        Assert.That(actual, Is.Empty);
+        Assert.That(entry.DirectoryName, Is.Empty);
     }
 
     [Test]
-    public void GetDirectoryName_ForFile_InSubDirectory_ReturnsDirectoryName()
+    public void DirectoryName_ForFile_InSubDirectory_ReturnsDirectoryName()
     {
         const string relativePath = "A/B/C.txt";
         const string expectedDirectoryName = "A/B";
 
         var entry = EntryModel.Create(relativePath);
-        var actual = entry.GetDirectoryName();
 
-        Assert.That(actual, Is.EqualTo(expectedDirectoryName));
+        Assert.That(entry.DirectoryName, Is.EqualTo(expectedDirectoryName));
     }
 
     [Test]
-    public void GetDirectoryName_ForDirectory_InRoot_ReturnsSelf()
+    public void DirectoryName_ForDirectory_InRoot_ReturnsSelf()
     {
         const string relativePath = "A/";
         const string expectedDirectoryName = "A";
 
         var entry = EntryModel.Create(relativePath);
-        var actual = entry.GetDirectoryName();
 
-        Assert.That(actual, Is.EqualTo(expectedDirectoryName));
+        Assert.That(entry.DirectoryName, Is.EqualTo(expectedDirectoryName));
     }
 
     [Test]
-    public void GetDirectoryName_ForDirectory_InSubDirectory_ReturnsSelf()
+    public void DirectoryName_ForDirectory_InSubDirectory_ReturnsSelf()
     {
         const string relativePath = "A/B/";
         const string expectedDirectoryName = "A/B";
 
         var entry = EntryModel.Create(relativePath);
-        var actual = entry.GetDirectoryName();
 
-        Assert.That(actual, Is.EqualTo(expectedDirectoryName));
-    }
-
-    [Test]
-    public void GetDirectoryName_IsRootEntry_ThrowsInvalidOperationException()
-    {
-        var relativePath = EntryModel.DirectorySeparatorChar.ToString();
-
-        var entry = EntryModel.Create(relativePath);
-
-        Assert.That(
-            () => entry.GetDirectoryName(),
-            Throws.InvalidOperationException.With.Message.EqualTo("Cannot get directory name for the root entry.")
-        );
+        Assert.That(entry.DirectoryName, Is.EqualTo(expectedDirectoryName));
     }
 }
