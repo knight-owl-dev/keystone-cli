@@ -61,18 +61,10 @@ public record EntryModel(EntryType Type, string Name, string RelativePath)
     {
         ArgumentException.ThrowIfNullOrEmpty(relativePath);
 
-        if (relativePath.StartsWith(DirectorySeparatorChar))
+        if (Path.IsPathRooted(relativePath))
         {
             throw new ArgumentException(
-                $"The relative path must not start with '{DirectorySeparatorChar}'.",
-                nameof(relativePath)
-            );
-        }
-
-        if (relativePath.Contains('\\'))
-        {
-            throw new ArgumentException(
-                $"The relative path must use '{DirectorySeparatorChar}' as the directory separator.",
+                "The relative path must not be rooted.",
                 nameof(relativePath)
             );
         }

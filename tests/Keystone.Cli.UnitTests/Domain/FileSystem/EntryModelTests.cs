@@ -52,24 +52,13 @@ public class EntryModelTests
     }
 
     [Test]
-    public void Create_UsesInvalidPathSeparator_ThrowsArgumentException()
-    {
-        const string invalidRelativePath = @"A\B\C.txt";
-
-        Assert.That(
-            () => EntryModel.Create(invalidRelativePath),
-            Throws.ArgumentException.With.Message.Contains("The relative path must use '/' as the directory separator.")
-        );
-    }
-
-    [Test]
     public void Create_RelativePath_IsRoot_ThrowsArgumentException()
     {
         const string invalidRelativePath = "/";
 
         Assert.That(
             () => EntryModel.Create(invalidRelativePath),
-            Throws.ArgumentException.With.Message.Contains("The relative path must not start with '/'.")
+            Throws.ArgumentException.With.Message.Contains("The relative path must not be rooted.")
         );
     }
 
@@ -80,7 +69,7 @@ public class EntryModelTests
 
         Assert.That(
             () => EntryModel.Create(invalidRelativePath),
-            Throws.ArgumentException.With.Message.Contains("The relative path must not start with '/'.")
+            Throws.ArgumentException.With.Message.Contains("The relative path must not be rooted.")
         );
     }
 
