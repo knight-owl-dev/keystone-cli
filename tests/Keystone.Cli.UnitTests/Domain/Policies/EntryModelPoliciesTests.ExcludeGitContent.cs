@@ -9,7 +9,7 @@ partial class EntryModelPoliciesTests
 {
     private static class ExcludeGitContentTestCases
     {
-        public static readonly TestCaseData<EntryModel>[] MinimalProjectContentTestCases =
+        public static readonly TestCaseData<EntryModel>[] MinimalProjectContent =
         [
             ..StandardProjectLayout.MinimalTemplateEntries.Select(entry
                 => new TestCaseData<EntryModel>(entry)
@@ -20,7 +20,7 @@ partial class EntryModelPoliciesTests
             ),
         ];
 
-        public static readonly TestCaseData<EntryModel>[] FullProjectContentTestCases =
+        public static readonly TestCaseData<EntryModel>[] FullProjectContent =
         [
             ..StandardProjectLayout.FullTemplateEntries.Select(entry
                 => new TestCaseData<EntryModel>(entry)
@@ -31,7 +31,7 @@ partial class EntryModelPoliciesTests
             ),
         ];
 
-        public static readonly TestCaseData<EntryModel>[] GitContentTestCases =
+        public static readonly TestCaseData<EntryModel>[] GitContent =
         [
             ..StandardProjectLayout.GitEntries.Select(entry
                 => new TestCaseData<EntryModel>(entry)
@@ -43,15 +43,15 @@ partial class EntryModelPoliciesTests
         ];
     }
 
-    [TestCaseSource(typeof(ExcludeGitContentTestCases), nameof(ExcludeGitContentTestCases.MinimalProjectContentTestCases))]
+    [TestCaseSource(typeof(ExcludeGitContentTestCases), nameof(ExcludeGitContentTestCases.MinimalProjectContent))]
     public bool ExcludeGitContent_MinimalProjectContent(EntryModel entry)
         => EntryModelPolicies.ExcludeGitContent(entry);
 
-    [TestCaseSource(typeof(ExcludeGitContentTestCases), nameof(ExcludeGitContentTestCases.FullProjectContentTestCases))]
+    [TestCaseSource(typeof(ExcludeGitContentTestCases), nameof(ExcludeGitContentTestCases.FullProjectContent))]
     public bool ExcludeGitContent_FullProjectContent(EntryModel entry)
         => EntryModelPolicies.ExcludeGitContent(entry);
 
-    [TestCaseSource(typeof(ExcludeGitContentTestCases), nameof(ExcludeGitContentTestCases.GitContentTestCases))]
+    [TestCaseSource(typeof(ExcludeGitContentTestCases), nameof(ExcludeGitContentTestCases.GitContent))]
     public bool ExcludeGitContent_GitContent(EntryModel entry)
         => EntryModelPolicies.ExcludeGitContent(entry);
 }
