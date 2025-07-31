@@ -1,7 +1,7 @@
 using System.IO.Compression;
 
 
-namespace Keystone.Cli.Application.GitHub;
+namespace Keystone.Cli.Domain.FileSystem;
 
 /// <summary>
 /// A delegate that represents a method to extract a <see cref="ZipArchiveEntry"/> to a specified file path.
