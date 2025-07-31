@@ -2,6 +2,7 @@ using Keystone.Cli.Application.Commands.New;
 using Keystone.Cli.Domain;
 using Keystone.Cli.Domain.Policies;
 using Keystone.Cli.Presentation;
+using Keystone.Cli.Presentation.CommandParameterSets;
 using NSubstitute;
 
 
@@ -19,8 +20,10 @@ public class NewCommandControllerTests
         const string name = "project-name";
         const string templateName = "template-name";
 
+        var parameters = new NewCommandParameterSet(name, templateName);
+
         var sut = Ctor();
-        var actual = await sut.NewAsync(name, templateName, path: null);
+        var actual = await sut.NewAsync(parameters);
 
         Assert.That(actual, Is.EqualTo(CliCommandResults.Success));
     }
@@ -33,10 +36,11 @@ public class NewCommandControllerTests
         const string name = "project-name";
         const string templateName = "template-name";
 
+        var parameters = new NewCommandParameterSet(name, templateName, path);
         var newCommand = Substitute.For<INewCommand>();
 
         var sut = Ctor(newCommand);
-        await sut.NewAsync(name, templateName, path);
+        await sut.NewAsync(parameters);
 
         await newCommand.Received(1).CreateNewAsync(
             name,
@@ -52,10 +56,11 @@ public class NewCommandControllerTests
         const string name = "project-name";
         const string templateName = "template-name";
 
+        var parameters = new NewCommandParameterSet(name, templateName, ProjectPath: ".");
         var newCommand = Substitute.For<INewCommand>();
 
         var sut = Ctor(newCommand);
-        await sut.NewAsync(name, templateName, path: ".");
+        await sut.NewAsync(parameters);
 
         await newCommand.Received(1).CreateNewAsync(
             name,
@@ -71,6 +76,7 @@ public class NewCommandControllerTests
         const string name = "project-name";
         const string templateName = "template-name";
 
+        var parameters = new NewCommandParameterSet(name, templateName);
         var newCommand = Substitute.For<INewCommand>();
 
         newCommand
@@ -78,7 +84,7 @@ public class NewCommandControllerTests
             .Do(_ => throw new KeyNotFoundException());
 
         var sut = Ctor(newCommand);
-        var actual = await sut.NewAsync(name, templateName, path: null);
+        var actual = await sut.NewAsync(parameters);
 
         Assert.That(actual, Is.EqualTo(CliCommandResults.Error));
     }

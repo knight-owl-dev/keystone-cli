@@ -1,8 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 using Cocona;
 using JetBrains.Annotations;
 using Keystone.Cli.Application.Commands.New;
 using Keystone.Cli.Domain;
 using Keystone.Cli.Domain.Policies;
+using Keystone.Cli.Presentation.CommandParameterSets;
 
 
 namespace Keystone.Cli.Presentation;
@@ -13,23 +15,19 @@ namespace Keystone.Cli.Presentation;
 public class NewCommandController(INewCommand newCommand)
 {
     [Command("new", Description = "Creates a new project from a template."), UsedImplicitly]
-    public async Task<int> NewAsync(
-        [Argument(Description = "The name of the new project, also used as its root directory unless the full path is provided")] string name,
-        [Option(Description = "The template name")] string? templateName,
-        [Option(Description = "The full path where to create the new project")] string? path
-    )
+    public async Task<int> NewAsync(NewCommandParameterSet parameters)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name);
-
-        var fullPath = string.IsNullOrWhiteSpace(path)
-            ? Path.Combine(Path.GetFullPath("."), ProjectNamePolicy.GetProjectDirectoryName(name))
-            : Path.GetFullPath(path);
-
         try
         {
+            parameters.Validate();
+
+            var fullPath = string.IsNullOrWhiteSpace(parameters.ProjectPath)
+                ? Path.Combine(Path.GetFullPath("."), ProjectNamePolicy.GetProjectDirectoryName(parameters.Name))
+                : Path.GetFullPath(parameters.ProjectPath);
+
             await newCommand.CreateNewAsync(
-                name,
-                templateName,
+                parameters.Name,
+                parameters.TemplateName,
                 fullPath,
                 CancellationToken.None
             );
@@ -41,6 +39,12 @@ public class NewCommandController(INewCommand newCommand)
             await Console.Error.WriteLineAsync(ex.Message);
 
             return CliCommandResults.Error;
+        }
+        catch (ValidationException ex)
+        {
+            await Console.Error.WriteLineAsync(ex.Message);
+
+            return CliCommandResults.ErrorInvalidArguments;
         }
     }
 }

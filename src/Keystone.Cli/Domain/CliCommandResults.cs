@@ -19,4 +19,9 @@ public static class CliCommandResults
     /// Indicates the command encountered an error.
     /// </summary>
     public const int Error = 1;
+
+    /// <summary>
+    /// Indicates the command was called with invalid arguments or parameters.
+    /// </summary>
+    public const int ErrorInvalidArguments = 2;
 }
