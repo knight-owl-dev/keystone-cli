@@ -1,4 +1,4 @@
-namespace Keystone.Cli.Domain;
+namespace Keystone.Cli.Domain.Policies;
 
 /// <summary>
 /// Defines project name policies.

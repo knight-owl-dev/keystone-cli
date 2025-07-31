@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 
 
-namespace Keystone.Cli.Domain;
+namespace Keystone.Cli.Domain.Policies;
 
 /// <summary>
 /// The Kebab-Case naming policy.

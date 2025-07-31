@@ -1,7 +1,7 @@
-using Keystone.Cli.Domain;
+using Keystone.Cli.Domain.Policies;
 
 
-namespace Keystone.Cli.UnitTests.Domain;
+namespace Keystone.Cli.UnitTests.Domain.Policies;
 
 [TestFixture, Parallelizable(ParallelScope.All)]
 public class KebabCaseNamingPolicyTests
