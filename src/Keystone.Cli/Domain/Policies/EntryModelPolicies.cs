@@ -13,12 +13,8 @@ public static class EntryModelPolicies
     /// <summary>
     /// A set of file names that are considered Git-related files.
     /// </summary>
-    private static readonly ImmutableHashSet<string> GitFiles = ImmutableHashSet.Create(
-        ".gitignore",
-        ".gitattributes",
-        ".gitkeep",
-        ".gitmodules"
-    );
+    private static readonly ImmutableHashSet<string> GitFiles
+        = [".gitignore", ".gitattributes", ".gitkeep", ".gitmodules"];
 
     /// <summary>
     /// Determines whether the specified entry should be included when ignoring Git-related
