@@ -30,7 +30,7 @@ public class GitHubZipEntryProviderFactory(IHttpClientFactory httpClientFactory)
             var archive = new ZipArchive(zipStream, ZipArchiveMode.Read);
             try
             {
-                return new GitHubZipEntryProvider(archive);
+                return new GitHubZipEntryProvider(ZipFileExtensions.ExtractToFile, archive);
             }
             catch
             {

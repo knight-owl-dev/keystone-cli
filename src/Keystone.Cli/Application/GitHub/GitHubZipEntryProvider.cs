@@ -9,7 +9,7 @@ namespace Keystone.Cli.Application.GitHub;
 /// <summary>
 /// The GitHub zip entry provider.
 /// </summary>
-public sealed class GitHubZipEntryProvider(ZipArchive archive)
+public sealed class GitHubZipEntryProvider(ExtractToFileDelegate extractToFileDelegate, ZipArchive archive)
     : IEntryProvider
 {
     /// <summary>
@@ -47,7 +47,7 @@ public sealed class GitHubZipEntryProvider(ZipArchive archive)
             throw new InvalidOperationException($"The '{entry.Name}' entry does not exist in the zip archive at {entry.RelativePath}.");
         }
 
-        archiveEntry.ExtractToFile(destinationFileName, overwrite: true);
+        extractToFileDelegate.Invoke(archiveEntry, destinationFileName, overwrite: true);
     }
 
     /// <summary>
