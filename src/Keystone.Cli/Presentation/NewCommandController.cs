@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using Keystone.Cli.Application.Commands.New;
 using Keystone.Cli.Domain;
 using Keystone.Cli.Domain.Policies;
-using Keystone.Cli.Presentation.CommandParameterSets;
+using Keystone.Cli.Presentation.ComponentModel.DataAnnotations;
 
 
 namespace Keystone.Cli.Presentation;
@@ -15,19 +15,29 @@ namespace Keystone.Cli.Presentation;
 public class NewCommandController(INewCommand newCommand)
 {
     [Command("new", Description = "Creates a new project from a template."), UsedImplicitly]
-    public async Task<int> NewAsync(NewCommandParameterSet parameters)
+    public async Task<int> NewAsync(
+        [Argument(Description = "The name of the new project, also used as its root directory unless the project path is provided"),
+         Required(AllowEmptyStrings = false, ErrorMessage = "The project name is required."),
+         NotPaddedWhitespace(ErrorMessage = "The project name is padded with whitespace.")]
+        string projectName,
+        [Option(Description = "The template name"),
+         NotPaddedWhitespace(ErrorMessage = "The template name is padded with whitespace.")]
+        string? templateName = null,
+        [Option(Description = "The path where to create the new project"),
+         Path(ErrorMessage = "The project path is invalid."),
+         NotPaddedWhitespace(ErrorMessage = "The project path is padded with whitespace.")]
+        string? projectPath = null
+    )
     {
+        var fullPath = string.IsNullOrWhiteSpace(projectPath)
+            ? Path.Combine(Path.GetFullPath("."), ProjectNamePolicy.GetProjectDirectoryName(projectName))
+            : Path.GetFullPath(projectPath);
+
         try
         {
-            parameters.Validate();
-
-            var fullPath = string.IsNullOrWhiteSpace(parameters.ProjectPath)
-                ? Path.Combine(Path.GetFullPath("."), ProjectNamePolicy.GetProjectDirectoryName(parameters.Name))
-                : Path.GetFullPath(parameters.ProjectPath);
-
             await newCommand.CreateNewAsync(
-                parameters.Name,
-                parameters.TemplateName,
+                projectName,
+                templateName,
                 fullPath,
                 CancellationToken.None
             );
@@ -39,12 +49,6 @@ public class NewCommandController(INewCommand newCommand)
             await Console.Error.WriteLineAsync(ex.Message);
 
             return CliCommandResults.Error;
-        }
-        catch (ValidationException ex)
-        {
-            await Console.Error.WriteLineAsync(ex.Message);
-
-            return CliCommandResults.ErrorInvalidArguments;
         }
     }
 }
