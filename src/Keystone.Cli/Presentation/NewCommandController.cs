@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using Cocona;
-using JetBrains.Annotations;
 using Keystone.Cli.Application.Commands.New;
 using Keystone.Cli.Domain;
 using Keystone.Cli.Domain.Policies;
@@ -14,7 +13,7 @@ namespace Keystone.Cli.Presentation;
 /// </summary>
 public class NewCommandController(INewCommand newCommand)
 {
-    [Command("new", Description = "Creates a new project from a template"), UsedImplicitly]
+    [Command("new", Description = "Creates a new project from a template")]
     public async Task<int> NewAsync(
         [Argument(Description = "The name of the new project, also used as its root directory unless the project path is provided"),
          Required(AllowEmptyStrings = false), NotPaddedWhitespace]
