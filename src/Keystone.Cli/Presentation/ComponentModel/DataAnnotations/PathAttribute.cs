@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
 
-namespace Keystone.Cli.Presentation.ComponentModel;
+namespace Keystone.Cli.Presentation.ComponentModel.DataAnnotations;
 
 /// <summary>
 /// Ensures the path does not contain invalid characters.
@@ -14,7 +14,7 @@ public class PathAttribute : ValidationAttribute
         {
             null => true,
             string path => IsValidPath(path),
-            _ => throw new NotSupportedException($"Values of type {value.GetType().FullName} are not supported.")
+            _ => throw new NotSupportedException($"Values of type {value.GetType().FullName} are not supported."),
         };
 
     /// <inheritdoc />
@@ -22,5 +22,5 @@ public class PathAttribute : ValidationAttribute
         => this.ErrorMessage ?? $"The {name} field must be a valid path.";
 
     private static bool IsValidPath(string path)
-        => ! string.IsNullOrWhiteSpace(path) && ! path.Any(c => Path.GetInvalidPathChars().Contains(c));
+        => ! string.IsNullOrWhiteSpace(path) && path.IndexOfAny(Path.GetInvalidPathChars()) == -1;
 }

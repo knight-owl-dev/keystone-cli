@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Cocona;
-using Keystone.Cli.Presentation.ComponentModel;
+using Keystone.Cli.Presentation.ComponentModel.DataAnnotations;
 
 
 namespace Keystone.Cli.Presentation.CommandParameterSets;

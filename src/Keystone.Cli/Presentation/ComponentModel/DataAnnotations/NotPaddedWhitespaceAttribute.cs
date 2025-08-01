@@ -1,13 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 
 
-namespace Keystone.Cli.Presentation.ComponentModel;
+namespace Keystone.Cli.Presentation.ComponentModel.DataAnnotations;
 
 /// <summary>
 /// Enforces that the value is not padded with whitespace.
 /// </summary>
-public class NotPaddedWhitespaceAttribute
-    : ValidationAttribute
+public class NotPaddedWhitespaceAttribute : ValidationAttribute
 {
     /// <inheritdoc />
     public override bool IsValid(object? value)
