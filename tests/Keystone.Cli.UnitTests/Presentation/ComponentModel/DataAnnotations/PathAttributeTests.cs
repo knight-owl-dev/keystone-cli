@@ -90,6 +90,6 @@ public class PathAttributeTests
         var sut = new PathAttribute();
         var actual = sut.FormatErrorMessage(name);
 
-        Assert.That(actual, Is.EqualTo($"The {name} field must be a valid path."));
+        Assert.That(actual, Is.EqualTo($"{name} must be a valid path."));
     }
 }

@@ -19,7 +19,7 @@ public class PathAttribute : ValidationAttribute
 
     /// <inheritdoc />
     public override string FormatErrorMessage(string name)
-        => this.ErrorMessage ?? $"The {name} field must be a valid path.";
+        => this.ErrorMessage ?? $"{name} must be a valid path.";
 
     private static bool IsValidPath(string path)
         => ! string.IsNullOrWhiteSpace(path) && path.IndexOfAny(Path.GetInvalidPathChars()) == -1;

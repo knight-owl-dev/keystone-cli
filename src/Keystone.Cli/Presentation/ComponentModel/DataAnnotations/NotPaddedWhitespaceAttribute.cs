@@ -19,7 +19,7 @@ public class NotPaddedWhitespaceAttribute : ValidationAttribute
 
     /// <inheritdoc />
     public override string FormatErrorMessage(string name)
-        => this.ErrorMessage ?? $"The {name} field must not be padded with whitespace.";
+        => this.ErrorMessage ?? $"{name} must not be padded with whitespace.";
 
     private static bool NotPadded(string text)
         => text == text.Trim();

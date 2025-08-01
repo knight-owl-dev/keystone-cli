@@ -17,15 +17,13 @@ public class NewCommandController(INewCommand newCommand)
     [Command("new", Description = "Creates a new project from a template."), UsedImplicitly]
     public async Task<int> NewAsync(
         [Argument(Description = "The name of the new project, also used as its root directory unless the project path is provided"),
-         Required(AllowEmptyStrings = false, ErrorMessage = "The project name is required."),
-         NotPaddedWhitespace(ErrorMessage = "The project name is padded with whitespace.")]
+         Required(AllowEmptyStrings = false), NotPaddedWhitespace]
         string projectName,
         [Option(Description = "The template name"),
-         NotPaddedWhitespace(ErrorMessage = "The template name is padded with whitespace.")]
+         NotPaddedWhitespace]
         string? templateName = null,
         [Option(Description = "The path where to create the new project"),
-         Path(ErrorMessage = "The project path is invalid."),
-         NotPaddedWhitespace(ErrorMessage = "The project path is padded with whitespace.")]
+         Path, NotPaddedWhitespace]
         string? projectPath = null
     )
     {

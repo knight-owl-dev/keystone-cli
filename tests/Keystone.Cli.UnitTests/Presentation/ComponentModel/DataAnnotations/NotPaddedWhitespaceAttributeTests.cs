@@ -104,6 +104,6 @@ public class NotPaddedWhitespaceAttributeTests
         var sut = new NotPaddedWhitespaceAttribute();
         var actual = sut.FormatErrorMessage(name);
 
-        Assert.That(actual, Is.EqualTo($"The {name} field must not be padded with whitespace."));
+        Assert.That(actual, Is.EqualTo($"{name} must not be padded with whitespace."));
     }
 }
