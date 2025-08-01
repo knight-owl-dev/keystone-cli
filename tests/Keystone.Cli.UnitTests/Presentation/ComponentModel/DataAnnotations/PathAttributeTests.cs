@@ -54,6 +54,19 @@ public class PathAttributeTests
     }
 
     [Test]
+    public void IsValid_WhenValueIsNotString_ThrowsNotSupportedException()
+    {
+        const int value = 1234567;
+        var sut = new PathAttribute();
+
+        Assert.That(
+            () => sut.IsValid(value),
+            Throws.TypeOf<NotSupportedException>()
+                .With.Message.EqualTo($"Values of type {typeof(int).FullName} are not supported.")
+        );
+    }
+
+    [Test]
     public void FormatErrorMessage_WhenHasErrorMessage_ReturnsErrorMessage()
     {
         const string name = "TestPath";
