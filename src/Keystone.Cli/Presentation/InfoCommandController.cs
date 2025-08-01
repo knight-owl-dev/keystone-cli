@@ -10,7 +10,7 @@ namespace Keystone.Cli.Presentation;
 /// </summary>
 public class InfoCommandController(IInfoCommand infoCommand)
 {
-    [Command("info", Description = "Prints the template information."), UsedImplicitly]
+    [Command("info", Description = "Prints the template information"), UsedImplicitly]
     public void Info()
     {
         var info = infoCommand.GetInfo();

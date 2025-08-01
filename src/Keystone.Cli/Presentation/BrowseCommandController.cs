@@ -11,7 +11,7 @@ namespace Keystone.Cli.Presentation;
 /// </summary>
 public class BrowseCommandController(IBrowseCommand browseCommand)
 {
-    [Command("browse", Description = "Opens the template repository in the default browser."), UsedImplicitly]
+    [Command("browse", Description = "Opens the template repository in the default browser"), UsedImplicitly]
     public int Browse([Argument(Description = "The template name")] string? templateName)
     {
         try
