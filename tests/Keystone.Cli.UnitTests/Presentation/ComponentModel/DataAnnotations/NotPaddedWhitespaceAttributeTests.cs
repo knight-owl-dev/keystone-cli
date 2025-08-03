@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Keystone.Cli.Presentation.ComponentModel.DataAnnotations;
 
 
@@ -42,43 +43,86 @@ public class NotPaddedWhitespaceAttributeTests
     ];
 
     [Test]
-    public void IsValid_WhenValueIsNull_ReturnsTrue()
+    public void GetValidationResult_WhenValueIsNull_ReturnsSuccess()
     {
-        var sut = new NotPaddedWhitespaceAttribute();
-        var actual = sut.IsValid(value: null);
+        var validationContext = new ValidationContext(new object())
+        {
+            DisplayName = "TestField",
+        };
 
-        Assert.That(actual, Is.True);
+        var sut = new NotPaddedWhitespaceAttribute();
+        var actual = sut.GetValidationResult(value: null, validationContext);
+
+        Assert.That(actual, Is.EqualTo(ValidationResult.Success));
     }
 
     [TestCaseSource(nameof(ValidTestCases))]
-    public void IsValid_WhenValueIsNotPadded_ReturnsTrue(string value)
+    public void GetValidationResult_WhenValueIsNotPadded_ReturnsSuccess(string value)
     {
-        var sut = new NotPaddedWhitespaceAttribute();
-        var actual = sut.IsValid(value);
+        var validationContext = new ValidationContext(value)
+        {
+            DisplayName = nameof(value),
+        };
 
-        Assert.That(actual, Is.True);
+        var sut = new NotPaddedWhitespaceAttribute();
+        var actual = sut.GetValidationResult(value, validationContext);
+
+        Assert.That(actual, Is.EqualTo(ValidationResult.Success));
     }
 
     [TestCaseSource(nameof(InvalidTestCases))]
-    public void IsValid_WhenValueIsPadded_ReturnsFalse(string value)
+    public void GetValidationResult_WhenValueIsPadded_ReturnsError(string value)
+    {
+        const string displayName = "value";
+
+        var validationContext = new ValidationContext(value)
+        {
+            DisplayName = displayName,
+        };
+
+        var sut = new NotPaddedWhitespaceAttribute();
+        var expectedErrorMessage = sut.FormatErrorMessage(displayName);
+
+        var actual = sut.GetValidationResult(value, validationContext)!;
+
+        Assert.That(actual.ErrorMessage, Is.EqualTo(expectedErrorMessage));
+    }
+
+    [Test]
+    public void GetValidationResult_WhenValueIsNotString_ThrowsNotSupportedException()
+    {
+        const int value = 1234567;
+
+        var validationContext = new ValidationContext(value)
+        {
+            DisplayName = nameof(value),
+        };
+
+        var sut = new NotPaddedWhitespaceAttribute();
+
+        Assert.That(
+            () => sut.GetValidationResult(value, validationContext),
+            Throws.TypeOf<NotSupportedException>()
+                .With.Message.EqualTo($"Values of type {typeof(int).FullName} are not supported.")
+        );
+    }
+
+    [Test]
+    public void IsValid_SupportsLegacyValidation_ForInvalidValue()
     {
         var sut = new NotPaddedWhitespaceAttribute();
-        var actual = sut.IsValid(value);
+        var actual = sut.IsValid(" padded text ");
 
         Assert.That(actual, Is.False);
     }
 
     [Test]
-    public void IsValid_WhenValueIsNotString_ThrowsNotSupportedException()
+    public void IsValid_SupportsLegacyValidation_ForValidValue()
     {
-        const int value = 1234567;
         var sut = new NotPaddedWhitespaceAttribute();
+        var actual = sut.IsValid("valid text");
 
-        Assert.That(
-            () => sut.IsValid(value),
-            Throws.TypeOf<NotSupportedException>()
-                .With.Message.EqualTo($"Values of type {typeof(int).FullName} are not supported.")
-        );
+        Assert.That(actual, Is.True);
     }
 
     [Test]
@@ -104,6 +148,6 @@ public class NotPaddedWhitespaceAttributeTests
         var sut = new NotPaddedWhitespaceAttribute();
         var actual = sut.FormatErrorMessage(name);
 
-        Assert.That(actual, Is.EqualTo($"{name} must not be padded with whitespace."));
+        Assert.That(actual, Is.EqualTo($"'{name}' must not be padded with whitespace."));
     }
 }

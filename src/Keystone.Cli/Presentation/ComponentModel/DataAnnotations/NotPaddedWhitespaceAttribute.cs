@@ -9,17 +9,19 @@ namespace Keystone.Cli.Presentation.ComponentModel.DataAnnotations;
 public class NotPaddedWhitespaceAttribute : ValidationAttribute
 {
     /// <inheritdoc />
-    public override bool IsValid(object? value)
+    protected override ValidationResult? IsValid(object? value, ValidationContext? validationContext)
         => value switch
         {
-            null => true,
-            string text => NotPadded(text),
-            _ => throw new NotSupportedException($"Values of type {value.GetType().FullName} are not supported.")
+            null => ValidationResult.Success,
+            string text when NotPadded(text) => ValidationResult.Success,
+            string when validationContext is not null => new ValidationResult(FormatErrorMessage(validationContext.DisplayName)),
+            string => new ValidationResult(errorMessage: null),
+            _ => throw new NotSupportedException($"Values of type {value.GetType().FullName} are not supported."),
         };
 
     /// <inheritdoc />
     public override string FormatErrorMessage(string name)
-        => this.ErrorMessage ?? $"{name} must not be padded with whitespace.";
+        => this.ErrorMessage ?? $"'{name}' must not be padded with whitespace.";
 
     private static bool NotPadded(string text)
         => text == text.Trim();
