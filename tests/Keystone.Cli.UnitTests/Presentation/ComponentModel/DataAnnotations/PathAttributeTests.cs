@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Keystone.Cli.Presentation.ComponentModel.DataAnnotations;
 
 
@@ -25,43 +26,86 @@ public class PathAttributeTests
     ];
 
     [Test]
-    public void IsValid_WhenValueIsNull_ReturnsTrue()
+    public void GetValidationResult_WhenValueIsNull_ReturnsSuccess()
     {
-        var sut = new PathAttribute();
-        var actual = sut.IsValid(value: null);
+        var validationContext = new ValidationContext(new object())
+        {
+            DisplayName = "TestPath",
+        };
 
-        Assert.That(actual, Is.True);
+        var sut = new PathAttribute();
+        var actual = sut.GetValidationResult(value: null, validationContext);
+
+        Assert.That(actual, Is.EqualTo(ValidationResult.Success));
     }
 
     [TestCaseSource(nameof(ValidPathTestCases))]
-    public void IsValid_WhenValueIsValid_ReturnsTrue(string path)
+    public void GetValidationResult_WhenValueIsValid_ReturnsSuccess(string path)
     {
-        var sut = new PathAttribute();
-        var actual = sut.IsValid(path);
+        var validationContext = new ValidationContext(path)
+        {
+            DisplayName = nameof(path),
+        };
 
-        Assert.That(actual, Is.True);
+        var sut = new PathAttribute();
+        var actual = sut.GetValidationResult(path, validationContext);
+
+        Assert.That(actual, Is.EqualTo(ValidationResult.Success));
     }
 
     [TestCaseSource(nameof(InvalidPathTestCases))]
-    public void IsValid_WhenValueIsInvalid_ReturnsFalse(string path)
+    public void GetValidationResult_WhenValueIsInvalid_ReturnsError(string path)
+    {
+        const string displayName = "TestPath";
+
+        var validationContext = new ValidationContext(path)
+        {
+            DisplayName = displayName,
+        };
+
+        var sut = new PathAttribute();
+        var expectedErrorMessage = sut.FormatErrorMessage(displayName);
+
+        var actual = sut.GetValidationResult(path, validationContext)!;
+
+        Assert.That(actual.ErrorMessage, Is.EqualTo(expectedErrorMessage));
+    }
+
+    [Test]
+    public void GetValidationResult_WhenValueIsNotString_ThrowsNotSupportedException()
+    {
+        const int value = 1234567;
+
+        var validationContext = new ValidationContext(value)
+        {
+            DisplayName = nameof(value),
+        };
+
+        var sut = new PathAttribute();
+
+        Assert.That(
+            () => sut.GetValidationResult(value, validationContext),
+            Throws.TypeOf<NotSupportedException>()
+                .With.Message.EqualTo($"Values of type {typeof(int).FullName} are not supported.")
+        );
+    }
+
+    [Test]
+    public void IsValid_SupportsLegacyValidation_ForInvalidPath()
     {
         var sut = new PathAttribute();
-        var actual = sut.IsValid(path);
+        var actual = sut.IsValid(string.Empty);
 
         Assert.That(actual, Is.False);
     }
 
     [Test]
-    public void IsValid_WhenValueIsNotString_ThrowsNotSupportedException()
+    public void IsValid_SupportsLegacyValidation_ForValidPath()
     {
-        const int value = 1234567;
         var sut = new PathAttribute();
+        var actual = sut.IsValid("valid/path/to/directory");
 
-        Assert.That(
-            () => sut.IsValid(value),
-            Throws.TypeOf<NotSupportedException>()
-                .With.Message.EqualTo($"Values of type {typeof(int).FullName} are not supported.")
-        );
+        Assert.That(actual, Is.True);
     }
 
     [Test]
@@ -88,6 +132,6 @@ public class PathAttributeTests
         var sut = new PathAttribute();
         var actual = sut.FormatErrorMessage(name);
 
-        Assert.That(actual, Is.EqualTo($"{name} must be a valid path."));
+        Assert.That(actual, Is.EqualTo($"'{name}' must be a valid path."));
     }
 }
