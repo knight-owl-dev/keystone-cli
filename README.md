@@ -9,7 +9,7 @@ publishing books and documents. It is part of the broader Keystone ecosystem, wh
   from scratch
 - [keystone-template-core-slim](https://github.com/knight-owl-dev/keystone-template-core-slim) – for using a prebuilt
   public Docker image
-- [keystone-hello-world](https://github.com/knight-owl-dev/keystone-hello-world.git) – a "Hello World" sample project
+- [keystone-hello-world](https://github.com/knight-owl-dev/keystone-hello-world) – a "Hello World" sample project
   based on the `core-slim` template, demonstrating Keystone capabilities with sample content
 
 For license details and third-party references, see [NOTICE.md](NOTICE.md).
