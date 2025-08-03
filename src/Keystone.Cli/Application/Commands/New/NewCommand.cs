@@ -1,4 +1,6 @@
 using Keystone.Cli.Application.GitHub;
+using Keystone.Cli.Domain.FileSystem;
+using Keystone.Cli.Domain.Policies;
 using Microsoft.Extensions.Logging;
 
 
@@ -11,7 +13,13 @@ public class NewCommand(IGitHubService gitHubService, ILogger<NewCommand> logger
     : INewCommand
 {
     /// <inheritdoc />
-    public async Task CreateNewAsync(string name, string? templateName, string fullPathToProject, CancellationToken cancellationToken)
+    public async Task CreateNewAsync(
+        string name,
+        string? templateName,
+        string fullPathToProject,
+        bool includeGitFiles,
+        CancellationToken cancellationToken
+    )
     {
         var templateTarget = templateService.GetTemplateTarget(templateName);
 
@@ -22,11 +30,16 @@ public class NewCommand(IGitHubService gitHubService, ILogger<NewCommand> logger
             fullPathToProject
         );
 
+        Func<EntryModel, bool> predicate = includeGitFiles
+            ? EntryModelPredicates.AcceptAll
+            : EntryModelPolicies.ExcludeGitContent;
+
         await gitHubService.CopyPublicRepositoryAsync(
             templateTarget.RepositoryUrl,
             branchName: templateTarget.BranchName,
             destinationPath: fullPathToProject,
             overwrite: true,
+            predicate: predicate,
             cancellationToken: cancellationToken
         );
     }

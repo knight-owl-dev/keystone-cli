@@ -23,7 +23,9 @@ public class NewCommandController(INewCommand newCommand)
         string? templateName = null,
         [Option(Description = "The path where to create the new project"),
          Path, NotPaddedWhitespace]
-        string? projectPath = null
+        string? projectPath = null,
+        [Option(Description = "Include Git-related files (e.g., .gitattributes, .gitignore) in the new project")]
+        bool includeGitFiles = false
     )
     {
         var fullPath = string.IsNullOrWhiteSpace(projectPath)
@@ -36,6 +38,7 @@ public class NewCommandController(INewCommand newCommand)
                 projectName,
                 templateName,
                 fullPath,
+                includeGitFiles,
                 CancellationToken.None
             );
 

@@ -42,6 +42,7 @@ public class NewCommandControllerTests
             name,
             templateName,
             Path.Combine(Path.GetFullPath("."), ProjectNamePolicy.GetProjectDirectoryName(name)),
+            includeGitFiles: false,
             CancellationToken.None
         );
     }
@@ -61,6 +62,27 @@ public class NewCommandControllerTests
             name,
             templateName,
             Path.GetFullPath("."),
+            includeGitFiles: false,
+            CancellationToken.None
+        );
+    }
+
+    [Test]
+    public async Task NewAsync_UsesIncludeGitFilesOptionAsync()
+    {
+        const string name = "project-name";
+        const string templateName = "template-name";
+
+        var newCommand = Substitute.For<INewCommand>();
+
+        var sut = Ctor(newCommand);
+        await sut.NewAsync(name, templateName, includeGitFiles: true);
+
+        await newCommand.Received(1).CreateNewAsync(
+            name,
+            templateName,
+            Arg.Any<string>(),
+            includeGitFiles: true,
             CancellationToken.None
         );
     }
@@ -74,7 +96,7 @@ public class NewCommandControllerTests
         var newCommand = Substitute.For<INewCommand>();
 
         newCommand
-            .When(stub => stub.CreateNewAsync(name, templateName, Arg.Any<string>(), CancellationToken.None))
+            .When(stub => stub.CreateNewAsync(name, templateName, Arg.Any<string>(), Arg.Any<bool>(), CancellationToken.None))
             .Do(_ => throw new KeyNotFoundException());
 
         var sut = Ctor(newCommand);

@@ -11,6 +11,7 @@ public interface INewCommand
     /// <param name="name">The new project name, also used as its root directory.</param>
     /// <param name="templateName">The optional template name.</param>
     /// <param name="fullPathToProject">The full path to the new project directory.</param>
+    /// <param name="includeGitFiles">Include Git-related files (e.g., <c>.gitattributes</c>, <c>.gitignore</c>) in the new project.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <exception cref="KeyNotFoundException">
     /// Thrown when the template target is not found.
@@ -19,6 +20,7 @@ public interface INewCommand
         string name,
         string? templateName,
         string fullPathToProject,
+        bool includeGitFiles,
         CancellationToken cancellationToken
     );
 }
