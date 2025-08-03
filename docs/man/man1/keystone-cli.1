@@ -1,0 +1,128 @@
+.Dd August 2025
+.Dt KEYSTONE-CLI 1
+.Os
+
+.Sh NAME
+.Nm keystone-cli
+.Nd initialize and manage Keystone-based projects from templates
+
+.Sh SYNOPSIS
+.Nm
+.Op Cm COMMAND
+.Op Fl h
+.Op Fl -help
+.Op Fl -version
+
+.Sh DESCRIPTION
+.Nm
+is a command-line tool for creating and inspecting projects based on Keystone templates.
+It provides an easy way to bootstrap a new project, open template repositories, and inspect available metadata.
+
+.Sh COMMANDS
+.Bl -tag -width indent
+.It Cm browse
+Opens the template repository in the default browser.
+.It Cm info
+Prints information about available templates.
+.It Cm new
+Creates a new project from a template.
+.El
+
+.Sh OPTIONS
+.Bl -tag -width indent
+.It Fl h , Fl -help
+Show help message.
+.It Fl -version
+Show version.
+.El
+
+.Sh COMMAND DETAILS
+
+.Ss Cm browse
+.Sy Usage:
+.Nm
+.Cm browse
+.Op Fl h
+.Ar template-name
+
+.Pp
+.Bl -tag -width indent
+.It Ar template-name
+The template name.
+
+.It Fl h , Fl -help
+Show help message.
+.El
+
+.Ss Cm info
+.Sy Usage:
+.Nm
+.Cm info
+.Op Fl h
+
+.Pp
+.Bl -tag -width indent
+.It Fl h , Fl -help
+Show help message.
+.El
+
+.Ss Cm new
+.Sy Usage:
+.Nm
+.Cm new
+.Op Fl -template-name Ar string
+.Op Fl -project-path Ar string
+.Op Fl -include-git-files
+.Op Fl h
+.Ar project-name
+
+.Pp
+.Bl -tag -width indent
+.It Ar project-name
+The name of the new project. Also used as its root directory unless the project path is provided.
+
+.It Fl -template-name Ar string
+The template name.
+
+.It Fl -project-path Ar string
+The path where to create the new project.
+
+.It Fl -include-git-files
+Include Git-related files (e.g., .gitattributes, .gitignore) in the new project.
+
+.It Fl h , Fl -help
+Show help message.
+.El
+
+.Sh VERSION
+keystone-cli 0.1.0+0c739e6fa2207d032c855acefd01b6e1a0b27910
+
+.Sh AUTHOR
+Knight Owl Dev
+.Pa https://github.com/knight-owl-dev/keystone-cli
+
+.Sh LICENSE
+This CLI is licensed under the MIT License. See
+.Pa LICENSE
+for details.
+
+.Sh TEMPLATES
+Keystone CLI works with official Keystone templates:
+
+.Bl -tag -width indent
+.It Pa keystone-template-core
+https://github.com/knight-owl-dev/keystone-template-core
+
+.It Pa keystone-template-core-slim
+https://github.com/knight-owl-dev/keystone-template-core-slim
+.El
+
+.Pp
+Templates are licensed separately under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 License.
+
+.Pp
+Use with other templates is possible, but may not be supported.
+
+.Sh SEE ALSO
+.Xr man 1 ,
+.Xr git 1
