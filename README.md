@@ -14,9 +14,8 @@ For license details and third-party references, see [NOTICE.md](NOTICE.md).
 
 ## Project Structure
 
-The project is organized into four main parts:
+The project is organized into three main parts:
 
-- [artifacts](artifacts) – Contains the generated artifacts, including binaries and documentation.
 - [docs](docs) – Contains documentation files, including man pages in [mdoc(7)](https://man.openbsd.org/mdoc.7)
   format and other relevant documentation.
 - [src](src) – Application source code.
