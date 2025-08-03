@@ -16,14 +16,12 @@ public class PathAttributeTests
         new("./path/to/directory"),
         new("~/path/to/directory"),
         new("./path/to/directory/"),
+        new(" ./path/to/directory "),
     ];
 
     private static readonly TestCaseData<string>[] InvalidPathTestCases =
     [
-        new(string.Empty),
-        new(" "),
-        new(" ./path/to/directory "),
-        ..Path.GetInvalidPathChars().Select(c => new TestCaseData<string>($"./path/to/directory/{c}")),
+        new(string.Empty), new(" "), ..Path.GetInvalidPathChars().Select(c => new TestCaseData<string>($"./path/to/directory/{c}")),
     ];
 
     [Test]
@@ -48,7 +46,7 @@ public class PathAttributeTests
     public void IsValid_WhenValueIsInvalid_ReturnsFalse(string path)
     {
         var sut = new PathAttribute();
-        var actual = sut.IsValid(string.Empty);
+        var actual = sut.IsValid(path);
 
         Assert.That(actual, Is.False);
     }
