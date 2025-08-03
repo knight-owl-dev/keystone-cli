@@ -48,11 +48,16 @@ Show version.
 .Pp
 .Bl -tag -width indent
 .It Ar template-name
-The template name.
+The name of the template to open in your default web browser.
 
 .It Fl h , Fl -help
 Show help message.
 .El
+
+.Pp
+The `browse` command opens the selected template's repository in your default browser, making it easy to explore
+documentation and resources online. You can also clone the repository from GitHub if needed. Note that the CLI copies
+the source code rather than performing a full `git clone`, with an option to include Git-related files.
 
 .Ss Cm info
 .Sy Usage:
@@ -65,6 +70,11 @@ Show help message.
 .It Fl h , Fl -help
 Show help message.
 .El
+
+.Pp
+The `info` command lists all available Keystone templates, including their names and repository URLs.
+Use this command to discover templates you can use with other commands such as `browse` or `new`.
+This helps you select the right template for your project workflow.
 
 .Ss Cm new
 .Sy Usage:
@@ -82,17 +92,55 @@ Show help message.
 The name of the new project. Also used as its root directory unless the project path is provided.
 
 .It Fl -template-name Ar string
-The template name.
+The template name to use for the new project.
 
 .It Fl -project-path Ar string
 The path where to create the new project.
+.Pp
+This can be a relative or absolute path. If provided, the project files are copied directly to the specified path
+without adding the project name as a subdirectory.
 
 .It Fl -include-git-files
-Include Git-related files (e.g., .gitattributes, .gitignore) in the new project.
+Include Git-related files (such as `.gitattributes` and `.gitignore`) in the new project.
+.Pp
+This is optional, as Keystone CLI does not enforce any version control system by default. Use this if you plan
+to use Git for your project later, i.e., you're planning to run `git init` after creating the project. Alternatively,
+you may also consider using the `browse` command to clone the template repository directly from GitHub instead.
 
 .It Fl h , Fl -help
 Show help message.
 .El
+
+.Pp
+The `new` command creates a new project from a selected Keystone template. By default, it copies the template source
+code, but does not perform a full `git clone`. If you want to review the template documentation or clone the repository
+directly from GitHub, use the `browse` command first to open the template's repository in your browser.
+
+.Sh EXAMPLES
+
+.Pp
+To list all available templates:
+.Dl keystone-cli info
+
+.Pp
+To open the repository for the default template in your browser:
+.Dl keystone-cli browse
+
+.Pp
+To open the repository for the `hello-world` template in your browser:
+.Dl keystone-cli browse hello-world
+
+.Pp
+To create a new project named `mybook` using the `core-slim` template in the current directory:
+.Dl keystone-cli new --template-name core-slim mybook
+
+.Pp
+To create a new project named `mybook` using the `core` template in a specific directory and include Git files:
+.Dl keystone-cli new --template-name core --project-path /path/to/projects/mybook --include-git-files mybook
+
+.Pp
+To create a "Hello World" project named `sample` using the `hello-world` template in the current directory:
+.Dl keystone-cli new --template-name hello-world sample
 
 .Sh VERSION
 keystone-cli 0.1.0
@@ -112,14 +160,28 @@ Keystone CLI works with official Keystone templates:
 .Bl -tag -width indent
 .It Pa keystone-template-core
 https://github.com/knight-owl-dev/keystone-template-core
+.Pp
+A minimalist, developer-grade template for writing and publishing books using open tools such as Markdown, Pandoc,
+LaTeX, GNU Make, and Docker. This terminal-first edition has no editor integrations and works with any text editor.
+.Pp
+Builds a Docker image with all dependencies locally. Ideal for developers who prefer a terminal workflow and want
+full control over Pandoc integration.
 
 .It Pa keystone-template-core-slim
 https://github.com/knight-owl-dev/keystone-template-core-slim
+.Pp
+A developer-friendly book publishing template built on Keystone. The slim variant has a minimal project footprint
+and uses a public Docker image for all dependencies.
+.Pp
+Ideal for quick setup and lightweight projects, with no need to build Docker images locally.
 
 .It Pa keystone-hello-world
 https://github.com/knight-owl-dev/keystone-hello-world.git
 .Pp
-A "Hello World" sample project based on the core-slim template, demonstrating Keystone capabilities with sample content.
+A "Hello World" sample project based on the core-slim template, showcasing Keystone features with example content.
+.Pp
+Perfect for new users to explore the template structure, learn how to use the makefile, and understand content
+organization in Keystone projects.
 .El
 
 .Pp
