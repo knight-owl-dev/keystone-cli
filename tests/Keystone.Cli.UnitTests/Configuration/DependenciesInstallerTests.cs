@@ -2,6 +2,7 @@ using Keystone.Cli.Application;
 using Keystone.Cli.Application.Commands.Browse;
 using Keystone.Cli.Application.Commands.Info;
 using Keystone.Cli.Application.Commands.New;
+using Keystone.Cli.Application.Commands.Project;
 using Keystone.Cli.Application.Data;
 using Keystone.Cli.Application.FileSystem;
 using Keystone.Cli.Application.GitHub;
@@ -26,6 +27,7 @@ public class DependenciesInstallerTests
         typeof(IInfoCommand),
         typeof(INewCommand),
         typeof(IProcessService),
+        typeof(IProjectCommand),
         typeof(ITemplateService),
         typeof(ITemplateTargetsRepository),
     ];

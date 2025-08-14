@@ -18,5 +18,6 @@ var app = builder.Build();
 app.AddCommands<BrowseCommandController>();
 app.AddCommands<InfoCommandController>();
 app.AddCommands<NewCommandController>();
+app.AddCommands<SubCommandsHostController>();
 
 await app.RunAsync();
