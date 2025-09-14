@@ -3,8 +3,13 @@ namespace Keystone.Cli.Domain.Project;
 /// <summary>
 /// The project model with basic properties.
 /// </summary>
-public record ProjectModel(string ProjectName)
+public record ProjectModel(string ProjectPath)
 {
+    /// <summary>
+    /// The root path of your Keystone project.
+    /// </summary>
+    public string ProjectPath { get; init; } = ProjectPath;
+
     /// <summary>
     /// The name of your project.
     /// </summary>
@@ -23,7 +28,7 @@ public record ProjectModel(string ProjectName)
     /// <example>
     /// hello-world
     /// </example>
-    public string ProjectName { get; init; } = ProjectName;
+    public string? ProjectName { get; init; }
 
     /// <summary>
     /// The cover image for your book.
