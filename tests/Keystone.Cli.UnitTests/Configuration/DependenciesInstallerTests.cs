@@ -6,6 +6,7 @@ using Keystone.Cli.Application.Commands.Project;
 using Keystone.Cli.Application.Data;
 using Keystone.Cli.Application.FileSystem;
 using Keystone.Cli.Application.GitHub;
+using Keystone.Cli.Application.Project;
 using Keystone.Cli.Application.Utility;
 using Keystone.Cli.Configuration;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +30,7 @@ public class DependenciesInstallerTests
         typeof(INewCommand),
         typeof(IProcessService),
         typeof(IProjectCommand),
+        typeof(IProjectModelPolicyEnforcer),
         typeof(ITemplateService),
         typeof(ITemplateTargetsRepository),
     ];

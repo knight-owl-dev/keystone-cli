@@ -6,6 +6,7 @@ using Keystone.Cli.Application.Commands.Project;
 using Keystone.Cli.Application.Data;
 using Keystone.Cli.Application.FileSystem;
 using Keystone.Cli.Application.GitHub;
+using Keystone.Cli.Application.Project;
 using Keystone.Cli.Application.Utility;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -34,6 +35,7 @@ public static class DependenciesInstaller
             .AddSingleton<INewCommand, NewCommand>()
             .AddSingleton<IProcessService, ProcessService>()
             .AddSingleton<IProjectCommand, ProjectCommand>()
+            .AddSingleton<IProjectModelPolicyEnforcer, ProjectModelPolicyEnforcer>()
             .AddSingleton<ITemplateService, TemplateService>()
             .AddSingleton<ITemplateTargetsRepository, TemplateTargetsRepository>();
 }
