@@ -31,6 +31,7 @@ public class DependenciesInstallerTests
         typeof(IProcessService),
         typeof(IProjectCommand),
         typeof(IProjectModelPolicyEnforcer),
+        typeof(IProjectModelRepository),
         typeof(ITemplateService),
         typeof(ITemplateTargetsRepository),
     ];

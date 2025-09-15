@@ -36,6 +36,7 @@ public static class DependenciesInstaller
             .AddSingleton<IProcessService, ProcessService>()
             .AddSingleton<IProjectCommand, ProjectCommand>()
             .AddSingleton<IProjectModelPolicyEnforcer, ProjectModelPolicyEnforcer>()
+            .AddSingleton<IProjectModelRepository, ProjectModelRepository>()
             .AddSingleton<ITemplateService, TemplateService>()
             .AddSingleton<ITemplateTargetsRepository, TemplateTargetsRepository>();
 }
