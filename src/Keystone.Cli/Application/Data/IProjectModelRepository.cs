@@ -26,7 +26,20 @@ public interface IProjectModelRepository
     /// <summary>
     /// Saves the current <see cref="ProjectModel"/> to all associated backing stores.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The save operation only updates stores where the model has changed, minimizing unnecessary writes.
+    /// </para>
+    /// <para>
+    /// The project must already exist on disk. This method is not intended for cloning or initializing new projects
+    /// by altering the <see cref="ProjectModel.ProjectPath"/>. Such attempts will likely result in a
+    /// <see cref="ProjectNotLoadedException"/>.
+    /// </para>
+    /// </remarks>
     /// <param name="model">The <see cref="ProjectModel"/> to persist.</param>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <exception cref="ProjectNotLoadedException">
+    /// Thrown if the project model is not properly initialized or required files are missing.
+    /// </exception>
     Task SaveAsync(ProjectModel model, CancellationToken cancellationToken = default);
 }
