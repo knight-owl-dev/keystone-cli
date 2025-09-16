@@ -8,6 +8,7 @@ using Keystone.Cli.Application.FileSystem;
 using Keystone.Cli.Application.GitHub;
 using Keystone.Cli.Application.Project;
 using Keystone.Cli.Application.Utility;
+using Keystone.Cli.Application.Utility.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -32,6 +33,7 @@ public static class DependenciesInstaller
             .AddSingleton<IGitHubService, GitHubService>()
             .AddSingleton<IGitHubZipEntryProviderFactory, GitHubZipEntryProviderFactory>()
             .AddSingleton<IInfoCommand, InfoCommand>()
+            .AddSingleton<IJsonFileSerializer, JsonFileSerializer>()
             .AddSingleton<INewCommand, NewCommand>()
             .AddSingleton<IProcessService, ProcessService>()
             .AddSingleton<IProjectCommand, ProjectCommand>()
