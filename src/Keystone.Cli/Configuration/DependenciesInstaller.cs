@@ -40,5 +40,6 @@ public static class DependenciesInstaller
             .AddSingleton<IProjectModelPolicyEnforcer, ProjectModelPolicyEnforcer>()
             .AddSingleton<IProjectModelRepository, ProjectModelRepository>()
             .AddSingleton<ITemplateService, TemplateService>()
-            .AddSingleton<ITemplateTargetsRepository, TemplateTargetsRepository>();
+            .AddSingleton<ITemplateTargetsRepository, TemplateTargetsRepository>()
+            .AddSingleton<ITextFileSerializer, TextFileSerializer>();
 }

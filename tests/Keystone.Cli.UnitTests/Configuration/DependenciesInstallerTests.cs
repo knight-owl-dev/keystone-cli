@@ -36,6 +36,7 @@ public class DependenciesInstallerTests
         typeof(IProjectModelRepository),
         typeof(ITemplateService),
         typeof(ITemplateTargetsRepository),
+        typeof(ITextFileSerializer),
     ];
 
     [TestCaseSource(nameof(ExpectedTypes))]
