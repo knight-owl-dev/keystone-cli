@@ -19,7 +19,7 @@ public class TextFileSerializerTests
         const string path = "nonexistent.txt";
 
         var fileSystemService = Substitute.For<IFileSystemService>();
-        fileSystemService.FileExists(path).Returns(false);
+        fileSystemService.OpenReadStream(path).Throws<FileNotFoundException>();
 
         var sut = Ctor(fileSystemService);
 

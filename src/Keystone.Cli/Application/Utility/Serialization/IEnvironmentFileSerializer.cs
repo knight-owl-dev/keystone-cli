@@ -14,6 +14,9 @@ public interface IEnvironmentFileSerializer
     /// A task that represents the asynchronous load operation.
     /// The task result contains a dictionary of environment variable keys and values.
     /// </returns>
+    /// <exception cref="DirectoryNotFoundException">
+    /// The specified path is invalid, such as being on an unmapped drive.
+    /// </exception>
     /// <exception cref="FileNotFoundException">
     /// Thrown if the specified file does not exist.
     /// </exception>

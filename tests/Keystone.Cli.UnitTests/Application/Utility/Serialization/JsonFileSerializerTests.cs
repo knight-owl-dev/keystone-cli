@@ -3,6 +3,7 @@ using System.Text.Json;
 using Keystone.Cli.Application.FileSystem;
 using Keystone.Cli.Application.Utility.Serialization;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 
 namespace Keystone.Cli.UnitTests.Application.Utility.Serialization;
@@ -24,7 +25,7 @@ public class JsonFileSerializerTests
         const string path = "nonexistent.json";
 
         var fileSystemService = Substitute.For<IFileSystemService>();
-        fileSystemService.FileExists(path).Returns(false);
+        fileSystemService.OpenReadStream(path).Throws<FileNotFoundException>();
 
         var sut = Ctor(fileSystemService);
 

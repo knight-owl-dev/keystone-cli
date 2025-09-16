@@ -14,6 +14,9 @@ public interface ITextFileSerializer
     /// <returns>
     /// A read-only list of uncommented lines in the file.
     /// </returns>
+    /// <exception cref="DirectoryNotFoundException">
+    /// The specified path is invalid, such as being on an unmapped drive.
+    /// </exception>
     /// <exception cref="FileNotFoundException">
     /// Thrown if the specified file does not exist.
     /// </exception>

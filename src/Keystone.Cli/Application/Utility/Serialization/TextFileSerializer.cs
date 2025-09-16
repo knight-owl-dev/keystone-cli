@@ -13,11 +13,6 @@ public class TextFileSerializer(IFileSystemService fileSystemService)
     /// <inheritdoc />
     public async Task<IReadOnlyList<string>> LoadLinesAsync(string path, CancellationToken cancellationToken = default)
     {
-        if (! fileSystemService.FileExists(path))
-        {
-            throw new FileNotFoundException("The specified TEXT file does not exist.", path);
-        }
-
         await using var stream = fileSystemService.OpenReadStream(path);
 
         var unfilteredLines = await ReadLinesAsync(stream, cancellationToken).ConfigureAwait(false);

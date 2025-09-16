@@ -20,11 +20,6 @@ public class JsonFileSerializer(IFileSystemService fileSystemService)
     /// <inheritdoc />
     public async Task<T> LoadAsync<T>(string path, CancellationToken cancellationToken = default)
     {
-        if (! fileSystemService.FileExists(path))
-        {
-            throw new FileNotFoundException("The specified JSON file does not exist.", path);
-        }
-
         await using var stream = fileSystemService.OpenReadStream(path);
 
         try
