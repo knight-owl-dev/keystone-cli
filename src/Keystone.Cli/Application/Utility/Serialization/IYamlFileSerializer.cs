@@ -23,6 +23,9 @@ public interface IYamlFileSerializer
     /// <exception cref="UnauthorizedAccessException">
     /// Thrown if the application lacks necessary permissions to access the file.
     /// </exception>
+    /// <exception cref="OperationCanceledException">
+    /// Thrown if the operation is canceled via the provided cancellation token.
+    /// </exception>
     Task<T> LoadAsync<T>(string path, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -43,6 +46,9 @@ public interface IYamlFileSerializer
     /// </exception>
     /// <exception cref="DirectoryNotFoundException">
     /// Thrown if the specified directory does not exist.
+    /// </exception>
+    /// <exception cref="OperationCanceledException">
+    /// Thrown if the operation is canceled via the provided cancellation token.
     /// </exception>
     Task SaveAsync<T>(string path, T data, CancellationToken cancellationToken = default);
 }

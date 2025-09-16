@@ -20,6 +20,9 @@ public interface IEnvironmentFileSerializer
     /// <exception cref="UnauthorizedAccessException">
     /// Thrown if the application lacks necessary permissions to access the file.
     /// </exception>
+    /// <exception cref="OperationCanceledException">
+    /// Thrown if the operation is canceled via the provided cancellation token.
+    /// </exception>
     Task<IDictionary<string, string?>> LoadAsync(string path, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -41,6 +44,9 @@ public interface IEnvironmentFileSerializer
     /// </exception>
     /// <exception cref="DirectoryNotFoundException">
     /// Thrown if the specified directory does not exist.
+    /// </exception>
+    /// <exception cref="OperationCanceledException">
+    /// Thrown if the operation is canceled via the provided cancellation token.
     /// </exception>
     Task SaveAsync(string path, IDictionary<string, string?> values, CancellationToken cancellationToken = default);
 }
