@@ -14,6 +14,15 @@ public interface IJsonFileSerializer
     /// <returns>
     /// A task that represents the asynchronous load operation, containing the deserialized instance of <typeparamref name="T"/>.
     /// </returns>
+    /// <exception cref="FileNotFoundException">
+    /// Thrown if the specified file does not exist.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if deserialization fails or the JSON content is invalid.
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    /// Thrown if the application lacks necessary permissions to access the file.
+    /// </exception>
     Task<T> LoadAsync<T>(string path, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -26,6 +35,14 @@ public interface IJsonFileSerializer
     /// <param name="path">The full path to the JSON file to write.</param>
     /// <param name="data">The data to serialize.</param>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-    /// <returns>A task that represents the asynchronous save operation.</returns>
+    /// <returns>
+    /// A task that represents the asynchronous save operation.
+    /// </returns>
+    /// <exception cref="UnauthorizedAccessException">
+    /// Thrown if the application lacks necessary permissions to write to the file.
+    /// </exception>
+    /// <exception cref="DirectoryNotFoundException">
+    /// Thrown if the specified directory does not exist.
+    /// </exception>
     Task SaveAsync<T>(string path, T data, CancellationToken cancellationToken = default);
 }
