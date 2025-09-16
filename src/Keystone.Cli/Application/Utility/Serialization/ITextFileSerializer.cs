@@ -11,7 +11,15 @@ public interface ITextFileSerializer
     /// </summary>
     /// <param name="path">The path to the file to read.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
-    /// <returns>A read-only list of uncommented lines in the file.</returns>
+    /// <returns>
+    /// A read-only list of uncommented lines in the file.
+    /// </returns>
+    /// <exception cref="FileNotFoundException">
+    /// Thrown if the specified file does not exist.
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    /// Thrown if the application lacks necessary permissions to access the file.
+    /// </exception>
     Task<IReadOnlyList<string>> LoadLinesAsync(string path, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -21,6 +29,14 @@ public interface ITextFileSerializer
     /// <param name="path">The path to the file to write.</param>
     /// <param name="lines">The lines to write to the file.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
-    /// <returns>A task that represents the asynchronous save operation.</returns>
+    /// <returns>
+    /// A task that represents the asynchronous save operation.
+    /// </returns>
+    /// <exception cref="UnauthorizedAccessException">
+    /// Thrown if the application lacks necessary permissions to write to the file.
+    /// </exception>
+    /// <exception cref="DirectoryNotFoundException">
+    /// Thrown if the specified directory does not exist.
+    /// </exception>
     Task SaveLinesAsync(string path, IEnumerable<string> lines, CancellationToken cancellationToken = default);
 }

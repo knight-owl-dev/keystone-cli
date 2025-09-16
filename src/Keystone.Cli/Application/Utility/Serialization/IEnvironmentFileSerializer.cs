@@ -14,6 +14,12 @@ public interface IEnvironmentFileSerializer
     /// A task that represents the asynchronous load operation.
     /// The task result contains a dictionary of environment variable keys and values.
     /// </returns>
+    /// <exception cref="FileNotFoundException">
+    /// Thrown if the specified file does not exist.
+    /// </exception>
+    /// <exception cref="UnauthorizedAccessException">
+    /// Thrown if the application lacks necessary permissions to access the file.
+    /// </exception>
     Task<IDictionary<string, string?>> LoadAsync(string path, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -30,5 +36,11 @@ public interface IEnvironmentFileSerializer
     /// <returns>
     /// A task that represents the asynchronous save operation.
     /// </returns>
+    /// <exception cref="UnauthorizedAccessException">
+    /// Thrown if the application lacks necessary permissions to write to the file.
+    /// </exception>
+    /// <exception cref="DirectoryNotFoundException">
+    /// Thrown if the specified directory does not exist.
+    /// </exception>
     Task SaveAsync(string path, IDictionary<string, string?> values, CancellationToken cancellationToken = default);
 }
