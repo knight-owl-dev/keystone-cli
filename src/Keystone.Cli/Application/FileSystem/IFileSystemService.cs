@@ -45,4 +45,32 @@ public interface IFileSystemService
     /// no exception is thrown and the method returns false regardless of the existence of path.
     /// </returns>
     bool FileExists(string? path);
+
+    /// <summary>
+    /// Opens a read-only stream to the specified file with shared read access.
+    /// </summary>
+    /// <param name="path">The path of the file to open.</param>
+    /// <returns>
+    /// A stream for reading the file content.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
+    /// <exception cref="FileNotFoundException">The specified file was not found.</exception>
+    /// <exception cref="UnauthorizedAccessException">The caller does not have the required permission.</exception>
+    /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+    /// <seealso cref="FileStream"/>
+    Stream OpenReadStream(string path);
+
+    /// <summary>
+    /// Opens a write stream to the specified file. If the file does not exist, it is created;
+    /// otherwise, the existing file is opened without truncating or overwriting its contents.
+    /// </summary>
+    /// <param name="path">The file to create or overwrite.</param>
+    /// <returns>
+    /// A stream for writing to the file, positioned at the beginning.
+    /// Existing contents will be preserved unless overwritten by the caller.
+    /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="path"/> is <see langword="null"/>.</exception>
+    /// <exception cref="UnauthorizedAccessException">The caller does not have the required permission.</exception>
+    /// <exception cref="DirectoryNotFoundException">The specified path is invalid.</exception>
+    Stream OpenWriteStream(string path);
 }
