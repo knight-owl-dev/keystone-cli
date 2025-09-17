@@ -33,6 +33,31 @@ public static class TextParsingUtility
         => $"{key}={value ?? string.Empty}";
 
     /// <summary>
+    /// Tries to parse a key-value pair from a content line.
+    /// </summary>
+    /// <remarks>
+    /// Unlike <see cref="ParseKeyValuePair"/>, this method returns <c>false</c> if the line is a comment or blank line.
+    /// </remarks>
+    /// <param name="line">The content line.</param>
+    /// <param name="keyValuePair">The resulting key-value pair.</param>
+    /// <returns>
+    /// <c>true</c> if the line was successfully parsed into a key-value pair; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool TryParseKeyValuePair(string line, out KeyValuePair<string, string?> keyValuePair)
+    {
+        if (IsWhiteSpaceOrCommentLine(line))
+        {
+            keyValuePair = default;
+
+            return false;
+        }
+
+        keyValuePair = ParseKeyValuePair(line);
+
+        return keyValuePair is { Key: not null };
+    }
+
+    /// <summary>
     /// Parses a key-value pair from a content line.
     /// </summary>
     /// <remarks>

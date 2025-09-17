@@ -46,6 +46,63 @@ public class TextParsingUtilityTests
         Assert.That(actual, Is.False);
     }
 
+    [Test]
+    public void GetKeyValueString_KeyValuePair_ReturnsExpected()
+    {
+        var kvp = new KeyValuePair<string, string?>("FOO", "BAR");
+        var actual = TextParsingUtility.GetKeyValueString(kvp);
+
+        Assert.That(actual, Is.EqualTo("FOO=BAR"));
+    }
+
+    [Test]
+    public void GetKeyValueString_KeyValuePair_NullValue_ReturnsKeyEquals()
+    {
+        var kvp = new KeyValuePair<string, string?>("FOO", value: null);
+        var actual = TextParsingUtility.GetKeyValueString(kvp);
+
+        Assert.That(actual, Is.EqualTo("FOO="));
+    }
+
+    [Test]
+    public void TryParseKeyValuePair_CommentLine_ReturnsFalse()
+    {
+        const string line = "# FOO=BAR";
+        var success = TextParsingUtility.TryParseKeyValuePair(line, out var keyValuePair);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(success, Is.False);
+            Assert.That(keyValuePair, Is.Default);
+        }
+    }
+
+    [Test]
+    public void TryParseKeyValuePair_ValidLine_ReturnsTrueAndExpectedKvp()
+    {
+        const string line = "FOO=BAR";
+        var success = TextParsingUtility.TryParseKeyValuePair(line, out var keyValuePair);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(success, Is.True);
+            Assert.That(keyValuePair, Is.EqualTo(new KeyValuePair<string, string?>("FOO", "BAR")));
+        }
+    }
+
+    [Test]
+    public void TryParseKeyValuePair_InvalidLine_ReturnsFalse()
+    {
+        const string line = "not-a-key-value";
+        var success = TextParsingUtility.TryParseKeyValuePair(line, out var keyValuePair);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(success, Is.False);
+            Assert.That(keyValuePair, Is.Default);
+        }
+    }
+
     [TestCase("KEY=VALUE", "KEY", "VALUE")]
     [TestCase(" KEY = VALUE ", "KEY", "VALUE")]
     [TestCase("KEY= VALUE ", "KEY", "VALUE")]
