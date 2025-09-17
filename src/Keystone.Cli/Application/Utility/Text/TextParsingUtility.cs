@@ -16,6 +16,23 @@ public static class TextParsingUtility
         => string.IsNullOrWhiteSpace(line) || line.StartsWith('#');
 
     /// <summary>
+    /// Formats a key-value pair as a string in the form <c>KEY=VALUE</c>.
+    /// </summary>
+    /// <param name="kvp">The key-value pair to format.</param>
+    /// <returns>A string in the form <c>KEY=VALUE</c>. If the value is <c>null</c>, an empty string is used for the value.</returns>
+    public static string GetKeyValueString(KeyValuePair<string, string?> kvp)
+        => GetKeyValueString(kvp.Key, kvp.Value);
+
+    /// <summary>
+    /// Formats a key and value as a string in the form <c>KEY=VALUE</c>.
+    /// </summary>
+    /// <param name="key">The key to format.</param>
+    /// <param name="value">The value to format. If <c>null</c>, an empty string is used for the value.</param>
+    /// <returns>A string in the form <c>KEY=VALUE</c>.</returns>
+    public static string GetKeyValueString(string key, string? value)
+        => $"{key}={value ?? string.Empty}";
+
+    /// <summary>
     /// Parses a key-value pair from a content line.
     /// </summary>
     /// <remarks>

@@ -127,5 +127,51 @@ public class EnvironmentFileSerializerTests
         );
     }
 
-    // TODO: test SaveAsync method
+    [Test]
+    public async Task SaveAsync_UpdatesAndAddsKeys_PreservesCommentsAndBlankLinesAsync()
+    {
+        const string path = "test.env";
+
+        const string content = """
+            # Comment
+            KEY1=OLD-VALUE1
+
+            # Another comment
+            KEY2=OLD-VALUE2
+            KEY3 = OLD-VALUE3
+
+            # Final comment
+            """;
+
+        var values = new Dictionary<string, string?>
+        {
+            ["KEY1"] = "NEW-VALUE1", // update
+            ["KEY2"] = "NEW-VALUE2", // update
+            ["KEY3"] = "OLD-VALUE3", // no change
+            ["KEY4"] = "NEW-VALUE4", // add
+        };
+
+        const string expected = """
+            # Comment
+            KEY1=NEW-VALUE1
+
+            # Another comment
+            KEY2=NEW-VALUE2
+            KEY3 = OLD-VALUE3
+
+            # Final comment
+            KEY4=NEW-VALUE4
+            """;
+
+        var stream = new CapturingStream().SetContent(content);
+        var fileSystemService = Substitute.For<IFileSystemService>();
+        fileSystemService.OpenWriteStream(path).Returns(stream);
+
+        var sut = Ctor(fileSystemService);
+
+        await sut.SaveAsync(path, values);
+        var actual = stream.GetCapturedString();
+
+        Assert.That(actual, Is.EqualTo(expected).IgnoreWhiteSpace);
+    }
 }
