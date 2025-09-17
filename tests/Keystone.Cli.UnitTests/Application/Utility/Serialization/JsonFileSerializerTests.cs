@@ -96,9 +96,7 @@ public class JsonFileSerializerTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(capturingStream.CapturedBuffer, Is.Not.Null.And.Not.Empty);
-            var actual = JsonSerializer.Deserialize<TestModel>(capturingStream.CapturedBuffer!);
-
+            var actual = JsonSerializer.Deserialize<TestModel>(capturingStream.GetCapturedString());
             Assert.That(actual, Is.EqualTo(source));
         }
     }

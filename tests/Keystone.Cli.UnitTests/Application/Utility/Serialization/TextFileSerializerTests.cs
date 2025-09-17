@@ -136,7 +136,7 @@ public class TextFileSerializerTests
 
         await sut.SaveLinesAsync(path, lines);
 
-        var actual = Encoding.UTF8.GetString(capturingStream.CapturedBuffer ?? []);
+        var actual = capturingStream.GetCapturedString();
         var expected = string.Join(Environment.NewLine, lines) + Environment.NewLine;
 
         Assert.That(actual, Is.EqualTo(expected));
@@ -155,7 +155,7 @@ public class TextFileSerializerTests
 
         await sut.SaveLinesAsync(path, lines: []);
 
-        var actual = Encoding.UTF8.GetString(capturingStream.CapturedBuffer ?? []);
+        var actual = capturingStream.GetCapturedString();
 
         Assert.That(actual, Is.EqualTo(string.Empty));
     }
@@ -174,7 +174,7 @@ public class TextFileSerializerTests
 
         await sut.SaveLinesAsync(path, lines);
 
-        var actual = Encoding.UTF8.GetString(capturingStream.CapturedBuffer ?? []);
+        var actual = capturingStream.GetCapturedString();
         var expected = string.Join(Environment.NewLine, lines) + Environment.NewLine;
 
         Assert.That(actual, Is.EqualTo(expected));
@@ -221,7 +221,7 @@ public class TextFileSerializerTests
 
         await sut.SaveLinesAsync(path, lines);
 
-        var actual = Encoding.UTF8.GetString(capturingStream.CapturedBuffer ?? []);
+        var actual = capturingStream.GetCapturedString();
 
         Assert.That(actual, Is.EqualTo(expected).IgnoreWhiteSpace);
     }
@@ -256,7 +256,7 @@ public class TextFileSerializerTests
 
         await sut.SaveLinesAsync(path, lines);
 
-        var actual = Encoding.UTF8.GetString(capturingStream.CapturedBuffer ?? []);
+        var actual = capturingStream.GetCapturedString();
 
         Assert.That(actual, Is.EqualTo(expected).IgnoreWhiteSpace);
     }
@@ -294,7 +294,7 @@ public class TextFileSerializerTests
 
         await sut.SaveLinesAsync(path, lines);
 
-        var actual = Encoding.UTF8.GetString(capturingStream.CapturedBuffer ?? []);
+        var actual = capturingStream.GetCapturedString();
 
         Assert.That(actual, Is.EqualTo(expected).IgnoreWhiteSpace);
     }
