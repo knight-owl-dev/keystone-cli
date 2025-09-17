@@ -210,10 +210,7 @@ public class TextFileSerializerTests
 
         string[] lines = ["Line 1", "Line 2"];
 
-        var capturingStream = new CapturingStream();
-        capturingStream.Write(Encoding.UTF8.GetBytes(content));
-        capturingStream.Position = 0;
-
+        var capturingStream = new CapturingStream().SetContent(content);
         var fileSystemService = Substitute.For<IFileSystemService>();
         fileSystemService.OpenWriteStream(path).Returns(capturingStream);
 
@@ -245,10 +242,7 @@ public class TextFileSerializerTests
 
         string[] lines = ["Line 1", "Line 2"];
 
-        var capturingStream = new CapturingStream();
-        capturingStream.Write(Encoding.UTF8.GetBytes(content));
-        capturingStream.Position = 0;
-
+        var capturingStream = new CapturingStream().SetContent(content);
         var fileSystemService = Substitute.For<IFileSystemService>();
         fileSystemService.OpenWriteStream(path).Returns(capturingStream);
 
@@ -283,10 +277,7 @@ public class TextFileSerializerTests
 
         string[] lines = ["Line 1", "Line 2"];
 
-        var capturingStream = new CapturingStream();
-        capturingStream.Write(Encoding.UTF8.GetBytes(content));
-        capturingStream.Position = 0;
-
+        var capturingStream = new CapturingStream().SetContent(content);
         var fileSystemService = Substitute.For<IFileSystemService>();
         fileSystemService.OpenWriteStream(path).Returns(capturingStream);
 

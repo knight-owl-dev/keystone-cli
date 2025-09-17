@@ -26,6 +26,25 @@ internal class CapturingStream : MemoryStream
     }
 
     /// <summary>
+    /// Sets the new content of the stream using <see cref="Encoding.UTF8"/> encoding.
+    /// </summary>
+    /// <remarks>
+    /// This will reset the position to the beginning of the stream, reset the length,
+    /// and clear any previously captured buffer.
+    /// </remarks>
+    /// <param name="content">The new content.</param>
+    public CapturingStream SetContent(string content)
+    {
+        this.CapturedBuffer = null;
+        Write(Encoding.UTF8.GetBytes(content));
+
+        SetLength(this.Position);
+        Seek(0, SeekOrigin.Begin);
+
+        return this;
+    }
+
+    /// <summary>
     /// Gets the captures string using <see cref="Encoding.UTF8"/> encoding from the captured buffer.
     /// </summary>
     /// <returns>
