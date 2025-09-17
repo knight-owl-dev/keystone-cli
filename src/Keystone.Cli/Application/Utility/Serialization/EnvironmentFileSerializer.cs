@@ -19,9 +19,16 @@ public class EnvironmentFileSerializer(IFileSystemService fileSystemService)
         var unfilteredLines = await TextFileUtility.ReadLinesAsync(stream, cancellationToken).ConfigureAwait(false);
         var contentLines = unfilteredLines.RemoveAll(TextParsingUtility.IsWhiteSpaceOrCommentLine);
 
-        return contentLines.Select(TextParsingUtility.ParseKeyValuePair)
-            .Where(kvp => kvp is { Key: not null })
-            .ToImmutableDictionary();
+        try
+        {
+            return contentLines.Select(TextParsingUtility.ParseKeyValuePair)
+                .Where(kvp => kvp is { Key: not null })
+                .ToImmutableDictionary();
+        }
+        catch (ArgumentException exception)
+        {
+            throw new InvalidOperationException($"Could not parse environment file '{path}': {exception.Message}", exception);
+        }
     }
 
     /// <inheritdoc />
@@ -40,12 +47,12 @@ public class EnvironmentFileSerializer(IFileSystemService fileSystemService)
 
     /// <summary>
     /// Composes a new set of lines for an environment file by preserving all leading and trailing non-content lines
-    /// (comments or whitespace) from the current file, and replacing the content lines in between with
-    /// the provided key-value pairs formatted as "KEY=VALUE".
+    /// (comments or whitespace) from the current file, and replacing the content lines in between with the provided
+    /// key-value pairs formatted as "KEY=VALUE".
     /// </summary>
     /// <remarks>
-    /// If the original key-value pair is the same as the new one, it should be preserved in its original form.
-    /// This includes preserving the order of existing keys and only adding new keys at the end of the content section.
+    /// If the original key-value pair is the same as the new one, it is preserved in its original form. This includes
+    /// preserving the order of existing keys and only adding new keys at the end of the content section.
     /// </remarks>
     /// <param name="currentLines">A collection of all current lines including comments and whitespace.</param>
     /// <param name="values">A collection of values.</param>
@@ -53,38 +60,27 @@ public class EnvironmentFileSerializer(IFileSystemService fileSystemService)
     /// A collection containing the header (leading non-content lines), the new key-value pairs,
     /// </returns>
     private static ImmutableList<string> ComposeLines(ImmutableList<string> currentLines, IDictionary<string, string?> values)
-        => currentLines.Select(line =>
-            new
+        => currentLines.Aggregate(
+            (
+                Lines: ImmutableList.CreateBuilder<string>(),
+                ExistingKeys: ImmutableHashSet.CreateBuilder<string>(),
+                Values: values
+            ),
+            (acc, currentLine) =>
             {
-                Line = line,
-                KeyValuePair = TextParsingUtility.ParseKeyValuePair(line),
-            }
-        ).Aggregate(
-            new
-            {
-                Lines = ImmutableList.CreateBuilder<string>(),
-                ExistingKeys = ImmutableHashSet.CreateBuilder<string>(),
-                Values = values,
-            },
-            (acc, item) =>
-            {
-                if (item.KeyValuePair is { Key: null })
+                if (TextParsingUtility.TryParseKeyValuePair(currentLine, out var keyValuePair))
                 {
-                    acc.Lines.Add(item.Line);
+                    var (key, currentValue) = keyValuePair;
+                    var newLine = acc.Values.TryGetValue(key, out var newValue) && newValue != currentValue
+                        ? TextParsingUtility.GetKeyValueString(key, newValue)
+                        : currentLine;
 
-                    return acc;
-                }
-
-                var (key, currentValue) = item.KeyValuePair;
-                acc.ExistingKeys.Add(key);
-
-                if (acc.Values.TryGetValue(key, out var newValue) && newValue != currentValue)
-                {
-                    acc.Lines.Add(TextParsingUtility.GetKeyValueString(key, newValue));
+                    acc.ExistingKeys.Add(key);
+                    acc.Lines.Add(newLine);
                 }
                 else
                 {
-                    acc.Lines.Add(item.Line);
+                    acc.Lines.Add(currentLine);
                 }
 
                 return acc;

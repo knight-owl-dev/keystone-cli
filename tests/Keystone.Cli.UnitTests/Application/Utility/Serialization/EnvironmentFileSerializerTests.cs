@@ -64,6 +64,29 @@ public class EnvironmentFileSerializerTests
     }
 
     [Test]
+    public async Task LoadAsync_SameKeyMultipleTimes_ThrowsInvalidOperationExceptionAsync()
+    {
+        const string path = "duplicate.env";
+
+        const string content = """
+            KEY1=VALUE1
+            KEY2=VALUE2
+            KEY1=VALUE3
+            """;
+
+        var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+        var fileSystemService = Substitute.For<IFileSystemService>();
+        fileSystemService.OpenReadStream(path).Returns(stream);
+
+        var sut = Ctor(fileSystemService);
+
+        await Assert.ThatAsync(
+            () => sut.LoadAsync(path),
+            Throws.InstanceOf<InvalidOperationException>().And.Message.Contains("KEY1")
+        );
+    }
+
+    [Test]
     public async Task LoadAsync_EmptyFile_ReturnsEmptyDictionaryAsync()
     {
         const string path = "empty.env";
@@ -139,6 +162,7 @@ public class EnvironmentFileSerializerTests
             # Another comment
             KEY2=OLD-VALUE2
             KEY3 = OLD-VALUE3
+            KEY5=NOT-TO-BE-CHANGED
 
             # Final comment
             """;
@@ -158,6 +182,7 @@ public class EnvironmentFileSerializerTests
             # Another comment
             KEY2=NEW-VALUE2
             KEY3 = OLD-VALUE3
+            KEY5=NOT-TO-BE-CHANGED
 
             # Final comment
             KEY4=NEW-VALUE4

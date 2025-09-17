@@ -26,6 +26,9 @@ public interface IEnvironmentFileSerializer
     /// <exception cref="OperationCanceledException">
     /// Thrown if the operation is canceled via the provided cancellation token.
     /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the file contains duplicate keys or cannot be parsed correctly.
+    /// </exception>
     Task<IDictionary<string, string?>> LoadAsync(string path, CancellationToken cancellationToken = default);
 
     /// <summary>
