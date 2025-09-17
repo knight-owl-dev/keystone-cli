@@ -23,6 +23,7 @@ public class DependenciesInstallerTests
     [
         typeof(IBrowseCommand),
         typeof(IContentHashService),
+        typeof(IEnvironmentFileSerializer),
         typeof(IFileSystemCopyService),
         typeof(IFileSystemService),
         typeof(IGitHubService),

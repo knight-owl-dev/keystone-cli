@@ -28,6 +28,7 @@ public static class DependenciesInstaller
             .AddHttpClient()
             .AddSingleton<IBrowseCommand, BrowseCommand>()
             .AddSingleton<IContentHashService, ContentHashService>()
+            .AddSingleton<IEnvironmentFileSerializer, EnvironmentFileSerializer>()
             .AddSingleton<IFileSystemCopyService, FileSystemCopyService>()
             .AddSingleton<IFileSystemService, FileSystemService>()
             .AddSingleton<IGitHubService, GitHubService>()
