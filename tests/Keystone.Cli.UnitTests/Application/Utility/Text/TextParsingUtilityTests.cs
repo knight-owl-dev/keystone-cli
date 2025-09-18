@@ -6,6 +6,145 @@ namespace Keystone.Cli.UnitTests.Application.Utility.Text;
 [TestFixture, Parallelizable(ParallelScope.All)]
 public class TextParsingUtilityTests
 {
+    /// <summary>
+    /// Test cases for <see cref="TextParsingUtility.GetKeyValueString(KeyValuePair{string, string?})"/>.
+    /// </summary>
+    private static readonly TestCaseData<KeyValuePair<string, string?>>[] GetKeyValueStringTestCases =
+    [
+        new(new KeyValuePair<string, string?>("KEY", null))
+        {
+            ExpectedResult = "KEY=",
+            TestName = "Null",
+        },
+        new(new KeyValuePair<string, string?>("KEY", "VALUE"))
+        {
+            ExpectedResult = "KEY=VALUE",
+            TestName = "Simple",
+        },
+        new(new KeyValuePair<string, string?>("KEY", "VALUE=OTHER"))
+        {
+            ExpectedResult = "KEY=VALUE=OTHER",
+            TestName = "HasEqualsSign",
+        },
+        new(new KeyValuePair<string, string?>("KEY", "VALUE # NOT A COMMENT"))
+        {
+            ExpectedResult = "KEY=\"VALUE # NOT A COMMENT\"",
+            TestName = "HasHashSign",
+        },
+        new(new KeyValuePair<string, string?>("KEY", "VALUE WITH SPACES"))
+        {
+            ExpectedResult = "KEY=\"VALUE WITH SPACES\"",
+            TestName = "HasSpaces",
+        },
+        new(new KeyValuePair<string, string?>("KEY", " VALUE "))
+        {
+            ExpectedResult = "KEY=\" VALUE \"",
+            TestName = "Padded",
+        },
+        new(new KeyValuePair<string, string?>("KEY", "\"VALUE\""))
+        {
+            ExpectedResult = "KEY=\"\"VALUE\"\"",
+            TestName = "Quoted",
+        },
+        new(new KeyValuePair<string, string?>("KEY", "IT'S"))
+        {
+            ExpectedResult = "KEY=\"IT'S\"",
+            TestName = "Apostrophe",
+        },
+        new(new KeyValuePair<string, string?>("KEY", "VALUE [\r\n\t\\]"))
+        {
+            ExpectedResult = "KEY=\"VALUE [\\r\\n\\t\\]\"",
+            TestName = "ControlCharacters",
+        },
+        new(new KeyValuePair<string, string?>("KEY", @"VALUE [\r\n\t\]"))
+        {
+            ExpectedResult = @"KEY='VALUE [\r\n\t\]'",
+            TestName = "LiteralControlCharacters",
+        },
+    ];
+
+    /// <summary>
+    /// Test cases for <see cref="TextParsingUtility.ParseKeyValuePair(string)"/>.
+    /// </summary>
+    private static readonly TestCaseData<string>[] ParseKeyValuePairTestCases =
+    [
+        new("KEY=")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", null),
+            TestName = "EmptyValue",
+        },
+        new("KEY=VALUE")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE"),
+            TestName = "Simple",
+        },
+        new(" KEY = VALUE ")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE"),
+            TestName = "Padded",
+        },
+        new("KEY=VALUE=OTHER")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE=OTHER"),
+            TestName = "HasEqualsSign",
+        },
+        new("KEY = \"  PADDED VALUE WITH SPACES  \"")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "  PADDED VALUE WITH SPACES  "),
+            TestName = "Quoted",
+        },
+        new("KEY = '  PADDED VALUE WITH SPACES  '")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "  PADDED VALUE WITH SPACES  "),
+            TestName = "SingleQuoted",
+        },
+        new("KEY=\"VALUE WITH 'APOSTROPHE'\"")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE WITH 'APOSTROPHE'"),
+            TestName = "QuotedWithApostrophe",
+        },
+        new("KEY=\"VALUE WITH \\\"ESCAPED QUOTE\\\"\"")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE WITH \"ESCAPED QUOTE\""),
+            TestName = "QuotedWithEscapedQuote",
+        },
+        new("KEY=\"VALUE [\\r\\n\\t\\]")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE [\r\n\t\\]"),
+            TestName = "QuotedWithControlCharacters",
+        },
+        new(@"KEY='VALUE [\r\n\t\]'")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", @"VALUE [\r\n\t\]"),
+            TestName = "SingleQuotedWithLiteralControlCharacters",
+        },
+        new("KEY=VALUE# NOT A COMMENT")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE# NOT A COMMENT"),
+            TestName = "UnquotedValueWithHash",
+        },
+        new("KEY=\"VALUE # NOT A COMMENT\"")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE # NOT A COMMENT"),
+            TestName = "QuotedValueWithHash",
+        },
+        new("KEY='VALUE # NOT A COMMENT'")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE # NOT A COMMENT"),
+            TestName = "SingleQuotedValueWithHash",
+        },
+        new("KEY=VALUE # COMMENT")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE"),
+            TestName = "UnquotedValueWithComment",
+        },
+        new("KEY=\"VALUE # NOT A COMMENT\" # COMMENT")
+        {
+            ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE # NOT A COMMENT"),
+            TestName = "QuotedValueWithComment",
+        },
+    ];
+
     [Test]
     public void IsWhiteSpaceOrCommentLine_IsNull_ReturnsTrue()
     {
@@ -46,23 +185,13 @@ public class TextParsingUtilityTests
         Assert.That(actual, Is.False);
     }
 
-    [Test]
-    public void GetKeyValueString_KeyValuePair_ReturnsExpected()
-    {
-        var kvp = new KeyValuePair<string, string?>("FOO", "BAR");
-        var actual = TextParsingUtility.GetKeyValueString(kvp);
+    [TestCaseSource(nameof(GetKeyValueStringTestCases))]
+    public string GetKeyValueString(KeyValuePair<string, string?> keyValuePair)
+        => TextParsingUtility.GetKeyValueString(keyValuePair);
 
-        Assert.That(actual, Is.EqualTo("FOO=BAR"));
-    }
-
-    [Test]
-    public void GetKeyValueString_KeyValuePair_NullValue_ReturnsKeyEquals()
-    {
-        var kvp = new KeyValuePair<string, string?>("FOO", value: null);
-        var actual = TextParsingUtility.GetKeyValueString(kvp);
-
-        Assert.That(actual, Is.EqualTo("FOO="));
-    }
+    [TestCaseSource(nameof(ParseKeyValuePairTestCases))]
+    public KeyValuePair<string, string?> ParseKeyValuePair(string line)
+        => TextParsingUtility.ParseKeyValuePair(line);
 
     [Test]
     public void TryParseKeyValuePair_CommentLine_ReturnsFalse()
@@ -101,74 +230,5 @@ public class TextParsingUtilityTests
             Assert.That(success, Is.False);
             Assert.That(keyValuePair, Is.Default);
         }
-    }
-
-    [TestCase("KEY=VALUE", "KEY", "VALUE")]
-    [TestCase(" KEY = VALUE ", "KEY", "VALUE")]
-    [TestCase("KEY= VALUE ", "KEY", "VALUE")]
-    [TestCase(" KEY =VALUE", "KEY", "VALUE")]
-    [TestCase("KEY=VAL=UE", "KEY", "VAL=UE")]
-    public void ParseKeyValuePair_ValidCases_ReturnsExpected(string line, string expectedKey, string expectedValue)
-    {
-        var expected = new KeyValuePair<string, string?>(expectedKey, expectedValue);
-        var actual = TextParsingUtility.ParseKeyValuePair(line);
-
-        Assert.That(actual, Is.EqualTo(expected));
-    }
-
-    [Test]
-    public void ParseKeyValuePair_KeyWithEmptyValue_ReturnsKeyAndNullValue()
-    {
-        var expected = new KeyValuePair<string, string?>("KEY", value: null);
-        var actual = TextParsingUtility.ParseKeyValuePair("KEY=");
-
-        Assert.That(actual, Is.EqualTo(expected));
-    }
-
-    [TestCase("", TestName = "ParseKeyValuePair_EmptyString_ReturnsDefault")]
-    [TestCase("   ", TestName = "ParseKeyValuePair_WhitespaceOnly_ReturnsDefault")]
-    [TestCase("NoEqualsSign", TestName = "ParseKeyValuePair_NoEqualsSign_ReturnsDefault")]
-    [TestCase("=NoKey", TestName = "ParseKeyValuePair_SeparatorAtStart_ReturnsDefault")]
-    public void ParseKeyValuePair_InvalidCases_ReturnsDefault(string line)
-    {
-        var expected = default(KeyValuePair<string, string?>);
-        var actual = TextParsingUtility.ParseKeyValuePair(line);
-
-        Assert.That(actual, Is.EqualTo(expected));
-    }
-
-    [Test]
-    public void Normalize_EmptyString_ReturnsNull()
-    {
-        var actual = TextParsingUtility.Normalize("");
-
-        Assert.That(actual, Is.Null);
-    }
-
-    [Test]
-    public void Normalize_WhitespaceOnly_ReturnsNull()
-    {
-        var actual = TextParsingUtility.Normalize("   ");
-
-        Assert.That(actual, Is.Null);
-    }
-
-    [Test]
-    public void Normalize_Null_ReturnsNull()
-    {
-        var actual = TextParsingUtility.Normalize(null!);
-
-        Assert.That(actual, Is.Null);
-    }
-
-    [TestCase("value", "value")]
-    [TestCase(" value ", "value")]
-    [TestCase("  value", "value")]
-    [TestCase("value  ", "value")]
-    public void Normalize_ReturnsExpected(string input, string expected)
-    {
-        var actual = TextParsingUtility.Normalize(input);
-
-        Assert.That(actual, Is.EqualTo(expected));
     }
 }

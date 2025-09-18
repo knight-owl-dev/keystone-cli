@@ -3,6 +3,18 @@ namespace Keystone.Cli.Application.Utility.Text;
 /// <summary>
 /// Common text parsing utilities.
 /// </summary>
+/// <remarks>
+/// <para>
+/// This utility is compatible with both regular text files and environment files.
+/// It provides methods to identify comment and whitespace lines, format and parse
+/// key-value pairs.
+/// </para>
+/// <para>
+/// Environment key-value formatting is compatible with Docker-compose and similar tools.
+/// For more information, refer to <a href="https://docs.docker.com/compose/env-file/">
+/// Docker Compose Environment File documentation</a>.
+/// </para>
+/// </remarks>
 public static class TextParsingUtility
 {
     /// <summary>
@@ -93,6 +105,6 @@ public static class TextParsingUtility
     /// <returns>
     /// A trimmed text value, or <c>null</c> if the input is <c>null</c>, empty, or consists only of whitespace.
     /// </returns>
-    public static string? Normalize(string text)
+    private static string? Normalize(string text)
         => string.IsNullOrWhiteSpace(text) ? null : text.Trim();
 }
