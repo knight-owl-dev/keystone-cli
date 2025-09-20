@@ -103,30 +103,31 @@ public static partial class TextParsingUtility
     /// </returns>
     public static KeyValuePair<string, string?> ParseKeyValuePair(string line)
     {
-        var separatorIndex = line.IndexOf('=');
-        if (separatorIndex <= 0)
+        var match = GetKeyValuePairParsingRx().Match(line);
+        if (! match.Success)
         {
             return default;
         }
 
-        return Normalize(line[..separatorIndex]) is { } key
-            ? new KeyValuePair<string, string?>(key, value: Normalize(line[(separatorIndex + 1)..]))
-            : default;
-    }
+        var key = match.Groups["key"].Value.Trim();
+        var value = UnwrapMatch(match) switch
+        {
+            (QuoteStyle.None, var raw) => raw.Trim(),
+            (QuoteStyle.Single, var raw) => raw,
+            (QuoteStyle.Double, var raw) => UnescapeDoubleQuoted(raw),
+            _ => default,
+        };
 
-    /// <summary>
-    /// Normalizes a text value by trimming leading and trailing whitespace.
-    /// </summary>
-    /// <param name="text">A text value.</param>
-    /// <returns>
-    /// A trimmed text value, or <c>null</c> if the input is <c>null</c>, empty, or consists only of whitespace.
-    /// </returns>
-    private static string? Normalize(string text)
-        => string.IsNullOrWhiteSpace(text) ? null : text.Trim();
+        return new KeyValuePair<string, string?>(key, string.IsNullOrWhiteSpace(value) ? null : value);
+    }
 
     /// <summary>
     /// Supported quoting styles for key-value pair values.
     /// </summary>
+    /// <remarks>
+    /// Each field must correspond to a named capturing group in <see cref="GetKeyValuePairParsingRx"/>
+    /// for the <see cref="UnwrapMatch"/> method to work correctly.
+    /// </remarks>
     private enum QuoteStyle
     {
         /// <summary>
@@ -178,12 +179,31 @@ public static partial class TextParsingUtility
     }
 
     /// <summary>
+    /// Unwraps a successful match from <see cref="GetKeyValuePairParsingRx"/> expression.
+    /// </summary>
+    /// <param name="match">The successful match.</param>
+    /// <returns>
+    /// The quote style and the matched raw value.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if no matching group was found, indicating an unexpected state.
+    /// </exception>
+    private static (QuoteStyle QuoteStyle, string Value) UnwrapMatch(Match match)
+        => Enum.GetValues<QuoteStyle>().Join(
+            match.Groups.Where<Group>(group => group.Success),
+            quoteStyle => quoteStyle.ToString(),
+            group => group.Name,
+            (quoteStyle, group) => (quoteStyle, group.Value)
+        ).First();
+
+    /// <summary>
     /// Escapes special characters in a double-quoted string value.
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>
     /// The escaped string value.
     /// </returns>
+    /// <seealso cref="UnescapeDoubleQuoted"/>
     private static string EscapeDoubleQuotedString(string value)
         => value
             .Replace("\\", @"\\")
@@ -191,6 +211,22 @@ public static partial class TextParsingUtility
             .Replace("\n", "\\n")
             .Replace("\t", "\\t")
             .Replace("\"", "\\\"");
+
+    /// <summary>
+    /// Unescapes special characters in a double-quoted string value.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    /// <returns>
+    /// The unescaped string value.
+    /// </returns>
+    /// <seealso cref="EscapeDoubleQuotedString"/>
+    private static string UnescapeDoubleQuoted(string value)
+        => value
+            .Replace("\\r", "\r")
+            .Replace("\\n", "\n")
+            .Replace("\\t", "\t")
+            .Replace("\\\"", "\"")
+            .Replace(@"\\", @"\");
 
     /// <summary>
     /// Gets a regular expression to check for literal control sequences.
@@ -223,4 +259,16 @@ public static partial class TextParsingUtility
     /// </returns>
     [GeneratedRegex(@"[\s#']")]
     private static partial Regex GetComplexSequenceRx();
+
+    /// <summary>
+    /// Gets a regular expression to parse key-value pairs with all supported quoting styles and comments.
+    /// </summary>
+    /// <remarks>
+    /// Note, how <em>value</em> matching group names use the <see cref="QuoteStyle"/> case-sensitive literals.
+    /// </remarks>
+    /// <returns>
+    /// The compiled regular expression.
+    /// </returns>
+    [GeneratedRegex("""^\s*(?<key>[^=]+?)\s*=\s*(?:(?:"(?<Double>(?:[^"\\]|\\.)*)")|(?:'(?<Single>(?:[^'\\]|\\.)*)')|(?<None>.*?))(?:\s+#.*)?$""")]
+    private static partial Regex GetKeyValuePairParsingRx();
 }

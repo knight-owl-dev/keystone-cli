@@ -108,7 +108,7 @@ public class TextParsingUtilityTests
             ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE WITH \"ESCAPED QUOTE\""),
             TestName = "QuotedWithEscapedQuote",
         },
-        new("KEY=\"VALUE [\\r\\n\\t\\]")
+        new("KEY=\"VALUE [\\r\\n\\t\\\\]\"")
         {
             ExpectedResult = new KeyValuePair<string, string?>("KEY", "VALUE [\r\n\t\\]"),
             TestName = "QuotedWithControlCharacters",
