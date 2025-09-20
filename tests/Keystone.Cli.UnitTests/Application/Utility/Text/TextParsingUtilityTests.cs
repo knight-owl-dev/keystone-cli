@@ -43,7 +43,7 @@ public class TextParsingUtilityTests
         },
         new(new KeyValuePair<string, string?>("KEY", "\"VALUE\""))
         {
-            ExpectedResult = "KEY=\"\"VALUE\"\"",
+            ExpectedResult = "KEY='\"VALUE\"'",
             TestName = "Quoted",
         },
         new(new KeyValuePair<string, string?>("KEY", "IT'S"))
@@ -53,7 +53,7 @@ public class TextParsingUtilityTests
         },
         new(new KeyValuePair<string, string?>("KEY", "VALUE [\r\n\t\\]"))
         {
-            ExpectedResult = "KEY=\"VALUE [\\r\\n\\t\\]\"",
+            ExpectedResult = "KEY=\"VALUE [\\r\\n\\t\\\\]\"",
             TestName = "ControlCharacters",
         },
         new(new KeyValuePair<string, string?>("KEY", @"VALUE [\r\n\t\]"))

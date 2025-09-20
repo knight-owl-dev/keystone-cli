@@ -1,3 +1,6 @@
+using System.Text.RegularExpressions;
+
+
 namespace Keystone.Cli.Application.Utility.Text;
 
 /// <summary>
@@ -15,7 +18,7 @@ namespace Keystone.Cli.Application.Utility.Text;
 /// Docker Compose Environment File documentation</a>.
 /// </para>
 /// </remarks>
-public static class TextParsingUtility
+public static partial class TextParsingUtility
 {
     /// <summary>
     /// Checks if a line is either empty, contains only whitespace, or is a comment line (starts with '#').
@@ -42,7 +45,20 @@ public static class TextParsingUtility
     /// <param name="value">The value to format. If <c>null</c>, an empty string is used for the value.</param>
     /// <returns>A string in the form <c>KEY=VALUE</c>.</returns>
     public static string GetKeyValueString(string key, string? value)
-        => $"{key}={value ?? string.Empty}";
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return $"{key}=";
+        }
+
+        return GetQuoteStyle(value) switch
+        {
+            QuoteStyle.None => $"{key}={value}",
+            QuoteStyle.Single => $"{key}='{value}'",
+            QuoteStyle.Double => $"{key}=\"{EscapeDoubleQuotedString(value)}\"",
+            _ => throw new InvalidOperationException("Unexpected quote style."),
+        };
+    }
 
     /// <summary>
     /// Tries to parse a key-value pair from a content line.
@@ -107,4 +123,104 @@ public static class TextParsingUtility
     /// </returns>
     private static string? Normalize(string text)
         => string.IsNullOrWhiteSpace(text) ? null : text.Trim();
+
+    /// <summary>
+    /// Supported quoting styles for key-value pair values.
+    /// </summary>
+    private enum QuoteStyle
+    {
+        /// <summary>
+        /// No quoting, no escaping necessary for simple values.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// Single-quoting with <c>'</c> and no escaping is necessary.
+        /// </summary>
+        Single,
+
+        /// <summary>
+        /// Double-quoting with <c>"</c> escaping is necessary.
+        /// </summary>
+        Double,
+    }
+
+    /// <summary>
+    /// Gets the appropriate quoting style for a value when serializing a key-value pair.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// If someone uses literal control sequences in their data, like <c>\r</c>, <c>\n</c>, <c>\t</c>, or <c>\\</c>,
+    /// we need to single-quote the value to prevent them from being interpreted.
+    /// </para>
+    /// <para>
+    /// Otherwise, if the value contains whitespace, <c>#</c>, or single quote (<c>'</c>) characters,
+    /// we need to double-quote the value and escape special characters.
+    /// </para>
+    /// <para>
+    /// Simple values that do not contain any of these characters can be left unquoted.
+    /// </para>
+    /// </remarks>
+    /// <param name="value">The value.</param>
+    /// <returns>
+    /// The appropriate quoting style for the value.
+    /// </returns>
+    private static QuoteStyle GetQuoteStyle(string value)
+    {
+        if (GetLiteralControlSequenceRx().IsMatch(value) || value.Contains('"'))
+        {
+            return QuoteStyle.Single;
+        }
+
+        return GetComplexSequenceRx().IsMatch(value)
+            ? QuoteStyle.Double
+            : QuoteStyle.None;
+    }
+
+    /// <summary>
+    /// Escapes special characters in a double-quoted string value.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    /// <returns>
+    /// The escaped string value.
+    /// </returns>
+    private static string EscapeDoubleQuotedString(string value)
+        => value
+            .Replace("\\", @"\\")
+            .Replace("\r", "\\r")
+            .Replace("\n", "\\n")
+            .Replace("\t", "\\t")
+            .Replace("\"", "\\\"");
+
+    /// <summary>
+    /// Gets a regular expression to check for literal control sequences.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Values containing literal control sequences like <c>\r</c>, <c>\n</c>, <c>\t</c>, or <c>\\</c>
+    /// need to be single-quoted to prevent them from being interpreted.
+    /// </para>
+    ///
+    /// <para>
+    /// Note, this expression does not check for <c>"</c> since that is handled separately. Ideally,
+    /// strings containing <c>"</c> should also be single-quoted, but this is not strictly necessary.
+    /// </para>
+    /// </remarks>
+    /// <returns>
+    /// The compiled regular expression.
+    /// </returns>
+    [GeneratedRegex(@"\\[rnt\\]")]
+    private static partial Regex GetLiteralControlSequenceRx();
+
+    /// <summary>
+    /// Gets a regular expression to check for complex sequences.
+    /// </summary>
+    /// <remarks>
+    /// Values need to be double-quoted if they contain whitespace, <c>#</c>, or single quote (<c>'</c>) characters.
+    /// </remarks>
+    /// <returns>
+    /// The compiled regular expression.
+    /// </returns>
+    [GeneratedRegex(@"[\s#']")]
+    private static partial Regex GetComplexSequenceRx();
 }
