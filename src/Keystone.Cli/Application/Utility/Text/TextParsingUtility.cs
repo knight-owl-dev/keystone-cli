@@ -205,12 +205,7 @@ public static partial class TextParsingUtility
     /// </returns>
     /// <seealso cref="UnescapeDoubleQuoted"/>
     private static string EscapeDoubleQuotedString(string value)
-        => value
-            .Replace("\\", @"\\")
-            .Replace("\r", "\\r")
-            .Replace("\n", "\\n")
-            .Replace("\t", "\\t")
-            .Replace("\"", "\\\"");
+        => DoubleQuotedStringEscapeSequences.Aggregate(value, (acc, tuple) => acc.Replace(tuple.Unescaped, tuple.Escaped));
 
     /// <summary>
     /// Unescapes special characters in a double-quoted string value.
@@ -221,12 +216,13 @@ public static partial class TextParsingUtility
     /// </returns>
     /// <seealso cref="EscapeDoubleQuotedString"/>
     private static string UnescapeDoubleQuoted(string value)
-        => value
-            .Replace("\\r", "\r")
-            .Replace("\\n", "\n")
-            .Replace("\\t", "\t")
-            .Replace("\\\"", "\"")
-            .Replace(@"\\", @"\");
+        => DoubleQuotedStringEscapeSequences.Aggregate(value, (acc, tuple) => acc.Replace(tuple.Escaped, tuple.Unescaped));
+
+    /// <summary>
+    /// A mapping of unescaped to escaped sequences for double-quoted strings.
+    /// </summary>
+    private static readonly (string Unescaped, string Escaped)[] DoubleQuotedStringEscapeSequences
+        = [("\\", @"\\"), ("\r", "\\r"), ("\n", "\\n"), ("\t", "\\t"), ("\"", "\\\"")];
 
     /// <summary>
     /// Gets a regular expression to check for literal control sequences.
