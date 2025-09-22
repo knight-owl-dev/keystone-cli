@@ -1,3 +1,6 @@
+using Keystone.Cli.Application.Utility.Serialization.Yaml;
+
+
 namespace Keystone.Cli.Application.Utility.Serialization;
 
 /// <summary>
@@ -6,13 +9,12 @@ namespace Keystone.Cli.Application.Utility.Serialization;
 public interface IYamlFileSerializer
 {
     /// <summary>
-    /// Loads and deserializes YAML content from the specified file path into an instance of <typeparamref name="T"/>.
+    /// Loads and deserializes YAML content from the specified file path into a dictionary.
     /// </summary>
-    /// <typeparam name="T">The type to deserialize the YAML content into.</typeparam>
     /// <param name="path">The full path to the YAML file to read.</param>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     /// <returns>
-    /// A task that represents the asynchronous load operation, containing the deserialized instance of <typeparamref name="T"/>.
+    /// A task that represents the asynchronous load operation, containing the deserialized data.
     /// </returns>
     /// <exception cref="DirectoryNotFoundException">
     /// The specified path is invalid, such as being on an unmapped drive.
@@ -29,7 +31,7 @@ public interface IYamlFileSerializer
     /// <exception cref="OperationCanceledException">
     /// Thrown if the operation is canceled via the provided cancellation token.
     /// </exception>
-    Task<T> LoadAsync<T>(string path, CancellationToken cancellationToken = default);
+    Task<IDictionary<string, YamlValue>> LoadAsync(string path, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Serializes the specified data as YAML and writes it to the given file path.
@@ -37,7 +39,6 @@ public interface IYamlFileSerializer
     /// <remarks>
     /// YAML comments are preserved when saving the file.
     /// </remarks>
-    /// <typeparam name="T">The type of the data being serialized.</typeparam>
     /// <param name="path">The full path to the YAML file to write.</param>
     /// <param name="data">The data to serialize.</param>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
@@ -53,5 +54,5 @@ public interface IYamlFileSerializer
     /// <exception cref="OperationCanceledException">
     /// Thrown if the operation is canceled via the provided cancellation token.
     /// </exception>
-    Task SaveAsync<T>(string path, T data, CancellationToken cancellationToken = default);
+    Task SaveAsync(string path, IDictionary<string, YamlValue> data, CancellationToken cancellationToken = default);
 }
