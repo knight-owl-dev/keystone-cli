@@ -147,6 +147,84 @@ public class YamlFileSerializerTests
     }
 
     [Test]
+    public async Task LoadAsync_IgnoresNestedStructuresAsync()
+    {
+        const string path = "test.yaml";
+        const string yamlContent = """
+            ---
+            key1: value1
+            key2:
+              - item1
+              - item2
+            key3:
+              subkey1: subvalue1
+              subkey2: subvalue2
+            key4: |-
+              This is a multi-line
+              scalar value.
+            ...
+            """;
+
+        var fileSystemService = Substitute.For<IFileSystemService>();
+        var stream = new MemoryStream(Encoding.UTF8.GetBytes(yamlContent));
+        fileSystemService.OpenReadStream(path).Returns(stream);
+
+        // ignores key3 with nested mappings
+        var expected = new Dictionary<string, YamlValue>
+        {
+            ["key1"] = new YamlScalar("value1"),
+            ["key2"] = new YamlArray(["item1", "item2"]),
+            ["key4"] = new YamlScalar(
+                """
+                This is a multi-line
+                scalar value.
+                """
+            ),
+        };
+
+        var sut = Ctor(fileSystemService);
+        var actual = await sut.LoadAsync(path);
+
+        Assert.That(actual, Is.EquivalentTo(expected).IgnoreWhiteSpace);
+    }
+
+    [Test]
+    public async Task LoadAsync_RecognizesAlternativeFormattedYamlAsync()
+    {
+        const string path = "test.yaml";
+
+        // ReSharper disable once StringLiteralTypo
+        const string yamlContent = """
+            ---
+            key1: "value1"
+            key2: ["item1", "item2"]
+            key3: "This is a multi-line\nscalar value."
+            ...
+            """;
+
+        var fileSystemService = Substitute.For<IFileSystemService>();
+        var stream = new MemoryStream(Encoding.UTF8.GetBytes(yamlContent));
+        fileSystemService.OpenReadStream(path).Returns(stream);
+
+        var expected = new Dictionary<string, YamlValue>
+        {
+            ["key1"] = new YamlScalar("value1"),
+            ["key2"] = new YamlArray(["item1", "item2"]),
+            ["key3"] = new YamlScalar(
+                """
+                This is a multi-line
+                scalar value.
+                """
+            ),
+        };
+
+        var sut = Ctor(fileSystemService);
+        var actual = await sut.LoadAsync(path);
+
+        Assert.That(actual, Is.EquivalentTo(expected).IgnoreWhiteSpace);
+    }
+
+    [Test]
     public async Task SaveAsync_WritesUpdatesWithPreservedStructureAsync()
     {
         const string path = "pandoc.yaml";

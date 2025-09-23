@@ -1,3 +1,8 @@
+using System.Text.RegularExpressions;
+using YamlDotNet.Core;
+using YamlDotNet.Serialization;
+
+
 namespace Keystone.Cli.Application.Utility.Text;
 
 /// <summary>
@@ -15,7 +20,7 @@ namespace Keystone.Cli.Application.Utility.Text;
 /// supported are treated as unknown for simplicity and fidelity.
 /// </para>
 /// </remarks>
-public static class YamlParsingUtility
+public static partial class YamlParsingUtility
 {
     /// <summary>
     /// Parses a collection of YAML lines into structured entries.
@@ -23,9 +28,46 @@ public static class YamlParsingUtility
     /// <param name="lines">All lines from a fully loaded YAML file.</param>
     /// <returns>A collection of parsed <see cref="Entry"/> values.</returns>
     public static IEnumerable<Entry> Parse(IReadOnlyCollection<string> lines)
-    {
-        throw new NotImplementedException();
-    }
+        => lines.Aggregate(
+            seed: (
+                Entries: new List<Entry>(),
+                Buffer: new List<string>(),
+                Mode: EntryParsingMode.Unknown
+            ),
+            (acc, line) =>
+            {
+                var (entries, buffer, mode) = acc;
+
+                var nextMode = IsBlankLineOrComment(line)
+                    ? EntryParsingMode.Unknown
+                    : EntryParsingMode.Yaml;
+
+                var shouldFlush = buffer.Count > 0
+                    && (mode != nextMode || (mode == EntryParsingMode.Yaml && TopLevelKeyRx().IsMatch(line)));
+
+                if (shouldFlush)
+                {
+                    entries.Add(ParseBuffer(buffer.ToArray(), mode));
+                    buffer.Clear();
+                }
+
+                buffer.Add(line);
+
+                return acc with
+                {
+                    Mode = nextMode,
+                };
+            },
+            acc =>
+            {
+                if (acc.Buffer.Count > 0)
+                {
+                    acc.Entries.Add(ParseBuffer(acc.Buffer.ToArray(), acc.Mode));
+                }
+
+                return acc.Entries;
+            }
+        );
 
     /// <summary>
     /// Prepares a <see cref="ScalarEntry"/> from a string value.
@@ -137,4 +179,83 @@ public static class YamlParsingUtility
     /// </summary>
     /// <param name="RawLines">Raw lines representing the serialized entry.</param>
     public sealed record UnknownEntry(string[] RawLines) : Entry(PropertyName: null, RawLines, EntryKind.Unknown);
+
+    /// <summary>
+    /// Determines whether a line is blank or a comment.
+    /// </summary>
+    /// <param name="line">The line.</param>
+    /// <returns>
+    /// <c>true</c> if the line starts with <c>#</c> (after trimming leading whitespace)
+    /// or is empty/whitespace; otherwise, <c>false</c>.
+    /// </returns>
+    private static bool IsBlankLineOrComment(string line)
+        => string.IsNullOrWhiteSpace(line) || line.TrimStart().StartsWith('#');
+
+    /// <summary>
+    /// A regex to detect top-level YAML keys (not indented and contains a colon).
+    /// </summary>
+    [GeneratedRegex(@"^([^\s:#]+):(?:\s|$)")]
+    private static partial Regex TopLevelKeyRx();
+
+    /// <summary>
+    /// Entry parsing modes to guide how buffered lines are interpreted.
+    /// </summary>
+    private enum EntryParsingMode
+    {
+        /// <summary>
+        /// Building an unknown entry (e.g. comments, blank lines, or unrecognized formats).
+        /// </summary>
+        Unknown,
+
+        /// <summary>
+        /// Building a YAML entry (either scalar or array).
+        /// </summary>
+        Yaml,
+    }
+
+    /// <summary>
+    /// The YAML deserializer instance configured to ignore unmatched properties.
+    /// </summary>
+    private static readonly IDeserializer YamlDeserializer = new DeserializerBuilder()
+        .IgnoreUnmatchedProperties()
+        .Build();
+
+    private static Entry ParseBuffer(string[] buffer, EntryParsingMode mode)
+    {
+        if (mode == EntryParsingMode.Unknown)
+        {
+            return new UnknownEntry(buffer);
+        }
+
+        try
+        {
+            var yamlText = string.Join(Environment.NewLine, buffer);
+            var yamlObject = YamlDeserializer.Deserialize<Dictionary<string, object?>>(yamlText);
+
+            if (yamlObject is null or { Count: 0 } or { Count: > 1 })
+            {
+                return new UnknownEntry(buffer);
+            }
+
+            var propertyName = yamlObject.Keys.First();
+
+            return yamlObject[propertyName] switch
+            {
+                null => new ScalarEntry(propertyName, null, buffer),
+                string value => new ScalarEntry(propertyName, value, buffer),
+                int value => new ScalarEntry(propertyName, Convert.ToString(value), buffer),
+                bool value => new ScalarEntry(propertyName, Convert.ToString(value), buffer),
+                IEnumerable<object?> values => new ArrayEntry(
+                    propertyName,
+                    [..values.Select(value => Convert.ToString(value) ?? string.Empty)],
+                    buffer
+                ),
+                _ => new UnknownEntry(buffer),
+            };
+        }
+        catch (YamlException)
+        {
+            return new UnknownEntry(buffer);
+        }
+    }
 }
