@@ -28,7 +28,7 @@ public static partial class YamlParsingUtility
     /// </summary>
     /// <param name="lines">All lines from a fully loaded YAML file.</param>
     /// <returns>A collection of parsed <see cref="Entry"/> values.</returns>
-    public static IEnumerable<Entry> Parse(IReadOnlyCollection<string> lines)
+    public static IEnumerable<Entry> Parse(IEnumerable<string> lines)
         => lines.Aggregate(
             seed: (
                 Entries: new List<Entry>(),
