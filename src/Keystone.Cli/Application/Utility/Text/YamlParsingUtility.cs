@@ -326,13 +326,12 @@ public static partial class YamlParsingUtility
     /// </returns>
     private static IEnumerable<string> WriteYamlFragment(string propertyName, object? value)
     {
-        using var writer = new StringWriter();
-
         var yamlObject = new Dictionary<string, object?>
         {
             [propertyName] = value,
         };
 
+        using var writer = new StringWriter();
         YamlSerializer.Serialize(writer, yamlObject);
 
         using var reader = new StringReader(writer.ToString());
