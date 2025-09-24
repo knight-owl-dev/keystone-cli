@@ -317,7 +317,7 @@ public class YamlFileSerializerTests
             # It should be a concise summary of the book's content and purpose.
             # It can span multiple lines, but keep it short and to the point.
             #
-            description: |
+            description: |-
               This is a tribute to beginnings.
               In every language, in every framework, "Hello, world" is the first spark — the moment code speaks back.
               This sample book is your invitation to begin — to build something real, reproducible, and yours.

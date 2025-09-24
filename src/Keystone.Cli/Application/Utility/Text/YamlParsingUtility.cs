@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.EventEmitters;
 
 
 namespace Keystone.Cli.Application.Utility.Text;
@@ -43,7 +44,7 @@ public static partial class YamlParsingUtility
                     : EntryParsingMode.Yaml;
 
                 var shouldFlush = buffer.Count > 0
-                    && (mode != nextMode || (mode == EntryParsingMode.Yaml && TopLevelKeyRx().IsMatch(line)));
+                    && (mode != nextMode || (mode == EntryParsingMode.Yaml && IsTopLevelKeyOrTerminator(line)));
 
                 if (shouldFlush)
                 {
@@ -78,9 +79,7 @@ public static partial class YamlParsingUtility
     /// A <see cref="ScalarEntry"/> representing the provided value.
     /// </returns>
     public static ScalarEntry ToScalarEntry(string propertyName, string? value)
-    {
-        throw new NotImplementedException();
-    }
+        => new(propertyName, value, [..WriteYamlFragment(propertyName, value)]);
 
     /// <summary>
     /// Prepares an <see cref="ArrayEntry"/> from a collection of string items.
@@ -91,9 +90,7 @@ public static partial class YamlParsingUtility
     /// A <see cref="ArrayEntry"/> representing the provided items.
     /// </returns>
     public static ArrayEntry ToArrayEntry(string propertyName, IReadOnlyList<string> items)
-    {
-        throw new NotImplementedException();
-    }
+        => new(propertyName, items, [..WriteYamlFragment(propertyName, items)]);
 
     /// <summary>
     /// Indicates whether the specified entry is a YAML document terminator entry (<c>...</c>).
@@ -192,6 +189,17 @@ public static partial class YamlParsingUtility
         => string.IsNullOrWhiteSpace(line) || line.TrimStart().StartsWith('#');
 
     /// <summary>
+    /// Determines whether a line is a top-level YAML key (not indented and contains a colon)
+    /// or a YAML document terminator line (<c>...</c>).
+    /// </summary>
+    /// <param name="line">The line.</param>
+    /// <returns>
+    /// <c>true</c> if the line is a top-level key or a terminator; otherwise, <c>false</c>.
+    /// </returns>
+    private static bool IsTopLevelKeyOrTerminator(string line)
+        => TopLevelKeyRx().IsMatch(line) || IsTerminatorLine(line);
+
+    /// <summary>
     /// A regex to detect top-level YAML keys (not indented and contains a colon).
     /// </summary>
     [GeneratedRegex(@"^([^\s:#]+):(?:\s|$)")]
@@ -218,6 +226,19 @@ public static partial class YamlParsingUtility
     /// </summary>
     private static readonly IDeserializer YamlDeserializer = new DeserializerBuilder()
         .IgnoreUnmatchedProperties()
+        .Build();
+
+    /// <summary>
+    /// The YAML serializer instance used for generating top-level YAML fragments.
+    /// </summary>
+    /// <remarks>
+    /// The serializer must retain all properties, including those with default values, to avoid accidental removal of keys.
+    /// Since comments are preserved as part of raw lines, omitting a key (due to a default value) may orphan comments or
+    /// shift them to unrelated entries, leading to a loss of context. This serializer is configured to preserve structure
+    /// faithfully and should not omit defaults.
+    /// </remarks>
+    private static readonly ISerializer YamlSerializer = new SerializerBuilder()
+        .WithEventEmitter(nextEmitter => new LiteralMultilineStyleEmitter(nextEmitter))
         .Build();
 
     private static Entry ParseBuffer(string[] buffer, EntryParsingMode mode)
@@ -256,6 +277,62 @@ public static partial class YamlParsingUtility
         catch (YamlException)
         {
             return new UnknownEntry(buffer);
+        }
+    }
+
+    /// <summary>
+    /// Writes a YAML fragment for a given property name and value and returns the resulting YAML lines.
+    /// </summary>
+    /// <remarks>
+    /// The fragment is serialized as a top-level YAML document with a single property.
+    /// </remarks>
+    /// <param name="propertyName">The property name.</param>
+    /// <param name="value">The original.</param>
+    /// <returns>
+    /// Raw lines representing the serialized YAML fragment.
+    /// </returns>
+    private static IEnumerable<string> WriteYamlFragment(string propertyName, object? value)
+    {
+        using var writer = new StringWriter();
+
+        var yamlObject = new Dictionary<string, object?>
+        {
+            [propertyName] = value,
+        };
+
+        YamlSerializer.Serialize(writer, yamlObject);
+
+        using var reader = new StringReader(writer.ToString());
+        while (reader.ReadLine() is { } line)
+        {
+            yield return line;
+        }
+    }
+
+    /// <summary>
+    /// Forces multiline string values to be emitted using the literal block style (using the <c>|</c> indicator).
+    /// </summary>
+    /// <param name="nextEmitter">The next emitter in the chain.</param>
+    internal sealed class LiteralMultilineStyleEmitter(IEventEmitter nextEmitter) : ChainedEventEmitter(nextEmitter)
+    {
+        /// <inheritdoc />
+        public override void Emit(ScalarEventInfo eventInfo, IEmitter emitter)
+        {
+            ScalarEventInfo overrideEventInfo;
+            if (eventInfo.Source.Type == typeof(string) && eventInfo.Source.Value is string text && text.Contains('\n'))
+            {
+                overrideEventInfo = new ScalarEventInfo(eventInfo.Source)
+                {
+                    IsPlainImplicit = false,
+                    Style = ScalarStyle.Literal, // forces |
+                };
+            }
+            else
+            {
+                overrideEventInfo = eventInfo;
+            }
+
+            base.Emit(overrideEventInfo, emitter);
         }
     }
 }
