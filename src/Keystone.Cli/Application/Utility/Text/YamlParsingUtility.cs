@@ -149,6 +149,17 @@ public static partial class YamlParsingUtility
         /// </returns>
         public override string ToString()
             => string.Join(Environment.NewLine, this.RawLines);
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+            => HashCode.Combine(this.PropertyName, this.RawLines, this.Kind);
+
+        /// <inheritdoc />
+        public virtual bool Equals(Entry? other)
+            => other is not null
+                && this.PropertyName == other.PropertyName
+                && this.Kind == other.Kind
+                && this.RawLines.SequenceEqual(other.RawLines);
     }
 
     /// <summary>
@@ -161,7 +172,16 @@ public static partial class YamlParsingUtility
     /// <param name="PropertyName">The property name.</param>
     /// <param name="Value">The value.</param>
     /// <param name="RawLines">Raw lines representing the serialized entry.</param>
-    public sealed record ScalarEntry(string PropertyName, string? Value, string[] RawLines) : Entry(PropertyName, RawLines, EntryKind.Scalar);
+    public sealed record ScalarEntry(string PropertyName, string? Value, string[] RawLines) : Entry(PropertyName, RawLines, EntryKind.Scalar)
+    {
+        /// <inheritdoc />
+        public override int GetHashCode()
+            => HashCode.Combine(base.GetHashCode(), this.Value, typeof(ScalarEntry));
+
+        /// <inheritdoc />
+        public bool Equals(ScalarEntry? other)
+            => base.Equals(other) && this.Value == other.Value;
+    }
 
     /// <summary>
     /// The YAML array entry type.
@@ -169,13 +189,35 @@ public static partial class YamlParsingUtility
     /// <param name="PropertyName">The property name.</param>
     /// <param name="Items">A collection of items.</param>
     /// <param name="RawLines">Raw lines representing the serialized entry.</param>
-    public sealed record ArrayEntry(string PropertyName, IReadOnlyList<string> Items, string[] RawLines) : Entry(PropertyName, RawLines, EntryKind.Array);
+    public sealed record ArrayEntry(string PropertyName, IReadOnlyList<string> Items, string[] RawLines) : Entry(PropertyName, RawLines, EntryKind.Array)
+    {
+        /// <inheritdoc />
+        public override int GetHashCode()
+            => HashCode.Combine(
+                base.GetHashCode(),
+                this.Items.Aggregate(0, (a, b) => a ^ b.GetHashCode()),
+                typeof(ArrayEntry)
+            );
+
+        /// <inheritdoc />
+        public bool Equals(ArrayEntry? other)
+            => base.Equals(other) && this.Items.SequenceEqual(other.Items);
+    }
 
     /// <summary>
     /// The YAML unknown entry type, used for lines that do not conform to expected formats.
     /// </summary>
     /// <param name="RawLines">Raw lines representing the serialized entry.</param>
-    public sealed record UnknownEntry(string[] RawLines) : Entry(PropertyName: null, RawLines, EntryKind.Unknown);
+    public sealed record UnknownEntry(string[] RawLines) : Entry(PropertyName: null, RawLines, EntryKind.Unknown)
+    {
+        /// <inheritdoc />
+        public override int GetHashCode()
+            => HashCode.Combine(base.GetHashCode(), typeof(UnknownEntry));
+
+        /// <inheritdoc />
+        public bool Equals(UnknownEntry? other)
+            => base.Equals(other);
+    }
 
     /// <summary>
     /// Determines whether a line is blank or a comment.
