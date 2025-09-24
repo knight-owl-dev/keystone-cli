@@ -8,7 +8,7 @@ public record YamlArray(IReadOnlyList<string> Items) : YamlValue
 {
     /// <inheritdoc />
     public override int GetHashCode()
-        => this.Items.Aggregate(0, (a, b) => a ^ b.GetHashCode());
+        => this.Items.Aggregate(0, HashCode.Combine);
 
     /// <inheritdoc />
     public virtual bool Equals(YamlArray? other)

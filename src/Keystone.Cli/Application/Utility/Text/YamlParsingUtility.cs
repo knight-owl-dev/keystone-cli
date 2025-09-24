@@ -149,17 +149,6 @@ public static partial class YamlParsingUtility
         /// </returns>
         public override string ToString()
             => string.Join(Environment.NewLine, this.RawLines);
-
-        /// <inheritdoc />
-        public override int GetHashCode()
-            => HashCode.Combine(this.PropertyName, this.RawLines, this.Kind);
-
-        /// <inheritdoc />
-        public virtual bool Equals(Entry? other)
-            => other is not null
-                && this.PropertyName == other.PropertyName
-                && this.Kind == other.Kind
-                && this.RawLines.SequenceEqual(other.RawLines);
     }
 
     /// <summary>
@@ -176,11 +165,14 @@ public static partial class YamlParsingUtility
     {
         /// <inheritdoc />
         public override int GetHashCode()
-            => HashCode.Combine(base.GetHashCode(), this.Value, typeof(ScalarEntry));
+            => HashCode.Combine(this.PropertyName, this.Value);
 
         /// <inheritdoc />
         public bool Equals(ScalarEntry? other)
-            => base.Equals(other) && this.Value == other.Value;
+            => other is not null
+                && this.PropertyName == other.PropertyName
+                && this.Value == other.Value
+                && this.RawLines.SequenceEqual(other.RawLines);
     }
 
     /// <summary>
@@ -193,15 +185,14 @@ public static partial class YamlParsingUtility
     {
         /// <inheritdoc />
         public override int GetHashCode()
-            => HashCode.Combine(
-                base.GetHashCode(),
-                this.Items.Aggregate(0, (a, b) => a ^ b.GetHashCode()),
-                typeof(ArrayEntry)
-            );
+            => HashCode.Combine(this.PropertyName, this.Items.Aggregate(0, HashCode.Combine));
 
         /// <inheritdoc />
         public bool Equals(ArrayEntry? other)
-            => base.Equals(other) && this.Items.SequenceEqual(other.Items);
+            => other is not null
+                && this.PropertyName == other.PropertyName
+                && this.Items.SequenceEqual(other.Items)
+                && this.RawLines.SequenceEqual(other.RawLines);
     }
 
     /// <summary>
@@ -212,11 +203,11 @@ public static partial class YamlParsingUtility
     {
         /// <inheritdoc />
         public override int GetHashCode()
-            => HashCode.Combine(base.GetHashCode(), typeof(UnknownEntry));
+            => HashCode.Combine(this.RawLines.Aggregate(0, HashCode.Combine));
 
         /// <inheritdoc />
         public bool Equals(UnknownEntry? other)
-            => base.Equals(other);
+            => other is not null && this.RawLines.SequenceEqual(other.RawLines);
     }
 
     /// <summary>
