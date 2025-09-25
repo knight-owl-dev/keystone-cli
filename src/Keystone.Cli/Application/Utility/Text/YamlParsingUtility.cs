@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
@@ -139,17 +140,7 @@ public static partial class YamlParsingUtility
     /// <param name="PropertyName">The property name.</param>
     /// <param name="RawLines">Raw lines representing the serialized entry.</param>
     /// <param name="Kind">The kind of YAML entry.</param>
-    public abstract record Entry(string? PropertyName, string[] RawLines, EntryKind Kind)
-    {
-        /// <summary>
-        /// Gets a string representation of the entry.
-        /// </summary>
-        /// <returns>
-        /// <see cref="RawLines"/> as read from the source.
-        /// </returns>
-        public override string ToString()
-            => string.Join(Environment.NewLine, this.RawLines);
-    }
+    public abstract record Entry(string? PropertyName, string[] RawLines, EntryKind Kind);
 
     /// <summary>
     /// The YAML scalar entry type.
@@ -173,6 +164,14 @@ public static partial class YamlParsingUtility
                 && this.PropertyName == other.PropertyName
                 && this.Value == other.Value
                 && this.RawLines.SequenceEqual(other.RawLines);
+
+        protected override bool PrintMembers(StringBuilder builder)
+        {
+            builder.Append($"{nameof(this.PropertyName)}: {this.PropertyName}, ");
+            builder.Append($"{nameof(this.Value)}: {this.Value}");
+
+            return true;
+        }
     }
 
     /// <summary>
@@ -193,6 +192,14 @@ public static partial class YamlParsingUtility
                 && this.PropertyName == other.PropertyName
                 && this.Items.SequenceEqual(other.Items)
                 && this.RawLines.SequenceEqual(other.RawLines);
+
+        protected override bool PrintMembers(StringBuilder builder)
+        {
+            builder.Append($"{nameof(this.PropertyName)}: {this.PropertyName}, ");
+            builder.Append($"{nameof(this.Items)}: [{string.Join(", ", this.Items)}]");
+
+            return true;
+        }
     }
 
     /// <summary>
@@ -208,6 +215,13 @@ public static partial class YamlParsingUtility
         /// <inheritdoc />
         public bool Equals(UnknownEntry? other)
             => other is not null && this.RawLines.SequenceEqual(other.RawLines);
+
+        protected override bool PrintMembers(StringBuilder builder)
+        {
+            builder.Append(string.Join(Environment.NewLine, this.RawLines));
+
+            return true;
+        }
     }
 
     /// <summary>

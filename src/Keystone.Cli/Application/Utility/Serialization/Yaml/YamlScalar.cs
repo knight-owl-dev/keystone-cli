@@ -1,3 +1,6 @@
+using System.Text;
+
+
 namespace Keystone.Cli.Application.Utility.Serialization.Yaml;
 
 /// <summary>
@@ -10,4 +13,11 @@ public record YamlScalar(string? Value) : YamlValue
     /// The YAML <c>null</c> value.
     /// </summary>
     public static YamlScalar Null = new(Value: null);
+
+    protected override bool PrintMembers(StringBuilder builder)
+    {
+        builder.Append(this.Value);
+
+        return true;
+    }
 }
