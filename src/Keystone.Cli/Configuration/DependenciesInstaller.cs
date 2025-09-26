@@ -42,5 +42,6 @@ public static class DependenciesInstaller
             .AddSingleton<IProjectModelRepository, ProjectModelRepository>()
             .AddSingleton<ITemplateService, TemplateService>()
             .AddSingleton<ITemplateTargetsRepository, TemplateTargetsRepository>()
-            .AddSingleton<ITextFileSerializer, TextFileSerializer>();
+            .AddSingleton<ITextFileSerializer, TextFileSerializer>()
+            .AddSingleton<IYamlFileSerializer, YamlFileSerializer>();
 }
