@@ -177,6 +177,9 @@ public static partial class YamlParsingUtility
     /// <summary>
     /// The YAML array entry type.
     /// </summary>
+    /// <remarks>
+    /// Supports only scalar string items. Complex nested structures are not supported.
+    /// </remarks>
     /// <param name="PropertyName">The property name.</param>
     /// <param name="Items">A collection of items.</param>
     /// <param name="RawLines">Raw lines representing the serialized entry.</param>
@@ -289,6 +292,14 @@ public static partial class YamlParsingUtility
         .WithIndentedSequences()
         .Build();
 
+    /// <summary>
+    /// Parses a buffer of lines into a structured <see cref="Entry"/> based on the specified mode.
+    /// </summary>
+    /// <param name="buffer">The buffered lines.</param>
+    /// <param name="mode">The parsing mode.</param>
+    /// <returns>
+    /// The parsed <see cref="Entry"/>.
+    /// </returns>
     private static Entry ParseBuffer(string[] buffer, EntryParsingMode mode)
     {
         if (mode == EntryParsingMode.Unknown)
@@ -312,13 +323,17 @@ public static partial class YamlParsingUtility
             {
                 null => new ScalarEntry(propertyName, null, buffer),
                 string value => new ScalarEntry(propertyName, value, buffer),
-                IEnumerable<object?> values => new ArrayEntry(
+                IEnumerable<object?> values when IsScalarArray(values) => new ArrayEntry(
                     propertyName,
                     [..values.Select(value => Convert.ToString(value) ?? string.Empty)],
                     buffer
                 ),
                 _ => new UnknownEntry(buffer),
             };
+
+            // support only scalar arrays
+            static bool IsScalarArray(object? obj)
+                => obj is IEnumerable<object?> values && values.All(value => value is null or string);
         }
         catch (YamlException)
         {

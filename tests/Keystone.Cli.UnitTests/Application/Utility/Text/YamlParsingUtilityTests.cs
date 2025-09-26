@@ -238,6 +238,17 @@ public class YamlParsingUtilityTests
     }
 
     [Test]
+    public void Parse_ArrayOfObjects_ReturnsUnknownEntry()
+    {
+        var lines = new[] { "items:", "  - name: Item1", "    value: 10", "  - name: Item2", "    value: 20" };
+        var expected = new[] { new YamlParsingUtility.UnknownEntry(lines) };
+
+        var actual = YamlParsingUtility.Parse(lines).ToArray();
+
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Test]
     public void Parse_MultipleDocuments_ReturnsAllEntries()
     {
         string[] lines =
