@@ -77,7 +77,7 @@ public class YamlSerializationHelpersTests
     public void ToEntry_WithArrayValue_ReturnsArrayEntry()
     {
         var value = new YamlArray(["x", "y"]);
-        var expected = new YamlParsingUtility.ArrayEntry("arr", ["x", "y"], ["arr:", "- x", "- y"]);
+        var expected = new YamlParsingUtility.ArrayEntry("arr", ["x", "y"], ["arr:", "  - x", "  - y"]);
 
         var actual = YamlSerializationHelpers.ToEntry("arr", value);
 
@@ -110,7 +110,7 @@ public class YamlSerializationHelpersTests
     public void AsEntry_WithArrayValue_ReturnsArrayEntry()
     {
         var kvp = new KeyValuePair<string, YamlValue>("foo", new YamlArray(["a", "b"]));
-        var expected = new YamlParsingUtility.ArrayEntry("foo", ["a", "b"], ["foo:", "- a", "- b"]);
+        var expected = new YamlParsingUtility.ArrayEntry("foo", ["a", "b"], ["foo:", "  - a", "  - b"]);
 
         var actual = YamlSerializationHelpers.AsEntry(kvp);
 

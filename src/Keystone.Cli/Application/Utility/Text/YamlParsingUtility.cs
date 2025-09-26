@@ -286,6 +286,7 @@ public static partial class YamlParsingUtility
     /// </remarks>
     private static readonly ISerializer YamlSerializer = new SerializerBuilder()
         .WithEventEmitter(nextEmitter => new LiteralMultilineStyleEmitter(nextEmitter))
+        .WithIndentedSequences()
         .Build();
 
     private static Entry ParseBuffer(string[] buffer, EntryParsingMode mode)
