@@ -312,8 +312,6 @@ public static partial class YamlParsingUtility
             {
                 null => new ScalarEntry(propertyName, null, buffer),
                 string value => new ScalarEntry(propertyName, value, buffer),
-                int value => new ScalarEntry(propertyName, Convert.ToString(value), buffer),
-                bool value => new ScalarEntry(propertyName, Convert.ToString(value), buffer),
                 IEnumerable<object?> values => new ArrayEntry(
                     propertyName,
                     [..values.Select(value => Convert.ToString(value) ?? string.Empty)],

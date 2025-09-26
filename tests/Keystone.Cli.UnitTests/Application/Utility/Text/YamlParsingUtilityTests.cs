@@ -106,6 +106,28 @@ public class YamlParsingUtilityTests
     }
 
     [Test]
+    public void Parse_ScalarEntry_Boolean()
+    {
+        var lines = new[] { "author: true" };
+        var expected = new[] { new YamlParsingUtility.ScalarEntry("author", "true", lines) };
+
+        var actual = YamlParsingUtility.Parse(lines).ToArray();
+
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void Parse_ScalarEntry_Int()
+    {
+        var lines = new[] { "count: 42" };
+        var expected = new[] { new YamlParsingUtility.ScalarEntry("count", "42", lines) };
+
+        var actual = YamlParsingUtility.Parse(lines).ToArray();
+
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Test]
     public void Parse_ArrayEntry_ReturnsArrayEntry()
     {
         var lines = new[] { "keywords:", "  - hello-world", "  - keystone", "  - book" };
@@ -295,6 +317,24 @@ public class YamlParsingUtilityTests
         );
 
         var actual = YamlParsingUtility.ToScalarEntry("description", "This is a description\nthat spans multiple lines.");
+
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void ToScalarEntry_CreatesScalarEntry_Boolean()
+    {
+        var expected = new YamlParsingUtility.ScalarEntry("isActive", "true", ["isActive: true"]);
+        var actual = YamlParsingUtility.ToScalarEntry("isActive", "true");
+
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void ToScalarEntry_CreatesScalarEntry_Int()
+    {
+        var expected = new YamlParsingUtility.ScalarEntry("count", "42", ["count: 42"]);
+        var actual = YamlParsingUtility.ToScalarEntry("count", "42");
 
         Assert.That(actual, Is.EqualTo(expected));
     }
