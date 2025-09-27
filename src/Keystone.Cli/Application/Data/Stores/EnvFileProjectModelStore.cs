@@ -19,10 +19,10 @@ public class EnvFileProjectModelStore(
 {
     private const string KeystoneProject = "KEYSTONE_PROJECT";
     private const string KeystoneCoverImage = "KEYSTONE_COVER_IMAGE";
-    private const string KeystoneLatexPapersize = "KEYSTONE_LATEX_PAPERSIZE";
+    private const string KeystoneLatexPaperSize = "KEYSTONE_LATEX_PAPERSIZE";
     private const string KeystoneLatexGeometry = "KEYSTONE_LATEX_GEOMETRY";
     private const string KeystoneLatexFontsize = "KEYSTONE_LATEX_FONTSIZE";
-    private const string KeystoneLatexFontfamily = "KEYSTONE_LATEX_FONTFAMILY";
+    private const string KeystoneLatexFontFamily = "KEYSTONE_LATEX_FONTFAMILY";
     private const string KeystoneDockerComposeProject = "KEYSTONE_DOCKER_COMPOSE_PROJECT";
     private const string KeystoneDockerImage = "KEYSTONE_DOCKER_IMAGE";
 
@@ -42,10 +42,10 @@ public class EnvFileProjectModelStore(
         {
             ProjectName = GetValueOrDefault(envValues, KeystoneProject),
             CoverImage = GetValueOrDefault(envValues, KeystoneCoverImage),
-            LatexPapersize = GetValueOrDefault(envValues, KeystoneLatexPapersize),
+            LatexPapersize = GetValueOrDefault(envValues, KeystoneLatexPaperSize),
             LatexGeometry = GetValueOrDefault(envValues, KeystoneLatexGeometry),
             LatexFontsize = GetValueOrDefault(envValues, KeystoneLatexFontsize),
-            LatexFontfamily = GetValueOrDefault(envValues, KeystoneLatexFontfamily),
+            LatexFontfamily = GetValueOrDefault(envValues, KeystoneLatexFontFamily),
             DockerComposeProject = GetValueOrDefault(envValues, KeystoneDockerComposeProject),
             DockerImage = GetValueOrDefault(envValues, KeystoneDockerImage),
         };
@@ -60,10 +60,10 @@ public class EnvFileProjectModelStore(
         {
             [KeystoneProject] = model.ProjectName,
             [KeystoneCoverImage] = model.CoverImage,
-            [KeystoneLatexPapersize] = model.LatexPapersize,
+            [KeystoneLatexPaperSize] = model.LatexPapersize,
             [KeystoneLatexGeometry] = model.LatexGeometry,
             [KeystoneLatexFontsize] = model.LatexFontsize,
-            [KeystoneLatexFontfamily] = model.LatexFontfamily,
+            [KeystoneLatexFontFamily] = model.LatexFontfamily,
             [KeystoneDockerComposeProject] = model.DockerComposeProject,
             [KeystoneDockerImage] = model.DockerImage,
         };
@@ -78,10 +78,10 @@ public class EnvFileProjectModelStore(
         {
             [KeystoneProject] = model.ProjectName,
             [KeystoneCoverImage] = model.CoverImage,
-            [KeystoneLatexPapersize] = model.LatexPapersize,
+            [KeystoneLatexPaperSize] = model.LatexPapersize,
             [KeystoneLatexGeometry] = model.LatexGeometry,
             [KeystoneLatexFontsize] = model.LatexFontsize,
-            [KeystoneLatexFontfamily] = model.LatexFontfamily,
+            [KeystoneLatexFontFamily] = model.LatexFontfamily,
             [KeystoneDockerComposeProject] = model.DockerComposeProject,
             [KeystoneDockerImage] = model.DockerImage,
         };
