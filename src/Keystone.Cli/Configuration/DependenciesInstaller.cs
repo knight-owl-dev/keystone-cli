@@ -41,6 +41,7 @@ public static class DependenciesInstaller
             .AddSingleton<IProjectCommand, ProjectCommand>()
             .AddSingleton<IProjectModelPolicyEnforcer, ProjectModelPolicyEnforcer>()
             .AddSingleton<IProjectModelRepository, ProjectModelRepository>()
+            .AddSingleton<IProjectModelStore, EnvFileProjectModelStore>()
             .AddSingleton<IProjectModelStore, PublishFileProjectModelStore>()
             .AddSingleton<ITemplateService, TemplateService>()
             .AddSingleton<ITemplateTargetsRepository, TemplateTargetsRepository>()
