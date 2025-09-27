@@ -43,6 +43,7 @@ public static class DependenciesInstaller
             .AddSingleton<IProjectModelRepository, ProjectModelRepository>()
             .AddSingleton<IProjectModelStore, EnvFileProjectModelStore>()
             .AddSingleton<IProjectModelStore, PublishFileProjectModelStore>()
+            .AddSingleton<IProjectModelStore, SyncFileProjectModelStore>()
             .AddSingleton<ITemplateService, TemplateService>()
             .AddSingleton<ITemplateTargetsRepository, TemplateTargetsRepository>()
             .AddSingleton<ITextFileSerializer, TextFileSerializer>()

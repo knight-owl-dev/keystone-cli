@@ -41,4 +41,9 @@ public record KeystoneSyncModel(string TemplateRepositoryName)
     /// The timestamp of the last synchronization with the Keystone template repository.
     /// </summary>
     public DateTime? TemplateRepositorySyncedAt { get; init; }
+
+    /// <summary>
+    /// The note associated with the last synchronization, if any.
+    /// </summary>
+    public string? Note { get; init; }
 }
