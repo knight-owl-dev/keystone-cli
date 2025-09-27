@@ -4,6 +4,7 @@ using Keystone.Cli.Application.Commands.Info;
 using Keystone.Cli.Application.Commands.New;
 using Keystone.Cli.Application.Commands.Project;
 using Keystone.Cli.Application.Data;
+using Keystone.Cli.Application.Data.Stores;
 using Keystone.Cli.Application.FileSystem;
 using Keystone.Cli.Application.GitHub;
 using Keystone.Cli.Application.Project;
@@ -40,6 +41,7 @@ public static class DependenciesInstaller
             .AddSingleton<IProjectCommand, ProjectCommand>()
             .AddSingleton<IProjectModelPolicyEnforcer, ProjectModelPolicyEnforcer>()
             .AddSingleton<IProjectModelRepository, ProjectModelRepository>()
+            .AddSingleton<IProjectModelStore, PublishFileProjectModelStore>()
             .AddSingleton<ITemplateService, TemplateService>()
             .AddSingleton<ITemplateTargetsRepository, TemplateTargetsRepository>()
             .AddSingleton<ITextFileSerializer, TextFileSerializer>()
