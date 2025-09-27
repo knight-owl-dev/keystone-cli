@@ -99,18 +99,11 @@ public class EnvFileProjectModelStore(
 
     /// <summary>
     /// Gets the value for the specified key from the environment values dictionary,
-    /// or returns null if the key doesn't exist or the value is null/empty.
+    /// or returns null if the key doesn't exist.
     /// </summary>
     /// <param name="envValues">The environment values dictionary.</param>
     /// <param name="key">The key to look up.</param>
-    /// <returns>The value or null if not found or empty.</returns>
+    /// <returns>The value or null if not found.</returns>
     private static string? GetValueOrDefault(IDictionary<string, string?> envValues, string key)
-    {
-        if (envValues.TryGetValue(key, out var value) && ! string.IsNullOrEmpty(value))
-        {
-            return value;
-        }
-
-        return null;
-    }
+        => envValues.TryGetValue(key, out var value) ? value : null;
 }
