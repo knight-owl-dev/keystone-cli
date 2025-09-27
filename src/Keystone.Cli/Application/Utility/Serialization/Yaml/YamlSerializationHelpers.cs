@@ -73,4 +73,52 @@ public static class YamlSerializationHelpers
             YamlParsingUtility.ArrayEntry arrayEntry => new YamlArray(arrayEntry.Items),
             _ => throw new NotSupportedException($"Unsupported YAML entry type: {entry.GetType().FullName}"),
         };
+
+    /// <summary>
+    /// Gets a scalar string value from YAML data, or returns null if the key doesn't exist or isn't a scalar.
+    /// </summary>
+    /// <param name="yamlData">The YAML data dictionary.</param>
+    /// <param name="key">The key to look up.</param>
+    /// <returns>The scalar value or null if not found or not a scalar.</returns>
+    public static string? GetScalarValueOrDefault(IDictionary<string, YamlValue> yamlData, string key)
+    {
+        if (yamlData.TryGetValue(key, out var yamlValue) && yamlValue is YamlScalar scalar)
+        {
+            return scalar.Value;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Gets a string array from YAML data, or returns null if the key doesn't exist or isn't an array.
+    /// </summary>
+    /// <param name="yamlData">The YAML data dictionary.</param>
+    /// <param name="key">The key to look up.</param>
+    /// <returns>The array values or null if not found or not an array.</returns>
+    public static string[]? GetArrayValueOrDefault(IDictionary<string, YamlValue> yamlData, string key)
+    {
+        if (yamlData.TryGetValue(key, out var yamlValue) && yamlValue is YamlArray array)
+        {
+            return array.Items.ToArray();
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Creates a <see cref="YamlScalar"/> from a string value, returning <see cref="YamlScalar.Null"/> for null values.
+    /// </summary>
+    /// <param name="value">The string value.</param>
+    /// <returns>A <see cref="YamlScalar"/> representing the value.</returns>
+    public static YamlScalar CreateYamlScalar(string? value)
+        => value != null ? new YamlScalar(value) : YamlScalar.Null;
+
+    /// <summary>
+    /// Creates a <see cref="YamlValue"/> from a string array, returning <see cref="YamlScalar.Null"/> for null arrays.
+    /// </summary>
+    /// <param name="items">The string array.</param>
+    /// <returns>A <see cref="YamlArray"/> or <see cref="YamlScalar.Null"/> if the array is null.</returns>
+    public static YamlValue CreateYamlArray(string[]? items)
+        => items != null ? new YamlArray(items) : YamlScalar.Null;
 }

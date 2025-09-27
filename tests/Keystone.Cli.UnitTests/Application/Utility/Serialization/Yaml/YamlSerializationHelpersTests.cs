@@ -161,6 +161,166 @@ public class YamlSerializationHelpersTests
         );
     }
 
+    [Test]
+    public void GetScalarValueOrDefault_WhenKeyExistsAndIsScalar_ReturnsScalarValue()
+    {
+        var yamlData = new Dictionary<string, YamlValue>
+        {
+            ["title"] = new YamlScalar("Test Book"),
+            ["count"] = new YamlScalar("42"),
+        };
+
+        var actual = YamlSerializationHelpers.GetScalarValueOrDefault(yamlData, "title");
+
+        Assert.That(actual, Is.EqualTo("Test Book"));
+    }
+
+    [Test]
+    public void GetScalarValueOrDefault_WhenKeyExistsAndIsNullScalar_ReturnsNull()
+    {
+        var yamlData = new Dictionary<string, YamlValue>
+        {
+            ["title"] = YamlScalar.Null,
+        };
+
+        var actual = YamlSerializationHelpers.GetScalarValueOrDefault(yamlData, "title");
+
+        Assert.That(actual, Is.Null);
+    }
+
+    [Test]
+    public void GetScalarValueOrDefault_WhenKeyExistsButIsArray_ReturnsNull()
+    {
+        var yamlData = new Dictionary<string, YamlValue>
+        {
+            ["keywords"] = new YamlArray(["test", "book"]),
+        };
+
+        var actual = YamlSerializationHelpers.GetScalarValueOrDefault(yamlData, "keywords");
+
+        Assert.That(actual, Is.Null);
+    }
+
+    [Test]
+    public void GetScalarValueOrDefault_WhenKeyDoesNotExist_ReturnsNull()
+    {
+        var yamlData = new Dictionary<string, YamlValue>
+        {
+            ["title"] = new YamlScalar("Test Book"),
+        };
+
+        var actual = YamlSerializationHelpers.GetScalarValueOrDefault(yamlData, "nonexistent");
+
+        Assert.That(actual, Is.Null);
+    }
+
+    [Test]
+    public void GetArrayValueOrDefault_WhenKeyExistsAndIsArray_ReturnsArrayValues()
+    {
+        var yamlData = new Dictionary<string, YamlValue>
+        {
+            ["keywords"] = new YamlArray(["test", "book", "example"]),
+            ["tags"] = new YamlArray(["tag1"]),
+        };
+
+        string[] expected = ["test", "book", "example"];
+
+        var actual = YamlSerializationHelpers.GetArrayValueOrDefault(yamlData, "keywords");
+
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void GetArrayValueOrDefault_WhenKeyExistsAndIsEmptyArray_ReturnsEmptyArray()
+    {
+        var yamlData = new Dictionary<string, YamlValue>
+        {
+            ["keywords"] = new YamlArray([]),
+        };
+
+        var actual = YamlSerializationHelpers.GetArrayValueOrDefault(yamlData, "keywords");
+
+        Assert.That(actual, Is.Empty);
+    }
+
+    [Test]
+    public void GetArrayValueOrDefault_WhenKeyExistsButIsScalar_ReturnsNull()
+    {
+        var yamlData = new Dictionary<string, YamlValue>
+        {
+            ["title"] = new YamlScalar("Test Book"),
+        };
+
+        var actual = YamlSerializationHelpers.GetArrayValueOrDefault(yamlData, "title");
+
+        Assert.That(actual, Is.Null);
+    }
+
+    [Test]
+    public void GetArrayValueOrDefault_WhenKeyDoesNotExist_ReturnsNull()
+    {
+        var yamlData = new Dictionary<string, YamlValue>
+        {
+            ["keywords"] = new YamlArray(["test"]),
+        };
+
+        var actual = YamlSerializationHelpers.GetArrayValueOrDefault(yamlData, "nonexistent");
+
+        Assert.That(actual, Is.Null);
+    }
+
+    [Test]
+    public void CreateYamlScalar_WhenValueIsNotNull_ReturnsYamlScalarWithValue()
+    {
+        var actual = YamlSerializationHelpers.CreateYamlScalar("Test Value");
+
+        Assert.That(actual, Is.EqualTo(new YamlScalar("Test Value")));
+    }
+
+    [Test]
+    public void CreateYamlScalar_WhenValueIsEmptyString_ReturnsYamlScalarWithEmptyString()
+    {
+        var actual = YamlSerializationHelpers.CreateYamlScalar("");
+
+        Assert.That(actual, Is.EqualTo(new YamlScalar("")));
+    }
+
+    [Test]
+    public void CreateYamlScalar_WhenValueIsNull_ReturnsYamlScalarNull()
+    {
+        var actual = YamlSerializationHelpers.CreateYamlScalar(null);
+
+        Assert.That(actual, Is.EqualTo(YamlScalar.Null));
+    }
+
+    [Test]
+    public void CreateYamlArray_WhenItemsIsNotNull_ReturnsYamlArrayWithItems()
+    {
+        string[] items = ["item1", "item2", "item3"];
+
+        var actual = YamlSerializationHelpers.CreateYamlArray(items);
+
+        Assert.That(actual, Is.EqualTo(new YamlArray(items)));
+    }
+
+    [Test]
+    public void CreateYamlArray_WhenItemsIsEmptyArray_ReturnsYamlArrayWithEmptyItems()
+    {
+        var items = Array.Empty<string>();
+
+        var actual = YamlSerializationHelpers.CreateYamlArray(items);
+
+        Assert.That(actual, Is.EqualTo(new YamlArray(items)));
+    }
+
+    [Test]
+    public void CreateYamlArray_WhenItemsIsNull_ReturnsYamlScalarNull()
+    {
+        var actual = YamlSerializationHelpers.CreateYamlArray(null);
+
+        Assert.That(actual, Is.EqualTo(YamlScalar.Null));
+    }
+
     private record DummyYamlValue : YamlValue;
 
     private record DummyEntry() : YamlParsingUtility.Entry(null, [""], YamlParsingUtility.EntryKind.Unknown);
