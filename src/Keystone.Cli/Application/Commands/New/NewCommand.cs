@@ -1,8 +1,4 @@
-using Keystone.Cli.Application.GitHub;
 using Keystone.Cli.Application.Project;
-using Keystone.Cli.Domain.FileSystem;
-using Keystone.Cli.Domain.Policies;
-using Microsoft.Extensions.Logging;
 
 
 namespace Keystone.Cli.Application.Commands.New;
@@ -10,7 +6,7 @@ namespace Keystone.Cli.Application.Commands.New;
 /// <summary>
 /// The "new" command handler.
 /// </summary>
-public class NewCommand(IGitHubService gitHubService, ILogger<NewCommand> logger, ITemplateService templateService, IProjectService projectService)
+public class NewCommand(ITemplateService templateService, IProjectService projectService)
     : INewCommand
 {
     /// <inheritdoc />
@@ -24,26 +20,12 @@ public class NewCommand(IGitHubService gitHubService, ILogger<NewCommand> logger
     {
         var templateTarget = templateService.GetTemplateTarget(templateName);
 
-        logger.LogInformation(
-            "Creating project '{ProjectName}' from {RepositoryUrl} in {Path}",
+        await projectService.CreateNewAsync(
             name,
-            templateTarget.RepositoryUrl,
-            fullPathToProject
+            fullPathToProject,
+            templateTarget,
+            includeGitFiles,
+            cancellationToken
         );
-
-        Func<EntryModel, bool> predicate = includeGitFiles
-            ? EntryModelPredicates.AcceptAll
-            : EntryModelPolicies.ExcludeGitContent;
-
-        await gitHubService.CopyPublicRepositoryAsync(
-            templateTarget.RepositoryUrl,
-            branchName: templateTarget.BranchName,
-            destinationPath: fullPathToProject,
-            overwrite: true,
-            predicate: predicate,
-            cancellationToken: cancellationToken
-        );
-
-        await projectService.SetProjectNameAsync(fullPathToProject, name, cancellationToken);
     }
 }
