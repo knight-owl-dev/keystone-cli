@@ -63,24 +63,4 @@ public class ProjectService(IGitHubService gitHubService, ILogger<ProjectService
 
         return projectModel;
     }
-
-    /// <inheritdoc />
-    public async Task SetProjectNameAsync(string projectRoot, string name, CancellationToken cancellationToken)
-    {
-        var projectModel = await projectModelRepository.LoadAsync(projectRoot, cancellationToken);
-
-        var updatedModel = projectModel with
-        {
-            ProjectName = name,
-        };
-
-        await projectModelRepository.SaveAsync(updatedModel, cancellationToken);
-
-        logger.LogInformation(
-            "Updated the project name from '{OldProjectName}' to '{NewProjectName}' at '{ProjectPath}'",
-            projectModel.ProjectName,
-            name,
-            projectRoot
-        );
-    }
 }
