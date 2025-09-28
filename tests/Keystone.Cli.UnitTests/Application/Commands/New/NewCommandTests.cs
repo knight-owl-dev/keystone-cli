@@ -1,6 +1,7 @@
 using Keystone.Cli.Application;
 using Keystone.Cli.Application.Commands.New;
 using Keystone.Cli.Application.GitHub;
+using Keystone.Cli.Application.Project;
 using Keystone.Cli.Domain;
 using Keystone.Cli.Domain.FileSystem;
 using Keystone.Cli.Domain.Policies;
@@ -18,12 +19,14 @@ public class NewCommandTests
     private static NewCommand Ctor(
         IGitHubService? gitHubService = null,
         ILogger<NewCommand>? logger = null,
-        ITemplateService? templateService = null
+        ITemplateService? templateService = null,
+        IProjectService? projectService = null
     )
         => new(
             gitHubService ?? Substitute.For<IGitHubService>(),
             logger ?? Substitute.For<ILogger<NewCommand>>(),
-            templateService ?? Substitute.For<ITemplateService>()
+            templateService ?? Substitute.For<ITemplateService>(),
+            projectService ?? Substitute.For<IProjectService>()
         );
 
     [Test]
@@ -133,5 +136,30 @@ public class NewCommandTests
             predicate: EntryModelPredicates.AcceptAll,
             cancellationToken: CancellationToken.None
         );
+    }
+
+    [Test]
+    public async Task CreateNewAsync_SetsProjectNameAfterCopyingRepositoryAsync()
+    {
+        const string name = "project-name";
+        const string templateName = "template-name";
+        const string repositoryUrl = "https://github.com/knight-owl-dev/template-a";
+        const string path = $"./{name}";
+        const bool includeGitFiles = false;
+
+        var templateTarget = new TemplateTargetModel(
+            Name: templateName,
+            RepositoryUrl: new Uri(repositoryUrl)
+        );
+
+        var templateService = Substitute.For<ITemplateService>();
+        templateService.GetTemplateTarget(templateName).Returns(templateTarget);
+
+        var projectService = Substitute.For<IProjectService>();
+
+        var sut = Ctor(templateService: templateService, projectService: projectService);
+        await sut.CreateNewAsync(name, templateName, path, includeGitFiles, CancellationToken.None);
+
+        await projectService.Received(1).SetProjectNameAsync(path, name, CancellationToken.None);
     }
 }

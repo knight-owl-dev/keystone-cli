@@ -1,4 +1,5 @@
 using Keystone.Cli.Application.GitHub;
+using Keystone.Cli.Application.Project;
 using Keystone.Cli.Domain.FileSystem;
 using Keystone.Cli.Domain.Policies;
 using Microsoft.Extensions.Logging;
@@ -9,7 +10,7 @@ namespace Keystone.Cli.Application.Commands.New;
 /// <summary>
 /// The "new" command handler.
 /// </summary>
-public class NewCommand(IGitHubService gitHubService, ILogger<NewCommand> logger, ITemplateService templateService)
+public class NewCommand(IGitHubService gitHubService, ILogger<NewCommand> logger, ITemplateService templateService, IProjectService projectService)
     : INewCommand
 {
     /// <inheritdoc />
@@ -42,5 +43,7 @@ public class NewCommand(IGitHubService gitHubService, ILogger<NewCommand> logger
             predicate: predicate,
             cancellationToken: cancellationToken
         );
+
+        await projectService.SetProjectNameAsync(fullPathToProject, name, cancellationToken);
     }
 }
