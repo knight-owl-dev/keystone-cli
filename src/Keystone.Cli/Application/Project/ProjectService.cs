@@ -63,4 +63,26 @@ public class ProjectService(IGitHubService gitHubService, ILogger<ProjectService
 
         return projectModel;
     }
+
+    /// <inheritdoc />
+    public async Task<bool> SwitchTemplateAsync(string fullPathToProject, TemplateTargetModel templateTarget, CancellationToken cancellationToken)
+    {
+        var originalProjectModel = await projectModelRepository.LoadAsync(fullPathToProject, cancellationToken);
+
+        // TODO: check if the originalProjectModel is already using the target template (by comparing KeystoneSync data).
+        // If so, log a corresponding message and return false.
+
+        logger.LogInformation(
+            "Switching project '{ProjectName}' to use {RepositoryUrl} template in {Path}",
+            originalProjectModel.ProjectName,
+            templateTarget.RepositoryUrl,
+            fullPathToProject
+        );
+
+        // TODO: similar to CreateNewAsync, use IGitHubService.CopyPublicRepositoryAsync, must use EntryModelPolicies.ExcludeGitContent.
+        // Then read the newProjectModel (we need its KeystoneSync data).
+        // Update the `originalProjectModel.KeystoneSync` (to use the new sync data) and save it.
+
+        return false;
+    }
 }

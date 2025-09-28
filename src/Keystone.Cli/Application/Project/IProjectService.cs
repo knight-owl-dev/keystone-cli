@@ -30,4 +30,22 @@ public interface IProjectService
         bool includeGitFiles,
         CancellationToken cancellationToken
     );
+
+    /// <summary>
+    /// Switches the template of an existing project to a new template.
+    /// </summary>
+    /// <remarks>
+    /// Switching templates ignores git-related files (e.g., <c>.gitattributes</c>, <c>.gitignore</c>).
+    /// </remarks>
+    /// <param name="fullPathToProject">The full path to the existing project.</param>
+    /// <param name="templateTarget">The new template to apply to the project.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>
+    /// <c>true</c> if the template was switched successfully; <c>false</c> if the project already
+    /// uses the specified template and no change was made.
+    /// </returns>
+    /// <exception cref="ProjectNotLoadedException">
+    /// Thrown if the project at <paramref name="fullPathToProject"/> is not loaded.
+    /// </exception>
+    Task<bool> SwitchTemplateAsync(string fullPathToProject, TemplateTargetModel templateTarget, CancellationToken cancellationToken);
 }
