@@ -64,6 +64,11 @@ public interface IFileSystemService
     /// Opens a write stream to the specified file. If the file does not exist, it is created;
     /// otherwise, the existing file is opened without truncating or overwriting its contents.
     /// </summary>
+    /// <remarks>
+    /// The stream can be used for both reading and writing. The caller is responsible for
+    /// managing the stream's position and ensuring that existing content is preserved or
+    /// overwritten as needed.
+    /// </remarks>
     /// <param name="path">The file to create or overwrite.</param>
     /// <returns>
     /// A stream for writing to the file, positioned at the beginning.

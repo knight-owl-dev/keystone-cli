@@ -24,5 +24,5 @@ public class FileSystemService
 
     /// <inheritdoc />
     public Stream OpenWriteStream(string path)
-        => new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None);
+        => new FileStream(path, FileMode.OpenOrCreate, FileAccess.Read | FileAccess.Write, FileShare.None);
 }
