@@ -19,13 +19,15 @@ is a command-line tool for creating and inspecting projects based on Keystone te
 It provides an easy way to bootstrap a new project, open template repositories, and inspect available metadata.
 
 .Sh COMMANDS
-.Bl -tag -width indent
+.Bl -tag -width "project"
 .It Cm browse
 Opens the template repository in the default browser.
 .It Cm info
 Prints information about available templates.
 .It Cm new
 Creates a new project from a template.
+.It Cm project
+Manages projects, including switching templates.
 .El
 
 .Sh OPTIONS
@@ -119,6 +121,36 @@ The `new` command creates a new project from a selected Keystone template. By de
 code, but does not perform a full `git clone`. If you want to review the template documentation or clone the repository
 directly from GitHub, use the `browse` command first to open the template's repository in your browser.
 
+.Ss Cm project
+The `project` command provides subcommands for managing existing Keystone projects.
+
+.Ss Cm project switch-template
+.Sy Usage:
+.Nm
+.Cm project switch-template
+.Op Fl -project-path Ar string
+.Op Fl h
+.Ar new-template-name
+
+.Pp
+.Bl -tag -width indent
+.It Ar new-template-name
+The name of the new template to switch to.
+
+.It Fl -project-path Ar string
+The path to the project where the template should be switched.
+.Pp
+This can be a relative or absolute path. If not provided, the current working directory is used.
+
+.It Fl h , Fl -help
+Show help message.
+.El
+
+.Pp
+The `project switch-template` command switches an existing Keystone project to use a different template.
+This allows you to migrate projects between templates (e.g., from `core` to `core-slim`) while preserving
+your project's content and configuration.
+
 .Sh EXAMPLES
 
 .Pp
@@ -144,6 +176,14 @@ To create a new project named `my-book` using the `core` template in a specific 
 .Pp
 To create a "Hello World" project named `sample` using the `hello-world` template in the current directory:
 .Dl keystone-cli new --template-name hello-world sample
+
+.Pp
+To switch the current project to use the `core-slim` template:
+.Dl keystone-cli project switch-template core-slim
+
+.Pp
+To switch a project at a specific path to use the `core` template:
+.Dl keystone-cli project switch-template --project-path /path/to/my-project core
 
 .Sh VERSION
 keystone-cli 0.1.0
