@@ -69,8 +69,16 @@ public class ProjectService(IGitHubService gitHubService, ILogger<ProjectService
     {
         var originalProjectModel = await projectModelRepository.LoadAsync(fullPathToProject, cancellationToken);
 
-        // TODO: check if the originalProjectModel is already using the target template (by comparing KeystoneSync data).
-        // If so, log a corresponding message and return false.
+        if (originalProjectModel.KeystoneSync?.TemplateRepositoryName == templateTarget.Name)
+        {
+            logger.LogInformation(
+                "Project '{ProjectName}' already uses {RepositoryUrl} template, no change made",
+                originalProjectModel.ProjectName,
+                templateTarget.RepositoryUrl
+            );
+
+            return false;
+        }
 
         logger.LogInformation(
             "Switching project '{ProjectName}' to use {RepositoryUrl} template in {Path}",
@@ -79,10 +87,26 @@ public class ProjectService(IGitHubService gitHubService, ILogger<ProjectService
             fullPathToProject
         );
 
-        // TODO: similar to CreateNewAsync, use IGitHubService.CopyPublicRepositoryAsync, must use EntryModelPolicies.ExcludeGitContent.
-        // Then read the newProjectModel (we need its KeystoneSync data).
-        // Update the `originalProjectModel.KeystoneSync` (to use the new sync data) and save it.
+        await gitHubService.CopyPublicRepositoryAsync(
+            templateTarget.RepositoryUrl,
+            branchName: templateTarget.BranchName,
+            destinationPath: fullPathToProject,
+            overwrite: true,
+            predicate: EntryModelPolicies.ExcludeGitAndUserContent,
+            cancellationToken: cancellationToken
+        );
 
-        return false;
+        // reload the project model to pick up the KeystoneSync changes from the new template
+        var refreshedProjectModel = await projectModelRepository.LoadAsync(fullPathToProject, cancellationToken);
+
+        // preserve all properties except KeystoneSync, which we want to update
+        var updatedProjectModel = originalProjectModel with
+        {
+            KeystoneSync = refreshedProjectModel.KeystoneSync,
+        };
+
+        await projectModelRepository.SaveAsync(updatedProjectModel, cancellationToken);
+
+        return true;
     }
 }

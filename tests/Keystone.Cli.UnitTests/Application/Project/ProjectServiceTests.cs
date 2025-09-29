@@ -8,6 +8,7 @@ using Keystone.Cli.Domain.Project;
 using Keystone.Cli.UnitTests.Logging;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 
 
 namespace Keystone.Cli.UnitTests.Application.Project;
@@ -208,6 +209,206 @@ public class ProjectServiceTests
             () => sut.CreateNewAsync(projectName, fullPath, templateTarget, includeGitFiles: false, cancellationToken),
             Throws.TypeOf<InvalidOperationException>()
                 .With.Message.Contains($"A project already exists at '{fullPath}' with name '{existingProject.ProjectName}'")
+        );
+    }
+
+    [Test]
+    public async Task SwitchTemplateAsync_WhenProjectAlreadyUsesTemplate_ReturnsFalseAndLogsMessageAsync()
+    {
+        const string projectName = "existing-project";
+        const string fullPath = "/path/to/project";
+        const string templateName = "core";
+        const string repositoryUrl = "https://github.com/knight-owl-dev/template-core";
+
+        var templateTarget = new TemplateTargetModel(
+            Name: templateName,
+            RepositoryUrl: new Uri(repositoryUrl)
+        );
+
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
+
+        var existingProject = new ProjectModel(fullPath)
+        {
+            ProjectName = projectName,
+            KeystoneSync = new KeystoneSyncModel(templateName),
+        };
+
+        var projectModelRepository = Substitute.For<IProjectModelRepository>();
+        projectModelRepository.LoadAsync(fullPath, cancellationToken).Returns(existingProject);
+
+        var logger = new TestLogger<ProjectService>();
+        var sut = Ctor(logger: logger, projectModelRepository: projectModelRepository);
+
+        var actual = await sut.SwitchTemplateAsync(fullPath, templateTarget, cancellationToken);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(actual, Is.False);
+            Assert.That(
+                logger.CapturedLogEntries,
+                Has.Some.Matches<LogEntry>(entry =>
+                    entry.Is(LogLevel.Information, $"Project '{projectName}' already uses {repositoryUrl} template, no change made")
+                )
+            );
+        }
+    }
+
+    [Test]
+    public async Task SwitchTemplateAsync_WhenProjectUsesNullKeystoneSync_SwitchesTemplateAsync()
+    {
+        const string projectName = "existing-project";
+        const string fullPath = "/path/to/project";
+        const string newTemplateName = "core-slim";
+        const string repositoryUrl = "https://github.com/knight-owl-dev/template-core-slim";
+
+        var templateTarget = new TemplateTargetModel(
+            Name: newTemplateName,
+            RepositoryUrl: new Uri(repositoryUrl),
+            BranchName: "main"
+        );
+
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
+
+        var originalProject = new ProjectModel(fullPath)
+        {
+            ProjectName = projectName,
+            KeystoneSync = null,
+        };
+
+        var refreshedProject = new ProjectModel(fullPath)
+        {
+            ProjectName = "template-default-name",
+            KeystoneSync = new KeystoneSyncModel(newTemplateName),
+        };
+
+        var gitHubService = Substitute.For<IGitHubService>();
+        var projectModelRepository = Substitute.For<IProjectModelRepository>();
+        projectModelRepository.LoadAsync(fullPath, cancellationToken).Returns(
+            _ => originalProject,
+            _ => refreshedProject
+        );
+
+        var logger = new TestLogger<ProjectService>();
+        var sut = Ctor(gitHubService: gitHubService, logger: logger, projectModelRepository: projectModelRepository);
+
+        var actual = await sut.SwitchTemplateAsync(fullPath, templateTarget, cancellationToken);
+
+        Assert.That(actual, Is.True);
+
+        await gitHubService.Received(1).CopyPublicRepositoryAsync(
+            templateTarget.RepositoryUrl,
+            branchName: "main",
+            destinationPath: fullPath,
+            overwrite: true,
+            predicate: EntryModelPolicies.ExcludeGitAndUserContent,
+            cancellationToken: cancellationToken
+        );
+
+        var expectedUpdatedModel = originalProject with
+        {
+            KeystoneSync = refreshedProject.KeystoneSync,
+        };
+
+        await projectModelRepository.Received(1).SaveAsync(expectedUpdatedModel, cancellationToken);
+    }
+
+    [Test]
+    public async Task SwitchTemplateAsync_WhenProjectUsesDifferentTemplate_SwitchesTemplateAsync()
+    {
+        const string projectName = "existing-project";
+        const string fullPath = "/path/to/project";
+        const string oldTemplateName = "core";
+        const string newTemplateName = "core-slim";
+        const string repositoryUrl = "https://github.com/knight-owl-dev/template-core-slim";
+
+        var templateTarget = new TemplateTargetModel(
+            Name: newTemplateName,
+            RepositoryUrl: new Uri(repositoryUrl),
+            BranchName: "develop"
+        );
+
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
+
+        var originalProject = new ProjectModel(fullPath)
+        {
+            ProjectName = projectName,
+            KeystoneSync = new KeystoneSyncModel(oldTemplateName),
+        };
+
+        var refreshedProject = new ProjectModel(fullPath)
+        {
+            ProjectName = "template-default-name",
+            KeystoneSync = new KeystoneSyncModel(newTemplateName),
+        };
+
+        var gitHubService = Substitute.For<IGitHubService>();
+        var projectModelRepository = Substitute.For<IProjectModelRepository>();
+        projectModelRepository.LoadAsync(fullPath, cancellationToken).Returns(
+            _ => originalProject,
+            _ => refreshedProject
+        );
+
+        var logger = new TestLogger<ProjectService>();
+        var sut = Ctor(gitHubService: gitHubService, logger: logger, projectModelRepository: projectModelRepository);
+
+        var actual = await sut.SwitchTemplateAsync(fullPath, templateTarget, cancellationToken);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(actual, Is.True);
+            Assert.That(
+                logger.CapturedLogEntries,
+                Has.Some.Matches<LogEntry>(entry =>
+                    entry.Is(LogLevel.Information, $"Switching project '{projectName}' to use {repositoryUrl} template in {fullPath}")
+                )
+            );
+        }
+
+        await gitHubService.Received(1).CopyPublicRepositoryAsync(
+            templateTarget.RepositoryUrl,
+            branchName: "develop",
+            destinationPath: fullPath,
+            overwrite: true,
+            predicate: EntryModelPolicies.ExcludeGitAndUserContent,
+            cancellationToken: cancellationToken
+        );
+
+        var expectedUpdatedModel = originalProject with
+        {
+            KeystoneSync = refreshedProject.KeystoneSync,
+        };
+
+        await projectModelRepository.Received(1).SaveAsync(expectedUpdatedModel, cancellationToken);
+    }
+
+    [Test]
+    public async Task SwitchTemplateAsync_WhenProjectNotFound_ThrowsProjectNotLoadedExceptionAsync()
+    {
+        const string fullPath = "/path/to/nonexistent/project";
+        const string repositoryUrl = "https://github.com/knight-owl-dev/template-core";
+
+        var templateTarget = new TemplateTargetModel(
+            Name: "core",
+            RepositoryUrl: new Uri(repositoryUrl)
+        );
+
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
+
+        var exception = new ProjectNotLoadedException("Project not found.");
+        var projectModelRepository = Substitute.For<IProjectModelRepository>();
+        projectModelRepository
+            .LoadAsync(fullPath, cancellationToken)
+            .ThrowsAsync(exception);
+
+        var sut = Ctor(projectModelRepository: projectModelRepository);
+
+        await Assert.ThatAsync(
+            () => sut.SwitchTemplateAsync(fullPath, templateTarget, cancellationToken),
+            Throws.Exception.EqualTo(exception)
         );
     }
 }
