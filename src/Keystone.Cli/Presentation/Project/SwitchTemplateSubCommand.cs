@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Cocona;
 using Keystone.Cli.Application.Commands.Project;
 using Keystone.Cli.Domain;
+using Keystone.Cli.Domain.Project;
 using Keystone.Cli.Presentation.ComponentModel.DataAnnotations;
 
 
@@ -40,6 +41,12 @@ public class SwitchTemplateSubCommand(IProjectCommand projectCommand)
             return CliCommandResults.Success;
         }
         catch (KeyNotFoundException exception)
+        {
+            await Console.Error.WriteLineAsync(exception.Message);
+
+            return CliCommandResults.Error;
+        }
+        catch (ProjectNotLoadedException exception)
         {
             await Console.Error.WriteLineAsync(exception.Message);
 

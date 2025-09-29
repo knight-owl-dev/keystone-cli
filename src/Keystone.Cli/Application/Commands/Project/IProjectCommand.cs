@@ -1,3 +1,6 @@
+using Keystone.Cli.Domain.Project;
+
+
 namespace Keystone.Cli.Application.Commands.Project;
 
 /// <summary>
@@ -19,6 +22,9 @@ public interface IProjectCommand
     /// </returns>
     /// <exception cref="KeyNotFoundException">
     /// Thrown if the specified template does not exist in the Keystone templates registry.
+    /// </exception>
+    /// <exception cref="ProjectNotLoadedException">
+    /// Thrown if the project at the specified path could not be loaded.
     /// </exception>
     Task<bool> SwitchTemplateAsync(string newTemplateName, string projectPath, CancellationToken cancellationToken);
 }

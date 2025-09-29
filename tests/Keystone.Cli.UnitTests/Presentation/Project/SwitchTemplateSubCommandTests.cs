@@ -1,5 +1,6 @@
 using Keystone.Cli.Application.Commands.Project;
 using Keystone.Cli.Domain;
+using Keystone.Cli.Domain.Project;
 using Keystone.Cli.Presentation.Project;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -42,6 +43,24 @@ public class SwitchTemplateSubCommandTests
         projectCommand
             .SwitchTemplateAsync(newTemplateName, Arg.Any<string>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new KeyNotFoundException($"Template '{newTemplateName}' not found."));
+
+        var sut = Ctor(projectCommand);
+        var actual = await sut.SwitchTemplateAsync(newTemplateName, projectPath);
+
+        Assert.That(actual, Is.EqualTo(CliCommandResults.Error));
+    }
+
+    [Test]
+    public async Task SwitchTemplateAsync_ProjectNotLoaded_ReturnsCliFailureAsync()
+    {
+        const string newTemplateName = "new-template";
+        const string projectPath = ".";
+
+        var projectCommand = Substitute.For<IProjectCommand>();
+
+        projectCommand
+            .SwitchTemplateAsync(newTemplateName, Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new ProjectNotLoadedException("Failed to load project."));
 
         var sut = Ctor(projectCommand);
         var actual = await sut.SwitchTemplateAsync(newTemplateName, projectPath);
