@@ -17,6 +17,12 @@ public static class EntryModelPolicies
         = [".gitignore", ".gitattributes", ".gitkeep", ".gitmodules"];
 
     /// <summary>
+    /// A set of directory names that are considered user content directories.
+    /// </summary>
+    private static readonly ImmutableHashSet<string> UserContentDirectories
+        = ["appendix", "artifacts", "assets", "chapters", "drafts", "research"];
+
+    /// <summary>
     /// Determines whether the specified entry should be included when ignoring Git-related
     /// files and directories.
     /// </summary>
@@ -36,4 +42,30 @@ public static class EntryModelPolicies
             EntryType.Directory => entry.DirectoryName != ".git",
             _ => true,
         };
+
+    /// <summary>
+    /// Determines whether the specified entry should be included when ignoring user content.
+    /// </summary>
+    /// <param name="entry">The source entry.</param>
+    /// <returns>
+    /// <c>true</c> if the entry is not a user content directory; <c>false</c> otherwise.
+    /// </returns>
+    public static bool ExcludeUserContent(EntryModel entry)
+        => entry.Type switch
+        {
+            EntryType.File => ! entry.IsInAnyDirectory(UserContentDirectories),
+            EntryType.Directory => ! UserContentDirectories.Contains(entry.DirectoryName),
+            _ => true,
+        };
+
+    /// <summary>
+    /// Excludes both Git-related files and user content directories.
+    /// </summary>
+    /// <param name="entry">The source entry.</param>
+    /// <returns>
+    /// <c>true</c> if the entry is neither a Git-related file nor a user content directory;
+    /// <c>false</c> otherwise.
+    /// </returns>
+    public static bool ExcludeGitAndUserContent(EntryModel entry)
+        => ExcludeGitContent(entry) && ExcludeUserContent(entry);
 }
