@@ -13,6 +13,9 @@ public interface INewCommand
     /// <param name="fullPathToProject">The full path to the new project directory.</param>
     /// <param name="includeGitFiles">Include Git-related files (e.g., <c>.gitattributes</c>, <c>.gitignore</c>) in the new project.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the project cannot be created. e.g., if there's already a project at the specified path.
+    /// </exception>
     /// <exception cref="KeyNotFoundException">
     /// Thrown when the template target is not found.
     /// </exception>
