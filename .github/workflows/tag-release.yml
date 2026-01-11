@@ -1,0 +1,54 @@
+name: Tag release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # required to create/push tags reliably
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Read version from csproj
+        id: v
+        shell: bash
+        run: |
+          VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' ./src/Keystone.Cli/Keystone.Cli.csproj | head -n 1)"
+          if [[ -z "$VERSION" ]]; then
+            echo "ERROR: Could not read <Version> from ./src/Keystone.Cli/Keystone.Cli.csproj" >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Run unit tests (gate tagging)
+        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
+
+      - name: Ensure tag does not already exist
+        shell: bash
+        run: |
+          TAG="v${{ steps.v.outputs.version }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "ERROR: Tag already exists: $TAG" >&2
+            exit 1
+          fi
+
+      - name: Create and push tag
+        shell: bash
+        run: |
+          TAG="v${{ steps.v.outputs.version }}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "keystone-cli $TAG"
+          git push origin "$TAG"
+
+      - name: Summary
+        run: echo "Pushed tag v${{ steps.v.outputs.version }}. This will trigger the Release workflow."
