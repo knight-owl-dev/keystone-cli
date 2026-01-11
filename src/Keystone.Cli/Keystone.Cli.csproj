@@ -26,6 +26,11 @@
         <PublishTrimmed>false</PublishTrimmed>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <DebugType>none</DebugType>
+        <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Cocona" Version="2.2.0"/>
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.4"/>
