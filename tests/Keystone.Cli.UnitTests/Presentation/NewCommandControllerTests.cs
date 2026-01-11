@@ -2,6 +2,7 @@ using Keystone.Cli.Application.Commands.New;
 using Keystone.Cli.Domain;
 using Keystone.Cli.Domain.Policies;
 using Keystone.Cli.Presentation;
+using Keystone.Cli.UnitTests.Application.Utility;
 using NSubstitute;
 
 
@@ -11,7 +12,7 @@ namespace Keystone.Cli.UnitTests.Presentation;
 public class NewCommandControllerTests
 {
     private static NewCommandController Ctor(INewCommand? newCommand = null)
-        => new(newCommand ?? Substitute.For<INewCommand>());
+        => new(NullConsole.Instance, newCommand ?? Substitute.For<INewCommand>());
 
     [Test]
     public async Task NewAsync_OnSuccess_ReturnsCliSuccessAsync()

@@ -1,6 +1,7 @@
 using Keystone.Cli.Application.Commands.Info;
 using Keystone.Cli.Domain;
 using Keystone.Cli.Presentation;
+using Keystone.Cli.UnitTests.Application.Utility;
 using NSubstitute;
 
 
@@ -10,7 +11,7 @@ namespace Keystone.Cli.UnitTests.Presentation;
 public class InfoCommandControllerTests
 {
     private static InfoCommandController Ctor(IInfoCommand? infoCommand = null)
-        => new(infoCommand ?? Substitute.For<IInfoCommand>());
+        => new(NullConsole.Instance, infoCommand ?? Substitute.For<IInfoCommand>());
 
     [Test]
     public void Info_ExecutesCommand()

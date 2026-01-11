@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Cocona;
 using Keystone.Cli.Application.Commands.New;
+using Keystone.Cli.Application.Utility;
 using Keystone.Cli.Domain;
 using Keystone.Cli.Domain.Policies;
 using Keystone.Cli.Presentation.ComponentModel.DataAnnotations;
@@ -11,7 +12,7 @@ namespace Keystone.Cli.Presentation;
 /// <summary>
 /// The "new" command controller.
 /// </summary>
-public class NewCommandController(INewCommand newCommand)
+public class NewCommandController(IConsole console, INewCommand newCommand)
 {
     [Command("new", Description = "Creates a new project from a template")]
     public async Task<int> NewAsync(
@@ -46,13 +47,13 @@ public class NewCommandController(INewCommand newCommand)
         }
         catch (InvalidOperationException ex)
         {
-            await Console.Error.WriteLineAsync(ex.Message);
+            await console.Error.WriteLineAsync(ex.Message);
 
             return CliCommandResults.Error;
         }
         catch (KeyNotFoundException ex)
         {
-            await Console.Error.WriteLineAsync(ex.Message);
+            await console.Error.WriteLineAsync(ex.Message);
 
             return CliCommandResults.Error;
         }
