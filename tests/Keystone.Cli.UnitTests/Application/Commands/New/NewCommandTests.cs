@@ -1,11 +1,7 @@
 using Keystone.Cli.Application;
 using Keystone.Cli.Application.Commands.New;
-using Keystone.Cli.Application.GitHub;
+using Keystone.Cli.Application.Project;
 using Keystone.Cli.Domain;
-using Keystone.Cli.Domain.FileSystem;
-using Keystone.Cli.Domain.Policies;
-using Keystone.Cli.UnitTests.Logging;
-using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
@@ -16,14 +12,12 @@ namespace Keystone.Cli.UnitTests.Application.Commands.New;
 public class NewCommandTests
 {
     private static NewCommand Ctor(
-        IGitHubService? gitHubService = null,
-        ILogger<NewCommand>? logger = null,
-        ITemplateService? templateService = null
+        ITemplateService? templateService = null,
+        IProjectService? projectService = null
     )
         => new(
-            gitHubService ?? Substitute.For<IGitHubService>(),
-            logger ?? Substitute.For<ILogger<NewCommand>>(),
-            templateService ?? Substitute.For<ITemplateService>()
+            templateService ?? Substitute.For<ITemplateService>(),
+            projectService ?? Substitute.For<IProjectService>()
         );
 
     [Test]
@@ -46,7 +40,7 @@ public class NewCommandTests
     }
 
     [Test]
-    public async Task CreateNewAsync_LogsProjectNameWithRepositoryUrlAsync()
+    public async Task CreateNewAsync_CallsProjectServiceCreateNewAsync()
     {
         const string name = "project-name";
         const string templateName = "template-name";
@@ -59,22 +53,25 @@ public class NewCommandTests
             RepositoryUrl: new Uri(repositoryUrl)
         );
 
-        var logger = new TestLogger<NewCommand>();
-
         var templateService = Substitute.For<ITemplateService>();
         templateService.GetTemplateTarget(templateName).Returns(templateTarget);
 
-        var sut = Ctor(logger: logger, templateService: templateService);
+        var projectService = Substitute.For<IProjectService>();
+
+        var sut = Ctor(templateService: templateService, projectService: projectService);
         await sut.CreateNewAsync(name, templateName, path, includeGitFiles, CancellationToken.None);
 
-        Assert.That(
-            logger.CapturedLogEntries,
-            Has.Some.Matches<LogEntry>(entry => entry.Is(LogLevel.Information, $"Creating project '{name}' from {repositoryUrl}"))
+        await projectService.Received(1).CreateNewAsync(
+            name,
+            path,
+            templateTarget,
+            includeGitFiles,
+            CancellationToken.None
         );
     }
 
     [Test]
-    public async Task CreateNewAsync_WithGitContentExcluded_CopiesPublicRepositoryAsync()
+    public async Task CreateNewAsync_WithGitContentExcluded_PassesCorrectIncludeGitFilesValueAsync()
     {
         const string name = "project-name";
         const string templateName = "template-name";
@@ -89,23 +86,22 @@ public class NewCommandTests
         var templateService = Substitute.For<ITemplateService>();
         templateService.GetTemplateTarget(templateName).Returns(templateTarget);
 
-        var gitHubService = Substitute.For<IGitHubService>();
+        var projectService = Substitute.For<IProjectService>();
 
-        var sut = Ctor(gitHubService, templateService: templateService);
+        var sut = Ctor(templateService: templateService, projectService: projectService);
         await sut.CreateNewAsync(name, templateName, path, includeGitFiles: false, CancellationToken.None);
 
-        await gitHubService.Received(1).CopyPublicRepositoryAsync(
-            templateTarget.RepositoryUrl,
-            branchName: templateTarget.BranchName,
-            destinationPath: path,
-            overwrite: true,
-            predicate: EntryModelPolicies.ExcludeGitContent,
-            cancellationToken: CancellationToken.None
+        await projectService.Received(1).CreateNewAsync(
+            name,
+            path,
+            templateTarget,
+            includeGitFiles: false,
+            CancellationToken.None
         );
     }
 
     [Test]
-    public async Task CreateNewAsync_WithGitContentIncluded_CopiesPublicRepositoryAsync()
+    public async Task CreateNewAsync_WithGitContentIncluded_PassesCorrectIncludeGitFilesValueAsync()
     {
         const string name = "project-name";
         const string templateName = "template-name";
@@ -120,18 +116,17 @@ public class NewCommandTests
         var templateService = Substitute.For<ITemplateService>();
         templateService.GetTemplateTarget(templateName).Returns(templateTarget);
 
-        var gitHubService = Substitute.For<IGitHubService>();
+        var projectService = Substitute.For<IProjectService>();
 
-        var sut = Ctor(gitHubService, templateService: templateService);
+        var sut = Ctor(templateService: templateService, projectService: projectService);
         await sut.CreateNewAsync(name, templateName, path, includeGitFiles: true, CancellationToken.None);
 
-        await gitHubService.Received(1).CopyPublicRepositoryAsync(
-            templateTarget.RepositoryUrl,
-            branchName: templateTarget.BranchName,
-            destinationPath: path,
-            overwrite: true,
-            predicate: EntryModelPredicates.AcceptAll,
-            cancellationToken: CancellationToken.None
+        await projectService.Received(1).CreateNewAsync(
+            name,
+            path,
+            templateTarget,
+            includeGitFiles: true,
+            CancellationToken.None
         );
     }
 }

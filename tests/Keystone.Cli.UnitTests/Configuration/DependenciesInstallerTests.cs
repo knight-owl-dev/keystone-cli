@@ -2,10 +2,13 @@ using Keystone.Cli.Application;
 using Keystone.Cli.Application.Commands.Browse;
 using Keystone.Cli.Application.Commands.Info;
 using Keystone.Cli.Application.Commands.New;
+using Keystone.Cli.Application.Commands.Project;
 using Keystone.Cli.Application.Data;
 using Keystone.Cli.Application.FileSystem;
 using Keystone.Cli.Application.GitHub;
+using Keystone.Cli.Application.Project;
 using Keystone.Cli.Application.Utility;
+using Keystone.Cli.Application.Utility.Serialization;
 using Keystone.Cli.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,15 +22,23 @@ public class DependenciesInstallerTests
     private static readonly Type[] ExpectedTypes =
     [
         typeof(IBrowseCommand),
+        typeof(IContentHashService),
+        typeof(IEnvironmentFileSerializer),
         typeof(IFileSystemCopyService),
         typeof(IFileSystemService),
         typeof(IGitHubService),
         typeof(IGitHubZipEntryProviderFactory),
         typeof(IInfoCommand),
+        typeof(IJsonFileSerializer),
         typeof(INewCommand),
         typeof(IProcessService),
+        typeof(IProjectCommand),
+        typeof(IProjectModelPolicyEnforcer),
+        typeof(IProjectModelRepository),
         typeof(ITemplateService),
         typeof(ITemplateTargetsRepository),
+        typeof(ITextFileSerializer),
+        typeof(IYamlFileSerializer),
     ];
 
     [TestCaseSource(nameof(ExpectedTypes))]

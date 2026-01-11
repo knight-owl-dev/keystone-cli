@@ -1,7 +1,4 @@
-using Keystone.Cli.Application.GitHub;
-using Keystone.Cli.Domain.FileSystem;
-using Keystone.Cli.Domain.Policies;
-using Microsoft.Extensions.Logging;
+using Keystone.Cli.Application.Project;
 
 
 namespace Keystone.Cli.Application.Commands.New;
@@ -9,7 +6,7 @@ namespace Keystone.Cli.Application.Commands.New;
 /// <summary>
 /// The "new" command handler.
 /// </summary>
-public class NewCommand(IGitHubService gitHubService, ILogger<NewCommand> logger, ITemplateService templateService)
+public class NewCommand(ITemplateService templateService, IProjectService projectService)
     : INewCommand
 {
     /// <inheritdoc />
@@ -23,24 +20,12 @@ public class NewCommand(IGitHubService gitHubService, ILogger<NewCommand> logger
     {
         var templateTarget = templateService.GetTemplateTarget(templateName);
 
-        logger.LogInformation(
-            "Creating project '{ProjectName}' from {RepositoryUrl} in {Path}",
+        await projectService.CreateNewAsync(
             name,
-            templateTarget.RepositoryUrl,
-            fullPathToProject
-        );
-
-        Func<EntryModel, bool> predicate = includeGitFiles
-            ? EntryModelPredicates.AcceptAll
-            : EntryModelPolicies.ExcludeGitContent;
-
-        await gitHubService.CopyPublicRepositoryAsync(
-            templateTarget.RepositoryUrl,
-            branchName: templateTarget.BranchName,
-            destinationPath: fullPathToProject,
-            overwrite: true,
-            predicate: predicate,
-            cancellationToken: cancellationToken
+            fullPathToProject,
+            templateTarget,
+            includeGitFiles,
+            cancellationToken
         );
     }
 }

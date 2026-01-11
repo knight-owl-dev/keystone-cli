@@ -17,4 +17,12 @@ public class FileSystemService
     /// <inheritdoc />
     public bool FileExists(string? path)
         => File.Exists(path);
+
+    /// <inheritdoc />
+    public Stream OpenReadStream(string path)
+        => new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+    /// <inheritdoc />
+    public Stream OpenWriteStream(string path)
+        => new FileStream(path, FileMode.OpenOrCreate, FileAccess.Read | FileAccess.Write, FileShare.None);
 }

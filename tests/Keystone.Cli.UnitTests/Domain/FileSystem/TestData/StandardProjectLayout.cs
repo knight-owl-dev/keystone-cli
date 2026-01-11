@@ -126,4 +126,32 @@ public static class StandardProjectLayout
         EntryModel.Create("drafts/.gitkeep"),
         EntryModel.Create("research/.gitkeep"),
     ];
+
+    /// <summary>
+    /// Known user content directories and files.
+    /// </summary>
+    public static readonly ImmutableHashSet<EntryModel> UserContentEntries =
+    [
+        EntryModel.Create("appendix/"),
+        EntryModel.Create("appendix/.gitkeep"),
+        EntryModel.Create("appendix/appendix-a.md"),
+        EntryModel.Create("artifacts/"),
+        EntryModel.Create("artifacts/.gitkeep"),
+        EntryModel.Create("artifacts/output.pdf"),
+        EntryModel.Create("assets/"),
+        EntryModel.Create("assets/.gitkeep"),
+        EntryModel.Create("assets/keystone-cover.jpg"),
+        EntryModel.Create("assets/keystone-example.jpg"),
+        EntryModel.Create("chapters/"),
+        EntryModel.Create("chapters/.gitkeep"),
+        EntryModel.Create("chapters/chapter-1.md"),
+        EntryModel.Create("chapters/chapter-2.md"),
+        EntryModel.Create("chapters/introduction.md"),
+        EntryModel.Create("drafts/"),
+        EntryModel.Create("drafts/.gitkeep"),
+        EntryModel.Create("drafts/outline.md"),
+        EntryModel.Create("research/"),
+        EntryModel.Create("research/.gitkeep"),
+        EntryModel.Create("research/notes.md"),
+    ];
 }

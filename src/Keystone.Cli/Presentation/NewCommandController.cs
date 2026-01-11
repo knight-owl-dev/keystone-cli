@@ -44,6 +44,12 @@ public class NewCommandController(INewCommand newCommand)
 
             return CliCommandResults.Success;
         }
+        catch (InvalidOperationException ex)
+        {
+            await Console.Error.WriteLineAsync(ex.Message);
+
+            return CliCommandResults.Error;
+        }
         catch (KeyNotFoundException ex)
         {
             await Console.Error.WriteLineAsync(ex.Message);

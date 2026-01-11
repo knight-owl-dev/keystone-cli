@@ -104,4 +104,22 @@ public class NewCommandControllerTests
 
         Assert.That(actual, Is.EqualTo(CliCommandResults.Error));
     }
+
+    [Test]
+    public async Task NewAsync_OnInvalidOperationException_ReturnsCliErrorAsync()
+    {
+        const string name = "project-name";
+        const string templateName = "template-name";
+
+        var newCommand = Substitute.For<INewCommand>();
+
+        newCommand
+            .When(stub => stub.CreateNewAsync(name, templateName, Arg.Any<string>(), Arg.Any<bool>(), CancellationToken.None))
+            .Do(_ => throw new InvalidOperationException());
+
+        var sut = Ctor(newCommand);
+        var actual = await sut.NewAsync(name, templateName);
+
+        Assert.That(actual, Is.EqualTo(CliCommandResults.Error));
+    }
 }
