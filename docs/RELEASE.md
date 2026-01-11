@@ -17,48 +17,64 @@ Keystone CLI uses **tag-driven releases**.
 
 ---
 
-## Release steps
+## Release flows
 
-1. Sync and validate locally:
+Keystone CLI supports two release flows:
 
-   ```bash
-   git checkout main
-   git pull
-   dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
+1. **Automated GitHub release (preferred)** — push-button, reproducible, and audited
+2. **Manual release (backup)** — for emergencies or CI outages
+
+---
+
+## Automated release (via GitHub Actions)
+
+This is the **recommended** way to publish a new version.
+
+### Prerequisites
+
+- `<Version>` in `Keystone.Cli.csproj` is updated to the intended release version
+- All changes are merged into `main`
+- Unit tests are passing
+
+### Steps
+
+1. Update the project version:
+
+   ```xml
+   <Version>X.Y.Z</Version>
    ```
 
-2. Ensure the `<Version>` value in `Keystone.Cli.csproj` is updated to match the intended release version.
+   This value **must match** the git tag that will be created (`vX.Y.Z`).
 
-   This version **must match** the git tag you are about to create (e.g., `<Version>0.1.1</Version>` → `v0.1.1`).
+2. Push changes to `main` (via PR as usual).
 
-3. Create and push an annotated tag:
+3. Trigger the **Tag release** workflow in GitHub:
 
-   ```bash
-   git tag -a vX.Y.Z -m "keystone-cli vX.Y.Z"
-   git push origin vX.Y.Z
-   ```
-
-   Example:
-
-   ```bash
-   git tag -a v0.1.0 -m "keystone-cli v0.1.0"
-   git push origin v0.1.0
-   ```
-
-4. Monitor the GitHub Actions **Release** workflow.
+   - Go to **Actions → Tag release**
+   - Click **Run workflow**
 
    The workflow will:
 
-    - `dotnet publish` for `osx-arm64` and `osx-x64`
-    - run `scripts/package-release.sh` to build `.tar.gz` assets
-    - compute SHA-256 values
-    - create a GitHub Release for the tag and upload assets
+   - read `<Version>` from `Keystone.Cli.csproj`
+   - run unit tests (release gate)
+   - create and push the annotated tag `vX.Y.Z`
 
-5. Update the Homebrew formula in `Knight-Owl-Dev/homebrew-tap`:
+4. The tag push automatically triggers the **Release** workflow.
 
-    - Update the version and release URLs to `vX.Y.Z`
-    - Replace the `sha256` values with the ones printed by the workflow
-    - Commit and push the formula update
+   That workflow will:
+
+   - validate `<Version>` matches the tag
+   - build and publish binaries (matrix-based by RID)
+   - package `.tar.gz` release assets
+   - compute SHA-256 checksums
+   - generate release notes
+   - create a GitHub Release and upload all assets
+
+5. (Optional) Update the Homebrew formula in `Knight-Owl-Dev/homebrew-tap`:
+
+   - Update the version and release URLs to `vX.Y.Z`
+   - Replace the `sha256` values using `checksums.txt` from the release
+   - Commit and push (or merge the automated PR, if enabled)
 
 6. Validate installation on macOS:
 
@@ -71,11 +87,42 @@ Keystone CLI uses **tag-driven releases**.
 
 ---
 
-## Notes
+## Manual release (backup / emergency)
 
-- The release assets must be publicly downloadable.
-- GitHub **Release immutability** is enabled to prevent replacing assets after publishing.
-- The packaging script includes:
-    - `keystone-cli`
-    - `appsettings.json`
-    - `keystone-cli.1` (man page)
+Use this flow **only** if GitHub Actions is unavailable or requires debugging.
+
+### Steps
+
+1. Sync and validate locally:
+
+   ```bash
+   git checkout main
+   git pull
+   dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
+   ```
+
+2. Ensure `<Version>` in `Keystone.Cli.csproj` matches the intended release.
+
+3. Build and package release assets locally:
+
+   ```bash
+   dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r osx-arm64
+   dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r osx-x64
+
+   ./scripts/package-release.sh X.Y.Z
+   ```
+
+4. Create and push the annotated tag:
+
+   ```bash
+   git tag -a vX.Y.Z -m "keystone-cli vX.Y.Z"
+   git push origin vX.Y.Z
+   ```
+
+5. Create the GitHub Release manually if it didn't get created automatically:
+
+   - Upload the generated `.tar.gz` files
+   - Include `checksums.txt` in the release assets
+   - Paste checksum contents into the release description
+
+6. Update the Homebrew formula as usual.
