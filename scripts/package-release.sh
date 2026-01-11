@@ -8,18 +8,39 @@ cd "${REPO_ROOT}"
 
 VERSION=""
 
+RID=""
+
 usage() {
-  echo "Usage: $(basename "$0") [version]" >&2
-  echo "  version: Optional release version (e.g., 0.1.0). Defaults to the current CLI version in Keystone.Cli.csproj if omitted." >&2
+  echo "Usage: $(basename "$0") [version] [rid]" >&2
+  echo "  version: Optional release version (e.g., 0.1.0)." >&2
+  echo "           Defaults to the current <Version> value in Keystone.Cli.csproj if omitted." >&2
+  echo "  rid:     Optional runtime identifier (e.g., osx-arm64, osx-x64, linux-x64)." >&2
+  echo "           If provided, only that RID archive will be produced." >&2
+  echo "" >&2
+  echo "Examples:" >&2
+  echo "  $(basename "$0")" >&2
+  echo "  $(basename "$0") 0.1.0" >&2
+  echo "  $(basename "$0") 0.1.0 osx-arm64" >&2
+  echo "  $(basename "$0") osx-arm64" >&2
 }
 
-if [[ $# -gt 1 ]]; then
+if [[ $# -gt 2 ]]; then
   usage
   exit 2
 fi
 
 if [[ $# -eq 1 ]]; then
+  # Support either "version" OR "rid" as the sole argument.
+  if [[ "$1" =~ ^(osx|win|linux)(-|$) ]]; then
+    RID="$1"
+  else
+    VERSION="$1"
+  fi
+fi
+
+if [[ $# -eq 2 ]]; then
   VERSION="$1"
+  RID="$2"
 fi
 
 TFM="net10.0"
@@ -83,7 +104,11 @@ package() {
   fi
 }
 
-package osx-arm64
-package osx-x64
+if [[ -n "$RID" ]]; then
+  package "$RID"
+else
+  package osx-arm64
+  package osx-x64
+fi
 
 echo "Done."
