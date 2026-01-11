@@ -17,6 +17,33 @@ Keystone CLI uses **tag-driven releases**.
 
 ---
 
+## Version management
+
+Use the `/version` command in Claude Code to view or update the project version.
+
+### View current version
+
+```text
+/version
+```
+
+This displays the current version from `Keystone.Cli.csproj`.
+
+### Update to a new version
+
+```text
+/version X.Y.Z
+```
+
+This updates the version in all required files:
+
+- `src/Keystone.Cli/Keystone.Cli.csproj` (all five version properties)
+- `docs/man/man1/keystone-cli.1` (VERSION section)
+
+The version must follow semantic versioning format (`X.Y.Z`).
+
+---
+
 ## Release flows
 
 Keystone CLI supports two release flows:
@@ -38,11 +65,7 @@ This is the **recommended** way to publish a new version.
 
 ### Steps
 
-1. Update the project version:
-
-   ```xml
-   <Version>X.Y.Z</Version>
-   ```
+1. Update the project version using `/version X.Y.Z` in Claude Code (see [Version management](#version-management)).
 
    This value **must match** the git tag that will be created (`vX.Y.Z`).
 
@@ -101,7 +124,7 @@ Use this flow **only** if GitHub Actions is unavailable or requires debugging.
    dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
    ```
 
-2. Ensure `<Version>` in `Keystone.Cli.csproj` matches the intended release.
+2. Ensure the version matches the intended release (use `/version` to check, `/version X.Y.Z` to update).
 
 3. Build and package release assets locally:
 
