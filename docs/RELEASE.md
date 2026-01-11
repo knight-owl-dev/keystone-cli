@@ -39,6 +39,7 @@ This updates the version in all required files:
 
 - `src/Keystone.Cli/Keystone.Cli.csproj` (all five version properties)
 - `docs/man/man1/keystone-cli.1` (VERSION section)
+- `tests/Keystone.Cli.UnitTests/Application/Commands/Info/InfoCommandTests.cs` (version assertion)
 
 The version must follow semantic versioning format (`X.Y.Z`).
 

@@ -36,10 +36,24 @@ Update ALL five version properties to the new value:
 Update the VERSION section. Find the line that starts with `keystone-cli` under the
 `.Sh VERSION` section and update it to `keystone-cli X.Y.Z`.
 
+#### 3. `tests/Keystone.Cli.UnitTests/Application/Commands/Info/InfoCommandTests.cs`
+
+Update the version assertion. Find the line containing `Does.StartWith("X.Y.Z")` and update
+it to use the new version.
+
+### Verify
+
+After updating all files, run the unit tests to ensure everything still passes:
+
+```bash
+dotnet test
+```
+
 ### Output
 
-After updating, confirm the changes by showing:
+After updating and verifying, confirm the changes by showing:
 
 - The old version
 - The new version
 - List of files updated
+- Test results (passed/failed)
