@@ -21,12 +21,9 @@ public static class TextFileUtility
         using var reader = new StreamReader(stream, leaveOpen: true);
 
         var lines = ImmutableList.CreateBuilder<string>();
-        while (! reader.EndOfStream)
+        while (await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false) is { } line)
         {
-            if (await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false) is { } line)
-            {
-                lines.Add(line);
-            }
+            lines.Add(line);
         }
 
         return lines.ToImmutable();
