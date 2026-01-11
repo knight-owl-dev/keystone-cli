@@ -595,8 +595,14 @@ resharper_xmldoc_space_before_self_closing = true
 resharper_xmldoc_wrap_tags_and_pi = false
 resharper_xmldoc_wrap_text = true
 
+
 [{*.har,*.inputactions,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.stylelintrc,bowerrc,jest.config}]
 indent_size = 2
+
+# YAML files (match common ecosystem conventions)
+[*.{yml,yaml}]
+indent_size = 2
+tab_width = 2
 
 [*.{appxmanifest,asax,ascx,aspx,axaml,build,c,c++,cc,cginc,compute,cp,cpp,cs,cshtml,cu,cuh,cxx,dtd,fs,fsi,fsscript,fsx,fx,fxh,h,hh,hlsl,hlsli,hlslinc,hpp,hxx,inc,inl,ino,ipp,master,ml,mli,mpp,mq4,mq5,mqh,nuspec,paml,razor,resw,resx,shader,skin,tpp,usf,ush,vb,xaml,xamlx,xoml,xsd}]
 tab_width = 4

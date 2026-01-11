@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Cocona;
 using Keystone.Cli.Application.Commands.Project;
+using Keystone.Cli.Application.Utility;
 using Keystone.Cli.Domain;
 using Keystone.Cli.Domain.Project;
 using Keystone.Cli.Presentation.ComponentModel.DataAnnotations;
@@ -11,7 +12,7 @@ namespace Keystone.Cli.Presentation.Project;
 /// <summary>
 /// The implementation of the "switch-template" sub-command for the project command.
 /// </summary>
-public class SwitchTemplateSubCommand(IProjectCommand projectCommand)
+public class SwitchTemplateSubCommand(IConsole console, IProjectCommand projectCommand)
 {
     public async Task<int> SwitchTemplateAsync(
         [Argument(Description = "The name of the new template to switch to"),
@@ -27,12 +28,12 @@ public class SwitchTemplateSubCommand(IProjectCommand projectCommand)
             ? Path.GetFullPath(".")
             : Path.GetFullPath(projectPath);
 
-        Console.WriteLine($"Switching template to '{newTemplateName}' for project at '{fullPath}'.");
+        await console.Out.WriteLineAsync($"Switching template to '{newTemplateName}' for project at '{fullPath}'.");
         try
         {
             var result = await projectCommand.SwitchTemplateAsync(newTemplateName, fullPath, cancellationToken);
 
-            Console.WriteLine(
+            await console.Out.WriteLineAsync(
                 result
                     ? $"Switched to template '{newTemplateName}' successfully."
                     : $"The project already uses template `{newTemplateName}`."
@@ -42,13 +43,13 @@ public class SwitchTemplateSubCommand(IProjectCommand projectCommand)
         }
         catch (KeyNotFoundException exception)
         {
-            await Console.Error.WriteLineAsync(exception.Message);
+            await console.Error.WriteLineAsync(exception.Message);
 
             return CliCommandResults.Error;
         }
         catch (ProjectNotLoadedException exception)
         {
-            await Console.Error.WriteLineAsync(exception.Message);
+            await console.Error.WriteLineAsync(exception.Message);
 
             return CliCommandResults.Error;
         }

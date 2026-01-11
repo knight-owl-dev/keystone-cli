@@ -1,0 +1,153 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Extract version from tag
+        id: v
+        shell: bash
+        run: |
+          echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Validate csproj version matches tag
+        shell: bash
+        run: |
+          CS_VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' ./src/Keystone.Cli/Keystone.Cli.csproj | head -n 1)"
+          if [[ -z "$CS_VERSION" ]]; then
+            echo "ERROR: Could not read <Version> from ./src/Keystone.Cli/Keystone.Cli.csproj" >&2
+            exit 1
+          fi
+
+          if [[ "$CS_VERSION" != "${{ steps.v.outputs.version }}" ]]; then
+            echo "ERROR: csproj <Version> ($CS_VERSION) does not match tag (v${{ steps.v.outputs.version }})" >&2
+            exit 1
+          fi
+
+      - name: Run unit tests (gate release)
+        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
+
+  build-assets:
+    name: Build assets (${{ matrix.rid }})
+    needs: validate
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-latest
+            rid: osx-arm64
+          - runner: macos-latest
+            rid: osx-x64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Publish (${{ matrix.rid }})
+        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r ${{ matrix.rid }}
+
+      - name: Package tarball (${{ matrix.rid }})
+        shell: bash
+        run: bash ./scripts/package-release.sh "${{ needs.validate.outputs.version }}" "${{ matrix.rid }}"
+
+      - name: Upload tarball artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.rid }}
+          path: artifacts/release/keystone-cli_${{ needs.validate.outputs.version }}_${{ matrix.rid }}.tar.gz
+          if-no-files-found: error
+
+  publish-release:
+    name: Publish Release
+    needs: [validate, build-assets]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all tarballs
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Generate checksums.txt
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "Release assets:" 
+          files=$(find dist -maxdepth 3 -type f -name '*.tar.gz' -print)
+          if [[ -z "$files" ]]; then
+            echo "ERROR: No .tar.gz files found under dist/" >&2
+            exit 1
+          fi
+
+          printf "%s\n" $files | sort
+
+          sha256sum $files | sort > checksums.txt
+
+          echo ""
+          echo "checksums.txt:"
+          cat checksums.txt
+
+      - name: Prepare release notes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > release-body.md <<'EOF'
+          Automated release for ${GITHUB_REF_NAME}.
+
+          SHA256 checksums:
+          ```
+          EOF
+
+          cat checksums.txt >> release-body.md
+
+          cat >> release-body.md <<'EOF'
+          ```
+          EOF
+
+          echo ""
+          echo "release-body.md:" 
+          cat release-body.md
+
+      - name: Create GitHub Release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "keystone-cli v${{ needs.validate.outputs.version }}"
+          body_path: release-body.md
+          files: |
+            dist/**/keystone-cli_${{ needs.validate.outputs.version }}_*.tar.gz
+            checksums.txt
+            release-body.md

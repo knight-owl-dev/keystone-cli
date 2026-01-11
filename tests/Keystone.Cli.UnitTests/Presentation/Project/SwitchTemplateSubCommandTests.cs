@@ -2,6 +2,7 @@ using Keystone.Cli.Application.Commands.Project;
 using Keystone.Cli.Domain;
 using Keystone.Cli.Domain.Project;
 using Keystone.Cli.Presentation.Project;
+using Keystone.Cli.UnitTests.Application.Utility;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 
@@ -12,7 +13,7 @@ namespace Keystone.Cli.UnitTests.Presentation.Project;
 public class SwitchTemplateSubCommandTests
 {
     private static SwitchTemplateSubCommand Ctor(IProjectCommand? projectCommand = null)
-        => new(projectCommand ?? Substitute.For<IProjectCommand>());
+        => new(NullConsole.Instance, projectCommand ?? Substitute.For<IProjectCommand>());
 
     [Test]
     public async Task SwitchTemplateAsync_OnSuccess_ReturnsCliSuccessAsync()

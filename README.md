@@ -2,6 +2,9 @@
 
 A command-line interface for Keystone.
 
+- 📦 [Releases](https://github.com/Knight-Owl-Dev/keystone-cli/releases) — binaries & checksums
+- 📄 [License & Notices](NOTICE.md)
+
 This CLI is designed to operate alongside official Keystone templates, which define the structure and build behavior for
 publishing books and documents. It is part of the broader Keystone ecosystem, which includes:
 
@@ -12,7 +15,28 @@ publishing books and documents. It is part of the broader Keystone ecosystem, wh
 - [keystone-hello-world](https://github.com/knight-owl-dev/keystone-hello-world) – a "Hello World" sample project
   based on the `core-slim` template, demonstrating Keystone capabilities with sample content
 
-For license details and third-party references, see [NOTICE.md](NOTICE.md).
+## Installation (macOS)
+
+Keystone CLI is distributed via Homebrew.
+
+First, add the Knight Owl Homebrew tap:
+
+```bash
+brew tap Knight-Owl-Dev/tap
+```
+
+Then install the CLI:
+
+```bash
+brew install keystone-cli
+```
+
+After installation, verify that everything is working:
+
+```bash
+keystone-cli info
+man keystone-cli
+```
 
 ## Project Structure
 

@@ -1,6 +1,7 @@
 using Keystone.Cli.Application.Commands.Browse;
 using Keystone.Cli.Domain;
 using Keystone.Cli.Presentation;
+using Keystone.Cli.UnitTests.Application.Utility;
 using NSubstitute;
 
 
@@ -10,7 +11,7 @@ namespace Keystone.Cli.UnitTests.Presentation;
 public class BrowseCommandControllerTests
 {
     private static BrowseCommandController Ctor(IBrowseCommand? browseCommand = null)
-        => new(browseCommand ?? Substitute.For<IBrowseCommand>());
+        => new(NullConsole.Instance, browseCommand ?? Substitute.For<IBrowseCommand>());
 
     [Test]
     public void Browse_OnSuccess_ReturnsCliSuccess()

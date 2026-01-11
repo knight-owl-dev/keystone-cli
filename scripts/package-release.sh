@@ -6,8 +6,57 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${REPO_ROOT}"
 
-VERSION="${1:-0.1.0}"
+VERSION=""
+
+RID=""
+
+usage() {
+  echo "Usage: $(basename "$0") [version] [rid]" >&2
+  echo "  version: Optional release version (e.g., 0.1.0)." >&2
+  echo "           Defaults to the current <Version> value in Keystone.Cli.csproj if omitted." >&2
+  echo "  rid:     Optional runtime identifier (e.g., osx-arm64, osx-x64, linux-x64)." >&2
+  echo "           If provided, only that RID archive will be produced." >&2
+  echo "" >&2
+  echo "Examples:" >&2
+  echo "  $(basename "$0")" >&2
+  echo "  $(basename "$0") 0.1.0" >&2
+  echo "  $(basename "$0") 0.1.0 osx-arm64" >&2
+  echo "  $(basename "$0") osx-arm64" >&2
+}
+
+if [[ $# -gt 2 ]]; then
+  usage
+  exit 2
+fi
+
+if [[ $# -eq 1 ]]; then
+  # Support either "version" OR "rid" as the sole argument.
+  if [[ "$1" =~ ^(osx|win|linux)(-|$) ]]; then
+    RID="$1"
+  else
+    VERSION="$1"
+  fi
+fi
+
+if [[ $# -eq 2 ]]; then
+  VERSION="$1"
+  RID="$2"
+fi
+
 TFM="net10.0"
+
+if [[ -z "$VERSION" ]]; then
+  # Best-effort: extract <Version>...</Version> from the CLI project file.
+  # (Keeps this script dependency-free; falls back to 0.1.0 if not found.)
+  if [[ -f "./src/Keystone.Cli/Keystone.Cli.csproj" ]]; then
+    VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' ./src/Keystone.Cli/Keystone.Cli.csproj | head -n 1)"
+  fi
+
+  if [[ -z "$VERSION" ]]; then
+    VERSION="0.1.0"
+  fi
+fi
+
 OUT_DIR="artifacts/release"
 
 mkdir -p "$OUT_DIR"
@@ -55,7 +104,11 @@ package() {
   fi
 }
 
-package osx-arm64
-package osx-x64
+if [[ -n "$RID" ]]; then
+  package "$RID"
+else
+  package osx-arm64
+  package osx-x64
+fi
 
 echo "Done."

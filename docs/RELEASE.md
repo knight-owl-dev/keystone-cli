@@ -1,0 +1,128 @@
+# How To Release
+
+Keystone CLI uses **tag-driven releases**.
+
+- Pull requests must have passing unit tests before merge.
+- Releases are created **only** when a version tag (e.g., `v0.1.0`) is pushed.
+- A GitHub Actions workflow builds and publishes release artifacts.
+
+---
+
+## Prerequisites
+
+- You have push access to the [Knight-Owl-Dev/keystone-cli](https://github.com/knight-owl-dev/keystone-cli) repository.
+- Unit tests are green on `main`.
+- Homebrew tap repository [Knight-Owl-Dev/homebrew-tap](https://github.com/knight-owl-dev/homebrew-tap) is available for
+  formula updates.
+
+---
+
+## Release flows
+
+Keystone CLI supports two release flows:
+
+1. **Automated GitHub release (preferred)** — push-button, reproducible, and audited
+2. **Manual release (backup)** — for emergencies or CI outages
+
+---
+
+## Automated release (via GitHub Actions)
+
+This is the **recommended** way to publish a new version.
+
+### Prerequisites
+
+- `<Version>` in `Keystone.Cli.csproj` is updated to the intended release version
+- All changes are merged into `main`
+- Unit tests are passing
+
+### Steps
+
+1. Update the project version:
+
+   ```xml
+   <Version>X.Y.Z</Version>
+   ```
+
+   This value **must match** the git tag that will be created (`vX.Y.Z`).
+
+2. Push changes to `main` (via PR as usual).
+
+3. Trigger the **Tag release** workflow in GitHub:
+
+   - Go to **Actions → Tag release**
+   - Click **Run workflow**
+
+   The workflow will:
+
+   - read `<Version>` from `Keystone.Cli.csproj`
+   - run unit tests (release gate)
+   - create and push the annotated tag `vX.Y.Z`
+
+4. The tag push automatically triggers the **Release** workflow.
+
+   That workflow will:
+
+   - validate `<Version>` matches the tag
+   - build and publish binaries (matrix-based by RID)
+   - package `.tar.gz` release assets
+   - compute SHA-256 checksums
+   - generate release notes
+   - create a GitHub Release and upload all assets
+
+5. (Optional) Update the Homebrew formula in `Knight-Owl-Dev/homebrew-tap`:
+
+   - Update the version and release URLs to `vX.Y.Z`
+   - Replace the `sha256` values using `checksums.txt` from the release
+   - Commit and push (or merge the automated PR, if enabled)
+
+6. Validate installation on macOS:
+
+   ```bash
+   brew update
+   brew install keystone-cli
+   keystone-cli info
+   man keystone-cli
+   ```
+
+---
+
+## Manual release (backup / emergency)
+
+Use this flow **only** if GitHub Actions is unavailable or requires debugging.
+
+### Steps
+
+1. Sync and validate locally:
+
+   ```bash
+   git checkout main
+   git pull
+   dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
+   ```
+
+2. Ensure `<Version>` in `Keystone.Cli.csproj` matches the intended release.
+
+3. Build and package release assets locally:
+
+   ```bash
+   dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r osx-arm64
+   dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r osx-x64
+
+   ./scripts/package-release.sh X.Y.Z
+   ```
+
+4. Create and push the annotated tag:
+
+   ```bash
+   git tag -a vX.Y.Z -m "keystone-cli vX.Y.Z"
+   git push origin vX.Y.Z
+   ```
+
+5. Create the GitHub Release manually if it didn't get created automatically:
+
+   - Upload the generated `.tar.gz` files
+   - Include `checksums.txt` in the release assets
+   - Paste checksum contents into the release description
+
+6. Update the Homebrew formula as usual.
