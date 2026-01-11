@@ -34,7 +34,7 @@ public class GitHubZipEntryProviderFactory(IHttpClientFactory httpClientFactory)
             }
             catch
             {
-                archive.Dispose();
+                await archive.DisposeAsync();
                 throw;
             }
         }
