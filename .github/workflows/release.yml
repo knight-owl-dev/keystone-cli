@@ -11,16 +11,40 @@ permissions:
 jobs:
   release:
     runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - uses: actions/setup-dotnet@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
 
       - name: Extract version from tag
         id: v
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        shell: bash
+        run: |
+          echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Validate csproj version matches tag
+        shell: bash
+        run: |
+          CS_VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' ./src/Keystone.Cli/Keystone.Cli.csproj | head -n 1)"
+          if [[ -z "$CS_VERSION" ]]; then
+            echo "ERROR: Could not read <Version> from ./src/Keystone.Cli/Keystone.Cli.csproj" >&2
+            exit 1
+          fi
+
+          if [[ "$CS_VERSION" != "${{ steps.v.outputs.version }}" ]]; then
+            echo "ERROR: csproj <Version> ($CS_VERSION) does not match tag (v${{ steps.v.outputs.version }})" >&2
+            exit 1
+          fi
+
+      - name: Run unit tests (gate release)
+        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
 
       # Build publish outputs (your project expects artifacts/bin/... layout)
       - name: Publish (osx-arm64)
@@ -29,13 +53,46 @@ jobs:
       - name: Publish (osx-x64)
         run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r osx-x64
 
-      - name: Package tarballs + print SHA256
+      - name: Package tarballs
+        shell: bash
         run: bash ./scripts/package-release.sh "${{ steps.v.outputs.version }}"
+
+      - name: Compute SHA-256 (for release notes)
+        id: sha
+        shell: bash
+        run: |
+          ARM_FILE="artifacts/release/keystone-cli_${{ steps.v.outputs.version }}_osx-arm64.tar.gz"
+          X64_FILE="artifacts/release/keystone-cli_${{ steps.v.outputs.version }}_osx-x64.tar.gz"
+
+          if [[ ! -f "$ARM_FILE" ]]; then
+            echo "ERROR: Missing release asset: $ARM_FILE" >&2
+            exit 1
+          fi
+
+          if [[ ! -f "$X64_FILE" ]]; then
+            echo "ERROR: Missing release asset: $X64_FILE" >&2
+            exit 1
+          fi
+
+          ARM_SHA="$(shasum -a 256 "$ARM_FILE" | awk '{print $1}')"
+          X64_SHA="$(shasum -a 256 "$X64_FILE" | awk '{print $1}')"
+
+          echo "arm_sha=$ARM_SHA" >> "$GITHUB_OUTPUT"
+          echo "x64_sha=$X64_SHA" >> "$GITHUB_OUTPUT"
+
+          printf "SHA256 checksums\n\n- osx-arm64: %s\n- osx-x64: %s\n" "$ARM_SHA" "$X64_SHA" > artifacts/release/checksums.txt
 
       - name: Create GitHub Release and upload assets
         uses: softprops/action-gh-release@v2
         with:
           name: "keystone-cli v${{ steps.v.outputs.version }}"
+          body: |
+            Automated release for v${{ steps.v.outputs.version }}.
+
+            SHA256 checksums:
+            - osx-arm64: `${{ steps.sha.outputs.arm_sha }}`
+            - osx-x64: `${{ steps.sha.outputs.x64_sha }}`
           files: |
             artifacts/release/keystone-cli_${{ steps.v.outputs.version }}_osx-arm64.tar.gz
             artifacts/release/keystone-cli_${{ steps.v.outputs.version }}_osx-x64.tar.gz
+            artifacts/release/checksums.txt
