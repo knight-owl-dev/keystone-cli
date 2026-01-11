@@ -12,6 +12,29 @@ publishing books and documents. It is part of the broader Keystone ecosystem, wh
 - [keystone-hello-world](https://github.com/knight-owl-dev/keystone-hello-world) – a "Hello World" sample project
   based on the `core-slim` template, demonstrating Keystone capabilities with sample content
 
+## Installation (macOS)
+
+Keystone CLI is distributed via Homebrew.
+
+First, add the Knight Owl Homebrew tap:
+
+```bash
+brew tap Knight-Owl-Dev/tap
+```
+
+Then install the CLI:
+
+```bash
+brew install keystone-cli
+```
+
+After installation, verify that everything is working:
+
+```bash
+keystone-cli info
+man keystone-cli
+```
+
 For license details and third-party references, see [NOTICE.md](NOTICE.md).
 
 ## Project Structure
