@@ -2,6 +2,9 @@
 
 A command-line interface for Keystone.
 
+- 📦 [Releases](https://github.com/Knight-Owl-Dev/keystone-cli/releases) — binaries & checksums
+- 📄 [License & Notices](NOTICE.md)
+
 This CLI is designed to operate alongside official Keystone templates, which define the structure and build behavior for
 publishing books and documents. It is part of the broader Keystone ecosystem, which includes:
 
@@ -34,8 +37,6 @@ After installation, verify that everything is working:
 keystone-cli info
 man keystone-cli
 ```
-
-For license details and third-party references, see [NOTICE.md](NOTICE.md).
 
 ## Project Structure
 
