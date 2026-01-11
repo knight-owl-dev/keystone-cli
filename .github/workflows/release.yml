@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Extract version from tag
+        id: v
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      # Build publish outputs (your project expects artifacts/bin/... layout)
+      - name: Publish (osx-arm64)
+        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r osx-arm64
+
+      - name: Publish (osx-x64)
+        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r osx-x64
+
+      - name: Package tarballs + print SHA256
+        run: bash ./scripts/package-release.sh "${{ steps.v.outputs.version }}"
+
+      - name: Create GitHub Release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "keystone-cli v${{ steps.v.outputs.version }}"
+          files: |
+            artifacts/release/keystone-cli_${{ steps.v.outputs.version }}_osx-arm64.tar.gz
+            artifacts/release/keystone-cli_${{ steps.v.outputs.version }}_osx-x64.tar.gz

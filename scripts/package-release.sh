@@ -6,8 +6,36 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${REPO_ROOT}"
 
-VERSION="${1:-0.1.0}"
+VERSION=""
+
+usage() {
+  echo "Usage: $(basename "$0") [version]" >&2
+  echo "  version: Optional release version (e.g., 0.1.0). Defaults to the current CLI version in Keystone.Cli.csproj if omitted." >&2
+}
+
+if [[ $# -gt 1 ]]; then
+  usage
+  exit 2
+fi
+
+if [[ $# -eq 1 ]]; then
+  VERSION="$1"
+fi
+
 TFM="net10.0"
+
+if [[ -z "$VERSION" ]]; then
+  # Best-effort: extract <Version>...</Version> from the CLI project file.
+  # (Keeps this script dependency-free; falls back to 0.1.0 if not found.)
+  if [[ -f "./src/Keystone.Cli/Keystone.Cli.csproj" ]]; then
+    VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' ./src/Keystone.Cli/Keystone.Cli.csproj | head -n 1)"
+  fi
+
+  if [[ -z "$VERSION" ]]; then
+    VERSION="0.1.0"
+  fi
+fi
+
 OUT_DIR="artifacts/release"
 
 mkdir -p "$OUT_DIR"
