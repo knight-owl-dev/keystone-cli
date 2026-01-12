@@ -1,5 +1,7 @@
 # Keystone CLI
 
+[![Homebrew](https://img.shields.io/badge/install-homebrew-brightgreen)](https://brew.sh)
+
 A command-line interface for Keystone.
 
 - 📦 [Releases](https://github.com/Knight-Owl-Dev/keystone-cli/releases) — binaries & checksums
@@ -15,7 +17,7 @@ publishing books and documents. It is part of the broader Keystone ecosystem, wh
 - [keystone-hello-world](https://github.com/knight-owl-dev/keystone-hello-world) – a "Hello World" sample project
   based on the `core-slim` template, demonstrating Keystone capabilities with sample content
 
-## Installation (macOS)
+## Installation
 
 Keystone CLI is distributed via Homebrew.
 
@@ -40,10 +42,11 @@ man keystone-cli
 
 ## Project Structure
 
-The project is organized into three main parts:
+The project is organized into four main parts:
 
 - [docs](docs) – Contains documentation files, including man pages in [mdoc(7)](https://man.openbsd.org/mdoc.7)
   format and other relevant documentation.
+- [scripts](scripts) – Build and utility scripts.
 - [src](src) – Application source code.
 - [tests](tests) – Unit tests organized to mirror the structure of the application for consistency and
   coverage.

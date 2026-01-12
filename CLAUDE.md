@@ -7,18 +7,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 keystone-cli/
 ├── src/
-│   └── Keystone.Cli/           # Main application
-│       ├── Application/        # Business logic layer
-│       ├── Domain/             # Domain models and policies
-│       ├── Presentation/       # Command controllers
-│       └── Configuration/      # Dependency injection setup
+│   └── Keystone.Cli/               # Main application
+│       ├── Application/            # Business logic layer
+│       │   ├── Commands/           # Command handlers (Browse, Info, New, Project)
+│       │   ├── Data/               # Repository pattern with Stores/
+│       │   ├── FileSystem/         # File operations and copying services
+│       │   ├── GitHub/             # GitHub repository and template handling
+│       │   ├── Project/            # Project model management
+│       │   └── Utility/            # Serialization (JSON, YAML, Env), Text parsing
+│       ├── Domain/                 # Domain models and policies
+│       │   ├── FileSystem/         # File system abstractions
+│       │   ├── Helpers/            # Domain helper utilities
+│       │   ├── Policies/           # Validation rules
+│       │   └── Project/            # Project models
+│       ├── Presentation/           # Command controllers
+│       │   ├── ComponentModel/     # Data annotations and validation
+│       │   └── Project/            # Project-specific controllers
+│       └── Configuration/          # Dependency injection setup
 ├── tests/
-│   └── Keystone.Cli.UnitTests/ # Unit tests mirroring src structure
+│   └── Keystone.Cli.UnitTests/     # Unit tests mirroring src structure
 ├── docs/
-│   └── man/                    # Manual pages in mdoc format
-├── artifacts/                  # Build outputs
-├── Directory.Build.props       # MSBuild configuration
-└── keystone-cli.sln            # Visual Studio solution
+│   └── man/                        # Manual pages in mdoc format
+├── scripts/                        # Build and utility scripts
+├── artifacts/                      # Build outputs
+├── Directory.Build.props           # MSBuild configuration
+└── keystone-cli.sln                # Visual Studio solution
 ```
 
 ## Development Commands
