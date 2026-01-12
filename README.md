@@ -42,10 +42,11 @@ man keystone-cli
 
 ## Project Structure
 
-The project is organized into three main parts:
+The project is organized into four main parts:
 
 - [docs](docs) – Contains documentation files, including man pages in [mdoc(7)](https://man.openbsd.org/mdoc.7)
   format and other relevant documentation.
+- [scripts](scripts) – Build and utility scripts.
 - [src](src) – Application source code.
 - [tests](tests) – Unit tests organized to mirror the structure of the application for consistency and
   coverage.
