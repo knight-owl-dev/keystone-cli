@@ -106,15 +106,16 @@ jobs:
           set -euo pipefail
 
           echo "Release assets:" 
-          files=$(find dist -maxdepth 3 -type f -name '*.tar.gz' -print)
+          (cd dist && find . -maxdepth 3 -type f -name '*.tar.gz' -print | sed 's|^\./||' | sort)
+
+          files=$(cd dist && find . -maxdepth 3 -type f -name '*.tar.gz' -print | sed 's|^\./||')
           if [[ -z "$files" ]]; then
             echo "ERROR: No .tar.gz files found under dist/" >&2
             exit 1
           fi
 
-          printf "%s\n" $files | sort
-
-          sha256sum $files | sort > checksums.txt
+          # Compute checksums from inside dist/ so the paths in checksums.txt don't include the dist/ prefix.
+          (cd dist && sha256sum $files) | sort > checksums.txt
 
           echo ""
           echo "checksums.txt:"
@@ -125,8 +126,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          cat > release-body.md <<'EOF'
-          Automated release for ${GITHUB_REF_NAME}.
+          cat > release-body.md <<EOF
+          Automated release for v${{ needs.validate.outputs.version }}.
 
           SHA256 checksums:
           ```
