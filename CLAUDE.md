@@ -73,7 +73,7 @@ man -M "$(cd docs/man && pwd)" keystone-cli
 
 ### Framework and Dependencies
 
-- **Target Framework**: .NET 9.0
+- **Target Framework**: .NET 10.0
 - **CLI Framework**: Cocona (command-line application framework)
 - **Testing**: NUnit with NSubstitute for mocking
 - **Configuration**: Microsoft.Extensions.Configuration with JSON and environment variables
