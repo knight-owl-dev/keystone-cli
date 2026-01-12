@@ -130,9 +130,9 @@ jobs:
             echo "Automated release for v${{ needs.validate.outputs.version }}."
             echo ""
             echo "SHA256 checksums:"
-            echo "```"
+            echo '```'
             cat checksums.txt
-            echo "```"
+            echo '```'
           } > release-body.md
 
           echo ""
