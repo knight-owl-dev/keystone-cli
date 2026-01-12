@@ -12,11 +12,11 @@
         <Copyright>© 2025 Knight Owl LLC. All rights reserved.</Copyright>
         <Description>A command-line interface for Keystone.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <Version>0.1.4</Version>
-        <ApplicationVersion>0.1.4</ApplicationVersion>
-        <AssemblyVersion>0.1.4</AssemblyVersion>
-        <FileVersion>0.1.4</FileVersion>
-        <InformationalVersion>0.1.4</InformationalVersion>
+        <Version>0.1.5</Version>
+        <ApplicationVersion>0.1.5</ApplicationVersion>
+        <AssemblyVersion>0.1.5</AssemblyVersion>
+        <FileVersion>0.1.5</FileVersion>
+        <InformationalVersion>0.1.5</InformationalVersion>
     </PropertyGroup>
 
     <PropertyGroup>
