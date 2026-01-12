@@ -109,6 +109,8 @@ if [[ -n "$RID" ]]; then
 else
   package osx-arm64
   package osx-x64
+  package linux-x64
+  package linux-arm64
 fi
 
 echo "Done."

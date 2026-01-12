@@ -60,6 +60,10 @@ jobs:
             rid: osx-arm64
           - runner: macos-latest
             rid: osx-x64
+          - runner: ubuntu-latest
+            rid: linux-x64
+          - runner: ubuntu-latest
+            rid: linux-arm64
 
     steps:
       - name: Checkout
