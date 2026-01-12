@@ -24,7 +24,7 @@ Keystone CLI is distributed via Homebrew.
 First, add the Knight Owl Homebrew tap:
 
 ```bash
-brew tap Knight-Owl-Dev/tap
+brew tap knight-owl-dev/tap
 ```
 
 Then install the CLI:
