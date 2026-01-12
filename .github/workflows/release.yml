@@ -126,21 +126,17 @@ jobs:
         run: |
           set -euo pipefail
 
-          cat > release-body.md <<EOF
-          Automated release for v${{ needs.validate.outputs.version }}.
-
-          SHA256 checksums:
-          ```
-          EOF
-
-          cat checksums.txt >> release-body.md
-
-          cat >> release-body.md <<'EOF'
-          ```
-          EOF
+          {
+            echo "Automated release for v${{ needs.validate.outputs.version }}."
+            echo ""
+            echo "SHA256 checksums:"
+            echo "```"
+            cat checksums.txt
+            echo "```"
+          } > release-body.md
 
           echo ""
-          echo "release-body.md:" 
+          echo "release-body.md:"
           cat release-body.md
 
       - name: Create GitHub Release and upload assets
@@ -151,4 +147,3 @@ jobs:
           files: |
             dist/**/keystone-cli_${{ needs.validate.outputs.version }}_*.tar.gz
             checksums.txt
-            release-body.md
