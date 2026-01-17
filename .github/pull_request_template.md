@@ -18,9 +18,11 @@ Explain the **WHY**, not the **HOW**.
 
 <!--
 Use one of:
-- Refs #NN  (contributes to an issue)
+- Refs #NN  (contributes to an issue, prefer to close the issue manually if finished)
 - Fixes #NN (closes an issue on merge)
 -->
+
+Refs #
 
 ## Changes
 
