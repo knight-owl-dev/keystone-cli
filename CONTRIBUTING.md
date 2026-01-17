@@ -45,6 +45,19 @@ working as expected. Include:
 Use the [task template](.github/ISSUE_TEMPLATE/task.md) for enhancements, improvements, or
 planned work. Focus on outcomes rather than implementation details.
 
+### Using Claude Code
+
+If you use [Claude Code](https://claude.ai/code), you can create issues directly from the
+terminal using the `/issue-create` command. It will:
+
+- Prompt for a description (or accept one as an argument)
+- Determine the appropriate template (bug or task)
+- Suggest labels based on the content
+- Preview the issue before creation
+- Create the issue via `gh` CLI
+
+This requires the [GitHub CLI](https://cli.github.com/) to be installed and authenticated.
+
 ## Submitting Changes
 
 This project follows a structured workflow documented in
