@@ -24,11 +24,12 @@ Issues act as lightweight tickets and historical context.
 
 ### 2. Working on an Issue
 
-- Create a branch for the work (naming is flexible but should be descriptive)
+- Create a branch for the work
 - Implement the change
 - Commit freely during development
 
-Branch naming is optional and does not affect automation.
+Prefer the `issue-NN-short-description` naming convention (e.g., `issue-42-fix-login-bug`).
+This is not enforced but aids traceability.
 
 ### 3. Opening a Pull Request
 
