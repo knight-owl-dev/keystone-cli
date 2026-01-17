@@ -25,11 +25,14 @@ Issues act as lightweight tickets and historical context.
 ### 2. Working on an Issue
 
 - Create a branch for the work
+    - **Collaborators**: Use GitHub's **Create a branch** link on the issue page
+    - **External contributors**: Create a branch in your fork following the same naming pattern
 - Implement the change
 - Commit freely during development
 
-Prefer the `issue-NN-short-description` naming convention (e.g., `issue-42-fix-login-bug`).
-This is not enforced but aids traceability.
+GitHub generates branch names in the format `<issue-number>-<issue-title-slug>`
+(e.g., `42-fix-login-bug`). Following this pattern ensures consistency whether the branch
+is created automatically or manually.
 
 ### 3. Opening a Pull Request
 
