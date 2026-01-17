@@ -33,12 +33,14 @@ keystone-cli/
 │   │   └── how-to-workflow.md      # Development workflow guide
 │   └── man/                        # Manual pages in mdoc format
 ├── .github/
+│   ├── ISSUE_TEMPLATE/             # Issue templates
 │   ├── workflows/                  # GitHub Actions
 │   │   ├── ci.yml                  # CI pipeline (tests on PR/push)
 │   │   ├── release.yml             # Release build and publish
 │   │   └── tag-release.yml         # Manual tag creation workflow
 │   ├── pull_request_template.md    # PR template
 │   └── release.yml                 # Release notes configuration
+├── CONTRIBUTING.md                 # Contribution guidelines
 ├── scripts/                        # Build and utility scripts
 │   └── package-release.sh          # Tarball packaging script
 ├── artifacts/                      # Build outputs
