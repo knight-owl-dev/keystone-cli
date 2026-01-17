@@ -118,8 +118,10 @@ jobs:
             exit 1
           fi
 
-          # Compute checksums from inside dist/ so the paths in checksums.txt don't include the dist/ prefix.
-          (cd dist && sha256sum $files) | sort > checksums.txt
+          # Compute checksums: format is "filename  checksum" (filename first, stripped of artifact directory)
+          (cd dist && sha256sum $files) | while read sum file; do
+            echo "$(basename "$file")  $sum"
+          done | sort > checksums.txt
 
           echo ""
           echo "checksums.txt:"
