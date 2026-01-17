@@ -27,8 +27,20 @@ keystone-cli/
 ├── tests/
 │   └── Keystone.Cli.UnitTests/     # Unit tests mirroring src structure
 ├── docs/
+│   ├── how-to/                     # Procedural guides
+│   │   ├── how-to-release.md       # Release process documentation
+│   │   ├── how-to-test-man-page.md # Man page testing guide
+│   │   └── how-to-workflow.md      # Development workflow guide
 │   └── man/                        # Manual pages in mdoc format
+├── .github/
+│   ├── workflows/                  # GitHub Actions
+│   │   ├── ci.yml                  # CI pipeline (tests on PR/push)
+│   │   ├── release.yml             # Release build and publish
+│   │   └── tag-release.yml         # Manual tag creation workflow
+│   ├── pull_request_template.md    # PR template
+│   └── release.yml                 # Release notes configuration
 ├── scripts/                        # Build and utility scripts
+│   └── package-release.sh          # Tarball packaging script
 ├── artifacts/                      # Build outputs
 ├── Directory.Build.props           # MSBuild configuration
 └── keystone-cli.sln                # Visual Studio solution
@@ -164,3 +176,32 @@ Tests mirror the source structure in `tests/Keystone.Cli.UnitTests/`:
 - Self-contained single-file publishing enabled
 - Deterministic builds for CI/CD
 - Centralized build outputs in `artifacts/` directory
+
+## CI/CD and Release Process
+
+### GitHub Workflows
+
+- **ci.yml**: Runs unit tests on PRs and pushes to main
+- **tag-release.yml**: Manual workflow to create a version tag from csproj version
+- **release.yml**: Triggered by `v*.*.*` tags; validates version, builds multi-platform
+  binaries, generates checksums, and publishes GitHub Release
+
+### Release Flow
+
+1. Update version using `/version X.Y.Z` command (updates csproj, man page, and tests)
+2. Create PR and merge to main
+3. Run `tag-release.yml` workflow manually (creates and pushes tag)
+4. `release.yml` triggers automatically on tag push
+5. Release published with binaries for osx-arm64, osx-x64, linux-x64, linux-arm64, etc.
+
+### GitHub Configuration
+
+- **release.yml** (in `.github/`): Configures auto-generated release notes categories
+  (Breaking Changes, Security, Enhancements, Bug Fixes, Documentation, Dependencies)
+- **pull_request_template.md**: PR template enforcing outcome-focused descriptions and
+  label requirements
+
+### Scripts
+
+- **package-release.sh**: Creates release tarballs with binary, config, and man page;
+  generates SHA256 checksums. Usage: `./scripts/package-release.sh [version] [rid]`
