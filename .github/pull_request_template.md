@@ -2,6 +2,7 @@
 PR workflow reminder:
 - Use a clear, outcome-focused title (this becomes a release note entry)
 - Apply appropriate labels (e.g. enhancement, documentation, bug)
+- Use special labels (`breaking-change`, `security`, `dependencies`) intentionally — they affect release notes
 - Reference related issues using `Refs #NN` or `Fixes #NN`
 - Squash merge is preferred unless stated otherwise
 -->
