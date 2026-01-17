@@ -127,15 +127,15 @@ jobs:
           echo "checksums.txt:"
           cat checksums.txt
 
-      - name: Prepare release notes
+      - name: Prepare checksums body
         shell: bash
         run: |
           set -euo pipefail
 
           {
-            echo "Automated release for v${{ needs.validate.outputs.version }}."
             echo ""
-            echo "SHA256 checksums:"
+            echo "## SHA256 Checksums"
+            echo ""
             echo '```'
             cat checksums.txt
             echo '```'
@@ -149,6 +149,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: "keystone-cli v${{ needs.validate.outputs.version }}"
+          generate_release_notes: true
+          append_body: true
           body_path: release-body.md
           files: |
             dist/**/keystone-cli_${{ needs.validate.outputs.version }}_*.tar.gz
