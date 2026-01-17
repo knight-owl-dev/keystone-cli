@@ -47,16 +47,25 @@ planned work. Focus on outcomes rather than implementation details.
 
 ### Using Claude Code
 
-If you use [Claude Code](https://claude.ai/code), you can create issues directly from the
-terminal using the `/issue-create` command. It will:
+If you use [Claude Code](https://claude.ai/code), you can create issues and pull requests
+directly from the terminal.
 
-- Prompt for a description (or accept one as an argument)
-- Determine the appropriate template (bug or task)
-- Suggest labels based on the content
-- Preview the issue before creation
-- Create the issue via `gh` CLI
+**Creating issues** with `/issue-create`:
 
-This requires the [GitHub CLI](https://cli.github.com/) to be installed and authenticated.
+- Prompts for a description (or accepts one as an argument)
+- Determines the appropriate template (bug or task)
+- Suggests labels based on the content
+- Previews the issue before creation
+
+**Creating pull requests** with `/pr-create`:
+
+- Extracts the issue number from the branch name (e.g., `42-fix-login-bug`)
+- Fetches the related issue to understand scope and context
+- Analyzes commits to compose the Changes section
+- Generates a PR following the project template
+- Suggests labels based on the related issue
+
+Both commands require the [GitHub CLI](https://cli.github.com/) to be installed and authenticated.
 
 ## Submitting Changes
 
