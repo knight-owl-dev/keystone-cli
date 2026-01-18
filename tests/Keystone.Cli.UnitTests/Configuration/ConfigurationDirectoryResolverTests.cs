@@ -29,6 +29,9 @@ public class ConfigurationDirectoryResolverTests
         return new Mocks(environment, fileSystem);
     }
 
+    private static ConfigurationDirectoryResolver Ctor(Mocks mocks)
+        => new(mocks.Environment, mocks.FileSystem);
+
     [Test]
     public void ReturnsEnvVarPath_WhenSetAndContainsConfig()
     {
@@ -38,7 +41,7 @@ public class ConfigurationDirectoryResolverTests
         mocks.FileSystem.FileExists(Path.Combine(customPath, ConfigFileName)).Returns(true);
         mocks.Environment.GetEnvironmentVariable(EnvVarName).Returns(customPath);
 
-        var sut = new ConfigurationDirectoryResolver(mocks.Environment, mocks.FileSystem);
+        var sut = Ctor(mocks);
 
         Assert.That(sut.ResolveConfigDirectory(), Is.EqualTo(customPath));
     }
@@ -52,7 +55,7 @@ public class ConfigurationDirectoryResolverTests
         mocks.FileSystem.FileExists(Path.Combine(customPath, ConfigFileName)).Returns(false);
         mocks.Environment.GetEnvironmentVariable(EnvVarName).Returns(customPath);
 
-        var sut = new ConfigurationDirectoryResolver(mocks.Environment, mocks.FileSystem);
+        var sut = Ctor(mocks);
 
         Assert.That(sut.ResolveConfigDirectory(), Is.EqualTo(AppBasePath));
     }
@@ -63,7 +66,7 @@ public class ConfigurationDirectoryResolverTests
         var mocks = CreateMocks();
         mocks.Environment.GetEnvironmentVariable(EnvVarName).Returns(string.Empty);
 
-        var sut = new ConfigurationDirectoryResolver(mocks.Environment, mocks.FileSystem);
+        var sut = Ctor(mocks);
 
         Assert.That(sut.ResolveConfigDirectory(), Is.EqualTo(AppBasePath));
     }
@@ -75,7 +78,7 @@ public class ConfigurationDirectoryResolverTests
 
         mocks.Environment.GetEnvironmentVariable(EnvVarName).Returns((string?) null);
 
-        var sut = new ConfigurationDirectoryResolver(mocks.Environment, mocks.FileSystem);
+        var sut = Ctor(mocks);
 
         Assert.That(sut.ResolveConfigDirectory(), Is.EqualTo(AppBasePath));
     }
@@ -86,7 +89,7 @@ public class ConfigurationDirectoryResolverTests
         var mocks = CreateMocks();
         mocks.FileSystem.FileExists(Path.Combine(UserConfigPath, ConfigFileName)).Returns(true);
 
-        var sut = new ConfigurationDirectoryResolver(mocks.Environment, mocks.FileSystem);
+        var sut = Ctor(mocks);
 
         Assert.That(sut.ResolveConfigDirectory(), Is.EqualTo(UserConfigPath));
     }
@@ -97,7 +100,7 @@ public class ConfigurationDirectoryResolverTests
         var mocks = CreateMocks(isWindows: true);
         mocks.FileSystem.FileExists(Path.Combine(UserConfigPath, ConfigFileName)).Returns(true);
 
-        var sut = new ConfigurationDirectoryResolver(mocks.Environment, mocks.FileSystem);
+        var sut = Ctor(mocks);
 
         Assert.That(sut.ResolveConfigDirectory(), Is.EqualTo(UserConfigPath));
     }
@@ -109,7 +112,7 @@ public class ConfigurationDirectoryResolverTests
         mocks.FileSystem.FileExists(Path.Combine(UserConfigPath, ConfigFileName)).Returns(false);
         mocks.FileSystem.FileExists(Path.Combine(FhsPath, ConfigFileName)).Returns(true);
 
-        var sut = new ConfigurationDirectoryResolver(mocks.Environment, mocks.FileSystem);
+        var sut = Ctor(mocks);
 
         Assert.That(sut.ResolveConfigDirectory(), Is.EqualTo(FhsPath));
     }
@@ -121,7 +124,7 @@ public class ConfigurationDirectoryResolverTests
         mocks.FileSystem.FileExists(Path.Combine(UserConfigPath, ConfigFileName)).Returns(false);
         mocks.FileSystem.FileExists(Path.Combine(FhsPath, ConfigFileName)).Returns(true);
 
-        var sut = new ConfigurationDirectoryResolver(mocks.Environment, mocks.FileSystem);
+        var sut = Ctor(mocks);
 
         // Should return AppBasePath, not FhsPath, because FHS is skipped on Windows
         Assert.That(sut.ResolveConfigDirectory(), Is.EqualTo(AppBasePath));
@@ -134,7 +137,7 @@ public class ConfigurationDirectoryResolverTests
 
         // No paths contain the config file
 
-        var sut = new ConfigurationDirectoryResolver(mocks.Environment, mocks.FileSystem);
+        var sut = Ctor(mocks);
 
         Assert.That(sut.ResolveConfigDirectory(), Is.EqualTo(AppBasePath));
     }
@@ -146,7 +149,7 @@ public class ConfigurationDirectoryResolverTests
 
         // No paths contain the config file
 
-        var sut = new ConfigurationDirectoryResolver(mocks.Environment, mocks.FileSystem);
+        var sut = Ctor(mocks);
 
         Assert.That(sut.ResolveConfigDirectory(), Is.EqualTo(AppBasePath));
     }
@@ -161,7 +164,7 @@ public class ConfigurationDirectoryResolverTests
         mocks.FileSystem.FileExists(Path.Combine(UserConfigPath, ConfigFileName)).Returns(true);
         mocks.Environment.GetEnvironmentVariable(EnvVarName).Returns(customPath);
 
-        var sut = new ConfigurationDirectoryResolver(mocks.Environment, mocks.FileSystem);
+        var sut = Ctor(mocks);
 
         Assert.That(sut.ResolveConfigDirectory(), Is.EqualTo(customPath));
     }
@@ -173,7 +176,7 @@ public class ConfigurationDirectoryResolverTests
         mocks.FileSystem.FileExists(Path.Combine(UserConfigPath, ConfigFileName)).Returns(true);
         mocks.FileSystem.FileExists(Path.Combine(FhsPath, ConfigFileName)).Returns(true);
 
-        var sut = new ConfigurationDirectoryResolver(mocks.Environment, mocks.FileSystem);
+        var sut = Ctor(mocks);
 
         Assert.That(sut.ResolveConfigDirectory(), Is.EqualTo(UserConfigPath));
     }
