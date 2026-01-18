@@ -38,6 +38,7 @@ keystone-cli/
 │   │   ├── ci.yml                  # CI pipeline (tests on PR/push)
 │   │   ├── release.yml             # Release build and publish
 │   │   └── tag-release.yml         # Manual tag creation workflow
+│   ├── dependabot.yml              # Dependency update automation
 │   ├── pull_request_template.md    # PR template
 │   └── release.yml                 # Release notes configuration
 ├── CONTRIBUTING.md                 # Contribution guidelines
@@ -230,6 +231,8 @@ Framework-specific test infrastructure isolated from general test utilities:
 
 ### GitHub Configuration
 
+- **dependabot.yml**: Automated dependency updates for NuGet packages and GitHub Actions;
+  runs weekly on Mondays with minor/patch updates grouped to reduce PR noise
 - **release.yml** (in `.github/`): Configures auto-generated release notes categories
   (Breaking Changes, Security, Enhancements, Bug Fixes, Documentation, Dependencies)
 - **pull_request_template.md**: PR template enforcing outcome-focused descriptions and
