@@ -122,18 +122,41 @@ The project follows clean architecture principles with three main layers:
 
 - Business logic and use case implementations
 - Service implementations for core functionality:
-  - **Commands**: Browse, Info, New, Project commands
-  - **FileSystem**: File operations and copying services
-  - **GitHub**: GitHub repository and template handling
-  - **Project**: Project model management and policy enforcement
-  - **Data**: Repository pattern implementations with multiple store types
-  - **Utility**: Serialization services (JSON, YAML, Environment files)
+    - **Commands**: Browse, Info, New, Project commands
+    - **FileSystem**: File operations and copying services
+    - **GitHub**: GitHub repository and template handling
+    - **Project**: Project model management and policy enforcement
+    - **Data**: Repository pattern implementations with multiple store types
+    - **Utility**: Serialization services (JSON, YAML, Environment files)
 
 #### Presentation Layer (`src/Keystone.Cli/Presentation/`)
 
 - Command controllers using Cocona framework
+- Decoupled from Application layer—can swap CLI frameworks without affecting business logic
 - User interface and command-line interaction
-- Controllers: `BrowseCommandController`, `InfoCommandController`, `NewCommandController`, `SubCommandsHostController`
+- Controllers: `BrowseCommandController`, `InfoCommandController`, `NewCommandController`,
+  `SubCommandsHostController`
+
+##### Cocona Conventions
+
+Cocona exposes method parameters as CLI options by default. To keep help output clean:
+
+- **Never** add `CancellationToken` as a command method parameter—it appears as
+  `--cancellation-token` in help output
+- Instead, inject `ICoconaAppContextAccessor` via constructor and access the token from context:
+
+```csharp
+public class MyCommand(ICoconaAppContextAccessor contextAccessor)
+{
+    public async Task<int> RunAsync()
+    {
+        var cancellationToken = contextAccessor.Current?.CancellationToken ?? CancellationToken.None;
+        // use cancellationToken...
+    }
+}
+```
+
+This convention is enforced by `CoconaCommandMethodConventionsTests`.
 
 ### Key Components
 
@@ -165,6 +188,15 @@ Tests mirror the source structure in `tests/Keystone.Cli.UnitTests/`:
 - Organized by layer (Application, Configuration, Domain, Presentation)
 - Uses NUnit testing framework with NSubstitute for mocking
 - Tests cover service implementations and command logic
+
+#### Cocona Test Utilities (`Presentation/Cocona/`)
+
+Framework-specific test infrastructure isolated from general test utilities:
+
+- `CoconaAppContextFactory` — Creates `CoconaAppContext` instances for testing commands
+  that need `ICoconaAppContextAccessor`
+- `CoconaCommandMethodConventionsTests` — Enforces conventions (e.g., no `CancellationToken`
+  parameters in command methods)
 
 ### Configuration
 

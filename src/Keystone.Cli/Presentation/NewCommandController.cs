@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Cocona;
+using Cocona.Application;
 using Keystone.Cli.Application.Commands.New;
 using Keystone.Cli.Application.Utility;
 using Keystone.Cli.Domain;
@@ -12,7 +13,11 @@ namespace Keystone.Cli.Presentation;
 /// <summary>
 /// The "new" command controller.
 /// </summary>
-public class NewCommandController(IConsole console, INewCommand newCommand)
+public class NewCommandController(
+    ICoconaAppContextAccessor contextAccessor,
+    IConsole console,
+    INewCommand newCommand
+)
 {
     [Command("new", Description = "Creates a new project from a template")]
     public async Task<int> NewAsync(
@@ -29,6 +34,8 @@ public class NewCommandController(IConsole console, INewCommand newCommand)
         bool includeGitFiles = false
     )
     {
+        var cancellationToken = contextAccessor.Current?.CancellationToken ?? CancellationToken.None;
+
         var fullPath = string.IsNullOrWhiteSpace(projectPath)
             ? Path.Combine(Path.GetFullPath("."), ProjectNamePolicy.GetProjectDirectoryName(projectName))
             : Path.GetFullPath(projectPath);
@@ -40,7 +47,7 @@ public class NewCommandController(IConsole console, INewCommand newCommand)
                 templateName,
                 fullPath,
                 includeGitFiles,
-                CancellationToken.None
+                cancellationToken
             );
 
             return CliCommandResults.Success;
