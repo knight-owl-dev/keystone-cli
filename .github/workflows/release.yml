@@ -84,7 +84,7 @@ jobs:
         run: bash ./scripts/package-release.sh "${{ needs.validate.outputs.version }}" "${{ matrix.rid }}"
 
       - name: Upload tarball artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: dist-${{ matrix.rid }}
           path: artifacts/release/keystone-cli_${{ needs.validate.outputs.version }}_${{ matrix.rid }}.tar.gz
