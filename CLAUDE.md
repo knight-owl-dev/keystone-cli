@@ -122,12 +122,12 @@ The project follows clean architecture principles with three main layers:
 
 - Business logic and use case implementations
 - Service implementations for core functionality:
-  - **Commands**: Browse, Info, New, Project commands
-  - **FileSystem**: File operations and copying services
-  - **GitHub**: GitHub repository and template handling
-  - **Project**: Project model management and policy enforcement
-  - **Data**: Repository pattern implementations with multiple store types
-  - **Utility**: Serialization services (JSON, YAML, Environment files)
+    - **Commands**: Browse, Info, New, Project commands
+    - **FileSystem**: File operations and copying services
+    - **GitHub**: GitHub repository and template handling
+    - **Project**: Project model management and policy enforcement
+    - **Data**: Repository pattern implementations with multiple store types
+    - **Utility**: Serialization services (JSON, YAML, Environment files)
 
 #### Presentation Layer (`src/Keystone.Cli/Presentation/`)
 
