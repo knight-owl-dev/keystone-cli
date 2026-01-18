@@ -8,6 +8,7 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
+      - ".NET"
     groups:
       minor-and-patch:
         update-types:
@@ -22,6 +23,7 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
+      - "github-actions"
     groups:
       minor-and-patch:
         update-types:
