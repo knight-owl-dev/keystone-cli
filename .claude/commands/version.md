@@ -33,8 +33,22 @@ Update ALL five version properties to the new value:
 
 #### 2. `docs/man/man1/keystone-cli.1`
 
-Update the VERSION section. Find the line that starts with `keystone-cli` under the
-`.Sh VERSION` section and update it to `keystone-cli X.Y.Z`.
+Update TWO sections in this file:
+
+**a) The `.Dd` date tag (line 1):**
+
+Run the locale-safe date script to get the current month and year:
+
+```bash
+./scripts/get-english-month-year.sh
+```
+
+Update the first line of the man page to `.Dd <output>` (e.g., `.Dd January 2026`).
+
+**b) The VERSION section:**
+
+Find the line that starts with `keystone-cli` under the `.Sh VERSION` section and
+update it to `keystone-cli X.Y.Z`.
 
 #### 3. `tests/Keystone.Cli.UnitTests/Application/Commands/Info/InfoCommandTests.cs`
 
