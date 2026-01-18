@@ -10,6 +10,9 @@ This CLI tool is part of the Keystone publishing system and is designed to opera
 - **Slim Template** (uses prebuilt public Docker image):
   [https://github.com/knight-owl-dev/keystone-template-core-slim](https://github.com/knight-owl-dev/keystone-template-core-slim)
 
+- **Hello World Template** (sample project with example content):
+  [https://github.com/knight-owl-dev/keystone-hello-world](https://github.com/knight-owl-dev/keystone-hello-world)
+
 These templates are licensed separately under
 the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
