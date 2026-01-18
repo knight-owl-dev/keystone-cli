@@ -201,9 +201,19 @@ Framework-specific test infrastructure isolated from general test utilities:
 
 ### Configuration
 
-- Application settings in `appsettings.json` and `appsettings.Development.json`
-- Environment-specific configuration support
-- Template repository URLs configurable via settings
+Application settings are loaded from `appsettings.json` and `appsettings.{Environment}.json`.
+The CLI searches for configuration files using a lookup chain (first match wins):
+
+1. `KEYSTONE_CLI_CONFIG_DIR` environment variable (all platforms)
+2. User config directory (all platforms): `%APPDATA%\keystone-cli\` on Windows,
+   `~/.config/keystone-cli/` on Linux/macOS
+3. `/etc/keystone-cli/` (FHS system-wide, Linux/macOS only)
+4. `AppContext.BaseDirectory` (fallback, same directory as the executable)
+
+This allows Linux package maintainers to place configuration in `/etc/keystone-cli/`
+while users can override with their user config directory or the environment variable.
+
+Template repository URLs are configurable via settings.
 
 ### Build Configuration
 

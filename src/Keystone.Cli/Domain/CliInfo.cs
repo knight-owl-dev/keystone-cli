@@ -6,6 +6,11 @@ namespace Keystone.Cli.Domain;
 public static class CliInfo
 {
     /// <summary>
+    /// The name of the Keystone CLI application.
+    /// </summary>
+    public const string AppName = "keystone-cli";
+
+    /// <summary>
     /// The year the Keystone CLI was created.
     /// </summary>
     public const int InceptionYear = 2025;

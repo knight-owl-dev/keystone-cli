@@ -185,6 +185,33 @@ To switch the current project to use the `core-slim` template:
 To switch a project at a specific path to use the `core` template:
 .Dl keystone-cli project switch-template --project-path /path/to/my-project core
 
+.Sh ENVIRONMENT
+.Bl -tag -width indent
+.It Ev KEYSTONE_CLI_CONFIG_DIR
+If set, specifies the directory containing the configuration file
+.Pa appsettings.json .
+This takes precedence over all other configuration locations.
+.El
+
+.Sh FILES
+.Nm
+searches for its configuration file
+.Pa appsettings.json
+in the following locations (first match wins):
+.Bl -enum -offset indent
+.It
+The directory specified by
+.Ev KEYSTONE_CLI_CONFIG_DIR .
+.It
+.Pa ~/.config/keystone-cli/
+.It
+.Pa /etc/keystone-cli/
+.It
+The directory containing the
+.Nm
+executable.
+.El
+
 .Sh VERSION
 keystone-cli 0.1.6
 
