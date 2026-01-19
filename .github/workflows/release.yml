@@ -118,9 +118,9 @@ jobs:
             exit 1
           fi
 
-          # Compute checksums: format is "filename  checksum" (filename first, stripped of artifact directory)
+          # Compute checksums: standard GNU coreutils format (checksum first, compatible with sha256sum -c)
           (cd dist && sha256sum $files) | while read sum file; do
-            echo "$(basename "$file")  $sum"
+            echo "$sum  $(basename "$file")"
           done | sort > checksums.txt
 
           echo ""
