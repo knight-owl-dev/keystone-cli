@@ -95,6 +95,7 @@ package() {
     -czf "$ARCHIVE" \
     keystone-cli \
     appsettings.json \
+    -C "$REPO_ROOT" LICENSE \
     -C "$REPO_ROOT/docs/man/man1" keystone-cli.1
 
   if command -v shasum >/dev/null 2>&1; then
