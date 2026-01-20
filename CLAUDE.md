@@ -43,7 +43,9 @@ keystone-cli/
 │   └── release.yml                 # Release notes configuration
 ├── CONTRIBUTING.md                 # Contribution guidelines
 ├── scripts/                        # Build and utility scripts
-│   └── package-release.sh          # Tarball packaging script
+│   ├── package-release.sh          # Tarball packaging script
+│   └── package-deb.sh              # Debian package script (requires nfpm)
+├── nfpm.yaml                       # nfpm configuration for .deb packaging
 ├── artifacts/                      # Build outputs
 ├── Directory.Build.props           # MSBuild configuration
 └── keystone-cli.sln                # Visual Studio solution
@@ -229,7 +231,7 @@ Template repository URLs are configurable via settings.
 - **ci.yml**: Runs unit tests on PRs and pushes to main
 - **tag-release.yml**: Manual workflow to create a version tag from csproj version
 - **release.yml**: Triggered by `v*.*.*` tags; validates version, builds multi-platform
-  binaries, generates checksums, and publishes GitHub Release
+  binaries, packages tarballs and .deb files, generates checksums, and publishes GitHub Release
 
 ### Release Flow
 
@@ -252,3 +254,6 @@ Template repository URLs are configurable via settings.
 
 - **package-release.sh**: Creates release tarballs with binary, config, and man page;
   generates SHA256 checksums. Usage: `./scripts/package-release.sh [version] [rid]`
+- **package-deb.sh**: Creates `.deb` packages for Linux (amd64, arm64) using nfpm;
+  requires `nfpm` (`brew install nfpm` or `go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest`).
+  Usage: `./scripts/package-deb.sh [version] [rid]`

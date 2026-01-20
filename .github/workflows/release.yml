@@ -90,6 +90,29 @@ jobs:
           path: artifacts/release/keystone-cli_${{ needs.validate.outputs.version }}_${{ matrix.rid }}.tar.gz
           if-no-files-found: error
 
+      - name: Setup Go
+        if: startsWith(matrix.rid, 'linux-')
+        uses: actions/setup-go@v6
+        with:
+          go-version: stable
+
+      - name: Install nfpm
+        if: startsWith(matrix.rid, 'linux-')
+        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+
+      - name: Build .deb package (${{ matrix.rid }})
+        if: startsWith(matrix.rid, 'linux-')
+        shell: bash
+        run: bash ./scripts/package-deb.sh "${{ needs.validate.outputs.version }}" "${{ matrix.rid }}"
+
+      - name: Upload .deb artifact
+        if: startsWith(matrix.rid, 'linux-')
+        uses: actions/upload-artifact@v6
+        with:
+          name: deb-${{ matrix.rid }}
+          path: artifacts/release/keystone-cli_*.deb
+          if-no-files-found: error
+
   publish-release:
     name: Publish Release
     needs: [validate, build-assets]
@@ -99,7 +122,7 @@ jobs:
       contents: write
 
     steps:
-      - name: Download all tarballs
+      - name: Download all artifacts
         uses: actions/download-artifact@v7
         with:
           path: dist
@@ -109,12 +132,12 @@ jobs:
         run: |
           set -euo pipefail
 
-          echo "Release assets:" 
-          (cd dist && find . -maxdepth 3 -type f -name '*.tar.gz' -print | sed 's|^\./||' | sort)
+          echo "Release assets:"
+          (cd dist && find . -maxdepth 3 -type f \( -name '*.tar.gz' -o -name '*.deb' \) -print | sed 's|^\./||' | sort)
 
-          files=$(cd dist && find . -maxdepth 3 -type f -name '*.tar.gz' -print | sed 's|^\./||')
+          files=$(cd dist && find . -maxdepth 3 -type f \( -name '*.tar.gz' -o -name '*.deb' \) -print | sed 's|^\./||')
           if [[ -z "$files" ]]; then
-            echo "ERROR: No .tar.gz files found under dist/" >&2
+            echo "ERROR: No release files found under dist/" >&2
             exit 1
           fi
 
@@ -154,4 +177,5 @@ jobs:
           body_path: release-body.md
           files: |
             dist/**/keystone-cli_${{ needs.validate.outputs.version }}_*.tar.gz
+            dist/**/keystone-cli_${{ needs.validate.outputs.version }}_*.deb
             checksums.txt

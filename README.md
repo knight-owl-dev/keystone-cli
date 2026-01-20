@@ -19,7 +19,7 @@ publishing books and documents. It is part of the broader Keystone ecosystem, wh
 
 ## Installation
 
-Keystone CLI is distributed via Homebrew.
+### Homebrew (macOS/Linux)
 
 First, add the Knight Owl Homebrew tap:
 
@@ -39,6 +39,12 @@ After installation, verify that everything is working:
 keystone-cli info
 man keystone-cli
 ```
+
+### Apt (Debian/Ubuntu) — Coming Soon
+
+See [issue #49](https://github.com/knight-owl-dev/keystone-cli/issues/49) for progress on apt
+repository support. In the meantime, `.deb` packages are available in
+[GitHub Releases](https://github.com/Knight-Owl-Dev/keystone-cli/releases).
 
 ## Project Structure
 
