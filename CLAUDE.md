@@ -30,6 +30,7 @@ keystone-cli/
 │   ├── how-to/                     # Procedural guides
 │   │   ├── how-to-release.md       # Release process documentation
 │   │   ├── how-to-test-man-page.md # Man page testing guide
+│   │   ├── how-to-upgrade-dotnet.md # .NET version upgrade guide
 │   │   └── how-to-workflow.md      # Development workflow guide
 │   └── man/                        # Manual pages in mdoc format
 ├── .github/
@@ -45,6 +46,7 @@ keystone-cli/
 ├── scripts/                        # Build and utility scripts
 │   ├── generate-checksums.sh       # SHA256 checksum generation for releases
 │   ├── get-english-month-year.sh   # Locale-safe date for man page updates
+│   ├── get-tfm.sh                  # Extract target framework from Directory.Build.props
 │   ├── get-version.sh              # Extract version from csproj
 │   ├── package-deb.sh              # Debian package script (requires nfpm)
 │   └── package-release.sh          # Tarball packaging script
@@ -226,6 +228,8 @@ Template repository URLs are configurable via settings.
 - Self-contained single-file publishing enabled
 - Deterministic builds for CI/CD
 - Centralized build outputs in `artifacts/` directory
+- Target framework defined centrally in `Directory.Build.props`; see
+  `docs/how-to/how-to-upgrade-dotnet.md` for upgrade instructions
 
 ## CI/CD and Release Process
 
@@ -259,6 +263,8 @@ Template repository URLs are configurable via settings.
   Usage: `./scripts/generate-checksums.sh [dist-dir]`
 - **get-english-month-year.sh**: Returns locale-safe English month and year for man page updates.
   Usage: `./scripts/get-english-month-year.sh`
+- **get-tfm.sh**: Extracts the target framework moniker from `Directory.Build.props`.
+  Usage: `./scripts/get-tfm.sh`
 - **get-version.sh**: Extracts the project version from `Keystone.Cli.csproj`.
   Usage: `./scripts/get-version.sh`
 - **package-deb.sh**: Creates `.deb` packages for Linux (amd64, arm64) using nfpm;
