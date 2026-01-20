@@ -33,12 +33,7 @@ jobs:
       - name: Validate csproj version matches tag
         shell: bash
         run: |
-          CS_VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' ./src/Keystone.Cli/Keystone.Cli.csproj | head -n 1)"
-          if [[ -z "$CS_VERSION" ]]; then
-            echo "ERROR: Could not read <Version> from ./src/Keystone.Cli/Keystone.Cli.csproj" >&2
-            exit 1
-          fi
-
+          CS_VERSION="$(./scripts/get-version.sh)"
           if [[ "$CS_VERSION" != "${{ steps.v.outputs.version }}" ]]; then
             echo "ERROR: csproj <Version> ($CS_VERSION) does not match tag (v${{ steps.v.outputs.version }})" >&2
             exit 1
