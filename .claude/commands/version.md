@@ -6,7 +6,11 @@ Manage the project version across all configuration files.
 
 ## Instructions
 
-1. Read the current version from `src/Keystone.Cli/Keystone.Cli.csproj` (the `<Version>` tag)
+1. Read the current version by running the version script:
+
+```bash
+./scripts/get-version.sh
+```
 
 2. **If arguments are empty or "show"**: Display the current version and exit
 
