@@ -43,7 +43,7 @@ if [[ $# -eq 2 ]]; then
   RID="$2"
 fi
 
-TFM="net10.0"
+TFM="$("${SCRIPT_DIR}/get-tfm.sh")"
 
 if [[ -z "$VERSION" ]]; then
   # Best-effort: extract <Version>...</Version> from the CLI project file.
