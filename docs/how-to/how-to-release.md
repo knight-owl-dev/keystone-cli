@@ -90,7 +90,8 @@ This is the **recommended** way to publish a new version.
    - validate `<Version>` matches the tag
    - build and publish binaries (matrix-based by RID)
    - package `.tar.gz` release assets
-   - compute SHA-256 checksums
+   - build `.deb` packages for Linux architectures (amd64, arm64)
+   - compute SHA-256 checksums for all assets
    - generate release notes
    - create a GitHub Release and upload all assets
 
@@ -132,8 +133,11 @@ Use this flow **only** if GitHub Actions is unavailable or requires debugging.
    ```bash
    dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r osx-arm64
    dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r osx-x64
+   dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r linux-x64
+   dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r linux-arm64
 
    ./scripts/package-release.sh X.Y.Z
+   ./scripts/package-deb.sh X.Y.Z  # requires nfpm
    ```
 
 4. Create and push the annotated tag:
@@ -150,3 +154,45 @@ Use this flow **only** if GitHub Actions is unavailable or requires debugging.
    - Paste checksum contents into the release description
 
 6. Update the Homebrew formula as usual.
+
+---
+
+## Debian packages
+
+The release workflow automatically builds `.deb` packages for Linux architectures:
+
+- `keystone-cli_X.Y.Z_amd64.deb` (linux-x64)
+- `keystone-cli_X.Y.Z_arm64.deb` (linux-arm64)
+
+These packages are built using [nfpm](https://nfpm.goreleaser.com/) via `scripts/package-deb.sh`
+and uploaded to GitHub Releases alongside the tarballs. The package configuration is defined in
+`nfpm.yaml` at the repository root.
+
+To build `.deb` packages locally (requires nfpm):
+
+```bash
+# Install nfpm (choose one)
+brew install nfpm                                            # macOS/Linux with Homebrew
+go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest     # with Go
+
+# Build for a specific RID
+./scripts/package-deb.sh 0.1.0 linux-x64
+
+# Or build all Linux architectures
+./scripts/package-deb.sh 0.1.0
+```
+
+### Package contents
+
+The `.deb` packages install:
+
+- `/opt/keystone-cli/keystone-cli` — the main binary
+- `/opt/keystone-cli/appsettings.json` — application configuration
+- `/usr/local/share/man/man1/keystone-cli.1` — man page
+- `/usr/share/doc/keystone-cli/copyright` — license file
+- `/usr/local/bin/keystone-cli` — symlink to the binary
+
+### Future: apt repository
+
+See [issue #49](https://github.com/knight-owl-dev/keystone-cli/issues/49) for progress on hosting
+these packages in an apt repository for easier installation on Debian/Ubuntu systems.
