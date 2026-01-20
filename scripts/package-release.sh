@@ -87,6 +87,11 @@ package() {
     exit 1
   fi
 
+  if [[ ! -f "LICENSE" ]]; then
+    echo "ERROR: LICENSE file not found: LICENSE" >&2
+    exit 1
+  fi
+
   local ARCHIVE="${OUT_DIR}/keystone-cli_${VERSION}_${RID}.tar.gz"
 
   echo "Packaging ${ARCHIVE} (RID: ${RID})"
