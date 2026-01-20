@@ -12,7 +12,7 @@ RID=""
 usage() {
   echo "Usage: $(basename "$0") [version] [rid]" >&2
   echo "  version: Optional release version (e.g., 0.1.0)." >&2
-  echo "           Defaults to the current <Version> value in Keystone.Cli.csproj if omitted." >&2
+  echo "           Extracted from Keystone.Cli.csproj if omitted; fails if not found." >&2
   echo "  rid:     Optional runtime identifier (linux-x64 or linux-arm64)." >&2
   echo "           If provided, only that RID package will be produced." >&2
   echo "" >&2
@@ -45,14 +45,7 @@ fi
 TFM="$("${SCRIPT_DIR}/get-tfm.sh")"
 
 if [[ -z "$VERSION" ]]; then
-  # Best-effort: extract <Version>...</Version> from the CLI project file.
-  if [[ -f "./src/Keystone.Cli/Keystone.Cli.csproj" ]]; then
-    VERSION="$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' ./src/Keystone.Cli/Keystone.Cli.csproj | head -n 1)"
-  fi
-
-  if [[ -z "$VERSION" ]]; then
-    VERSION="0.1.0"
-  fi
+  VERSION="$("${SCRIPT_DIR}/get-version.sh")"
 fi
 
 OUT_DIR="artifacts/release"
