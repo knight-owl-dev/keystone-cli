@@ -43,8 +43,11 @@ keystone-cli/
 │   └── release.yml                 # Release notes configuration
 ├── CONTRIBUTING.md                 # Contribution guidelines
 ├── scripts/                        # Build and utility scripts
-│   ├── package-release.sh          # Tarball packaging script
-│   └── package-deb.sh              # Debian package script (requires nfpm)
+│   ├── generate-checksums.sh       # SHA256 checksum generation for releases
+│   ├── get-english-month-year.sh   # Locale-safe date for man page updates
+│   ├── get-version.sh              # Extract version from csproj
+│   ├── package-deb.sh              # Debian package script (requires nfpm)
+│   └── package-release.sh          # Tarball packaging script
 ├── nfpm.yaml                       # nfpm configuration for .deb packaging
 ├── artifacts/                      # Build outputs
 ├── Directory.Build.props           # MSBuild configuration
@@ -252,8 +255,14 @@ Template repository URLs are configurable via settings.
 
 ### Scripts
 
-- **package-release.sh**: Creates release tarballs with binary, config, and man page;
-  generates SHA256 checksums. Usage: `./scripts/package-release.sh [version] [rid]`
+- **generate-checksums.sh**: Generates SHA256 checksums for release artifacts.
+  Usage: `./scripts/generate-checksums.sh [dist-dir]`
+- **get-english-month-year.sh**: Returns locale-safe English month and year for man page updates.
+  Usage: `./scripts/get-english-month-year.sh`
+- **get-version.sh**: Extracts the project version from `Keystone.Cli.csproj`.
+  Usage: `./scripts/get-version.sh`
 - **package-deb.sh**: Creates `.deb` packages for Linux (amd64, arm64) using nfpm;
   requires `nfpm` (`brew install nfpm` or `go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest`).
   Usage: `./scripts/package-deb.sh [version] [rid]`
+- **package-release.sh**: Creates release tarballs with binary, config, and man page.
+  Usage: `./scripts/package-release.sh [version] [rid]`
