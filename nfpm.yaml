@@ -7,12 +7,12 @@ homepage: "https://github.com/knight-owl-dev/keystone-cli"
 license: "MIT"
 
 contents:
-  - src: artifacts/bin/Keystone.Cli/Release/net10.0/${RID}/publish/keystone-cli
+  - src: artifacts/bin/Keystone.Cli/Release/${TFM}/${RID}/publish/keystone-cli
     dst: /opt/keystone-cli/keystone-cli
     expand: true
     file_info:
       mode: 0755
-  - src: artifacts/bin/Keystone.Cli/Release/net10.0/${RID}/publish/appsettings.json
+  - src: artifacts/bin/Keystone.Cli/Release/${TFM}/${RID}/publish/appsettings.json
     dst: /opt/keystone-cli/appsettings.json
     expand: true
   - src: docs/man/man1/keystone-cli.1

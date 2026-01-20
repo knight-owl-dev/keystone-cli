@@ -106,7 +106,7 @@ package() {
 
   echo "Building ${PACKAGE} (RID: ${RID}, ARCH: ${ARCH})"
 
-  ARCH="$ARCH" VERSION="$VERSION" RID="$RID" \
+  ARCH="$ARCH" VERSION="$VERSION" RID="$RID" TFM="$TFM" \
     nfpm package --packager deb --target "$PACKAGE"
 
   if command -v shasum >/dev/null 2>&1; then
