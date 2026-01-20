@@ -123,51 +123,16 @@ jobs:
       contents: write
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
       - name: Download all artifacts
         uses: actions/download-artifact@v7
         with:
           path: dist
 
-      - name: Generate checksums.txt
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          echo "Release assets:"
-          (cd dist && find . -maxdepth 3 -type f \( -name '*.tar.gz' -o -name '*.deb' \) -print | sed 's|^\./||' | sort)
-
-          files=$(cd dist && find . -maxdepth 3 -type f \( -name '*.tar.gz' -o -name '*.deb' \) -print | sed 's|^\./||')
-          if [[ -z "$files" ]]; then
-            echo "ERROR: No release files found under dist/" >&2
-            exit 1
-          fi
-
-          # Compute checksums: standard GNU coreutils format (checksum first, compatible with sha256sum -c)
-          (cd dist && sha256sum $files) | while read sum file; do
-            echo "$sum  $(basename "$file")"
-          done | sort > checksums.txt
-
-          echo ""
-          echo "checksums.txt:"
-          cat checksums.txt
-
-      - name: Prepare checksums body
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          {
-            echo ""
-            echo "## SHA256 Checksums"
-            echo ""
-            echo '```'
-            cat checksums.txt
-            echo '```'
-          } > release-body.md
-
-          echo ""
-          echo "release-body.md:"
-          cat release-body.md
+      - name: Generate checksums and release body
+        run: bash ./scripts/generate-checksums.sh dist
 
       - name: Create GitHub Release and upload assets
         uses: softprops/action-gh-release@v2
@@ -175,8 +140,8 @@ jobs:
           name: "keystone-cli v${{ needs.validate.outputs.version }}"
           generate_release_notes: true
           append_body: true
-          body_path: release-body.md
+          body_path: artifacts/release/release-body.md
           files: |
             dist/**/keystone-cli_${{ needs.validate.outputs.version }}_*.tar.gz
             dist/**/keystone-cli_${{ needs.validate.outputs.version }}_*.deb
-            checksums.txt
+            artifacts/release/checksums.txt
