@@ -111,14 +111,14 @@ public class GitHubServiceTests
 
         var fileSystemCopyService = Substitute.For<IFileSystemCopyService>();
         var gitHubZipEntryCollectionFactory = Substitute.For<IGitHubZipEntryCollectionFactory>();
-        var entryProvider = Substitute.For<IEntryCollection>();
+        var entryCollection = Substitute.For<IEntryCollection>();
 
         using var cancellationTokenSource = new CancellationTokenSource();
         var cancellationToken = cancellationTokenSource.Token;
 
         gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, cancellationToken)
-            .Returns(Task.FromResult(entryProvider));
+            .Returns(Task.FromResult(entryCollection));
 
         var sut = Ctor(
             fileSystemCopyService: fileSystemCopyService,
@@ -134,7 +134,7 @@ public class GitHubServiceTests
         );
 
         fileSystemCopyService.Received(1).Copy(
-            entryProvider,
+            entryCollection,
             destinationPath,
             overwrite: false
         );
@@ -149,11 +149,11 @@ public class GitHubServiceTests
 
         var fileSystemCopyService = Substitute.For<IFileSystemCopyService>();
         var gitHubZipEntryCollectionFactory = Substitute.For<IGitHubZipEntryCollectionFactory>();
-        var entryProvider = Substitute.For<IEntryCollection>();
+        var entryCollection = Substitute.For<IEntryCollection>();
 
         gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(entryProvider));
+            .Returns(Task.FromResult(entryCollection));
 
         var sut = Ctor(
             fileSystemCopyService: fileSystemCopyService,
@@ -167,7 +167,7 @@ public class GitHubServiceTests
             overwrite: false
         );
 
-        entryProvider.Received(1).Dispose();
+        entryCollection.Received(1).Dispose();
     }
 
     [Test]
@@ -179,11 +179,11 @@ public class GitHubServiceTests
 
         var fileSystemCopyService = Substitute.For<IFileSystemCopyService>();
         var gitHubZipEntryCollectionFactory = Substitute.For<IGitHubZipEntryCollectionFactory>();
-        var entryProvider = Substitute.For<IEntryCollection>();
+        var entryCollection = Substitute.For<IEntryCollection>();
 
         gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(entryProvider));
+            .Returns(Task.FromResult(entryCollection));
 
         var sut = Ctor(
             fileSystemCopyService: fileSystemCopyService,
@@ -198,7 +198,7 @@ public class GitHubServiceTests
         );
 
         fileSystemCopyService.Received(1).Copy(
-            entryProvider,
+            entryCollection,
             destinationPath,
             overwrite: true
         );
@@ -213,12 +213,12 @@ public class GitHubServiceTests
 
         var fileSystemCopyService = Substitute.For<IFileSystemCopyService>();
         var gitHubZipEntryCollectionFactory = Substitute.For<IGitHubZipEntryCollectionFactory>();
-        var entryProvider = Substitute.For<IEntryCollection>();
+        var entryCollection = Substitute.For<IEntryCollection>();
         var predicate = Substitute.For<Func<EntryModel, bool>>();
 
         gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(entryProvider));
+            .Returns(Task.FromResult(entryCollection));
 
         var sut = Ctor(
             fileSystemCopyService: fileSystemCopyService,
@@ -234,7 +234,7 @@ public class GitHubServiceTests
         );
 
         fileSystemCopyService.Received(1).Copy(
-            entryProvider,
+            entryCollection,
             destinationPath,
             overwrite: false,
             predicate
