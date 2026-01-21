@@ -76,7 +76,7 @@ public partial class ProjectService(
 
         var originalProjectModel = await projectModelRepository.LoadAsync(fullPathToProject, cancellationToken);
 
-        if (originalProjectModel.KeystoneSync?.TemplateRepositoryName == templateTarget.Name)
+        if (originalProjectModel.KeystoneSync?.TemplateRepositoryName == templateTarget.RepositoryName)
         {
             LogProjectAlreadyUsesRepository(logger, originalProjectModel.ProjectName!, templateTarget.RepositoryUrl);
 
