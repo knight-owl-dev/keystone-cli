@@ -218,6 +218,7 @@ public class ProjectServiceTests
         const string projectName = "existing-project";
         const string fullPath = "/path/to/project";
         const string templateName = "core";
+        const string repositoryName = "template-core";
         const string repositoryUrl = "https://github.com/knight-owl-dev/template-core";
 
         var templateTarget = new TemplateTargetModel(
@@ -231,7 +232,7 @@ public class ProjectServiceTests
         var existingProject = new ProjectModel(fullPath)
         {
             ProjectName = projectName,
-            KeystoneSync = new KeystoneSyncModel(templateName),
+            KeystoneSync = new KeystoneSyncModel(repositoryName),
         };
 
         var projectModelRepository = Substitute.For<IProjectModelRepository>();
@@ -260,6 +261,7 @@ public class ProjectServiceTests
         const string projectName = "existing-project";
         const string fullPath = "/path/to/project";
         const string newTemplateName = "core-slim";
+        const string newRepositoryName = "template-core-slim";
         const string repositoryUrl = "https://github.com/knight-owl-dev/template-core-slim";
 
         var templateTarget = new TemplateTargetModel(
@@ -280,7 +282,7 @@ public class ProjectServiceTests
         var refreshedProject = new ProjectModel(fullPath)
         {
             ProjectName = "template-default-name",
-            KeystoneSync = new KeystoneSyncModel(newTemplateName),
+            KeystoneSync = new KeystoneSyncModel(newRepositoryName),
         };
 
         var gitHubService = Substitute.For<IGitHubService>();
@@ -319,8 +321,9 @@ public class ProjectServiceTests
     {
         const string projectName = "existing-project";
         const string fullPath = "/path/to/project";
-        const string oldTemplateName = "core";
         const string newTemplateName = "core-slim";
+        const string oldRepositoryName = "template-core";
+        const string newRepositoryName = "template-core-slim";
         const string repositoryUrl = "https://github.com/knight-owl-dev/template-core-slim";
 
         var templateTarget = new TemplateTargetModel(
@@ -335,13 +338,13 @@ public class ProjectServiceTests
         var originalProject = new ProjectModel(fullPath)
         {
             ProjectName = projectName,
-            KeystoneSync = new KeystoneSyncModel(oldTemplateName),
+            KeystoneSync = new KeystoneSyncModel(oldRepositoryName),
         };
 
         var refreshedProject = new ProjectModel(fullPath)
         {
             ProjectName = "template-default-name",
-            KeystoneSync = new KeystoneSyncModel(newTemplateName),
+            KeystoneSync = new KeystoneSyncModel(newRepositoryName),
         };
 
         var gitHubService = Substitute.For<IGitHubService>();

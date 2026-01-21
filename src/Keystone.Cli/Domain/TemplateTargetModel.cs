@@ -6,4 +6,10 @@ namespace Keystone.Cli.Domain;
 /// <param name="Name">The name associated with the template target.</param>
 /// <param name="RepositoryUrl">The repository URL.</param>
 /// <param name="BranchName">The target branch name.</param>
-public record TemplateTargetModel(string Name, Uri RepositoryUrl, string BranchName = "main");
+public record TemplateTargetModel(string Name, Uri RepositoryUrl, string BranchName = "main")
+{
+    /// <summary>
+    /// Gets the repository name extracted from the <see cref="RepositoryUrl"/>.
+    /// </summary>
+    public string RepositoryName => this.RepositoryUrl.Segments[^1].TrimEnd('/');
+}
