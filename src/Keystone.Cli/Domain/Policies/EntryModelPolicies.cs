@@ -36,12 +36,16 @@ public static class EntryModelPolicies
     /// <c>false</c> otherwise.
     /// </returns>
     public static bool ExcludeGitContent(EntryModel entry)
-        => entry.Type switch
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+
+        return entry.Type switch
         {
             EntryType.File => ! GitFiles.Contains(entry.Name),
             EntryType.Directory => entry.DirectoryName != ".git",
             _ => true,
         };
+    }
 
     /// <summary>
     /// Determines whether the specified entry should be included when ignoring user content.
@@ -51,12 +55,16 @@ public static class EntryModelPolicies
     /// <c>true</c> if the entry is not a user content directory; <c>false</c> otherwise.
     /// </returns>
     public static bool ExcludeUserContent(EntryModel entry)
-        => entry.Type switch
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+
+        return entry.Type switch
         {
             EntryType.File => ! entry.IsInAnyDirectory(UserContentDirectories),
             EntryType.Directory => ! UserContentDirectories.Contains(entry.DirectoryName),
             _ => true,
         };
+    }
 
     /// <summary>
     /// Excludes both Git-related files and user content directories.

@@ -321,7 +321,7 @@ public class YamlSerializationHelpersTests
         Assert.That(actual, Is.EqualTo(YamlScalar.Null));
     }
 
-    private record DummyYamlValue : YamlValue;
+    private sealed record DummyYamlValue : YamlValue;
 
-    private record DummyEntry() : YamlParsingUtility.Entry(null, [""], YamlParsingUtility.EntryKind.Unknown);
+    private sealed record DummyEntry() : YamlParsingUtility.Entry(null, [""], YamlParsingUtility.EntryKind.Unknown);
 }

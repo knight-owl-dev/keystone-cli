@@ -15,7 +15,7 @@ public class ConfigurationDirectoryResolverTests
     private const string FhsPath = "/etc/keystone-cli";
     private const string AppBasePath = "/usr/local/bin";
 
-    private record Mocks(IEnvironmentService Environment, IFileSystemService FileSystem);
+    private sealed record Mocks(IEnvironmentService Environment, IFileSystemService FileSystem);
 
     private static Mocks CreateMocks(bool isWindows = false)
     {

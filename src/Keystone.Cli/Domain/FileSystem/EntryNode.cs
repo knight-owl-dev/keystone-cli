@@ -148,7 +148,11 @@ public class EntryNode(EntryModel entry)
         Func<TAccumulator, EntryModel, TAccumulator> func,
         Func<TAccumulator, TResult> resultSelector
     )
-        => resultSelector(Aggregate(seed, predicate, func));
+    {
+        ArgumentNullException.ThrowIfNull(resultSelector);
+
+        return resultSelector(Aggregate(seed, predicate, func));
+    }
 
     /// <summary>
     /// Recursively applies an accumulator function to all entries in this tree that satisfy the specified predicate.
@@ -166,6 +170,9 @@ public class EntryNode(EntryModel entry)
         Func<TAccumulate, EntryModel, TAccumulate> func
     )
     {
+        ArgumentNullException.ThrowIfNull(predicate);
+        ArgumentNullException.ThrowIfNull(func);
+
         if (! predicate(entry))
         {
             return seed;
@@ -231,7 +238,7 @@ public class EntryNode(EntryModel entry)
                     entryTypeGroup => entryTypeGroup.ToList()
                 );
 
-                if (directoryName == string.Empty || ! entriesByType.TryGetValue(EntryType.Directory, out var directories))
+                if (directoryName.Length == 0 || ! entriesByType.TryGetValue(EntryType.Directory, out var directories))
                 {
                     // all top-level files
                     acc.TopLevelNodes.AddRange(group.Select(entry => new EntryNode(entry)));

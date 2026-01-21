@@ -11,7 +11,6 @@ using Keystone.Cli.Application.Project;
 using Keystone.Cli.Application.Utility;
 using Keystone.Cli.Application.Utility.Serialization;
 using Microsoft.Extensions.DependencyInjection;
-using Console = Keystone.Cli.Application.Console;
 
 
 namespace Keystone.Cli.Configuration;
@@ -29,7 +28,7 @@ public static class DependenciesInstaller
         => services
             .AddHttpClient()
             .AddSingleton<IBrowseCommand, BrowseCommand>()
-            .AddSingleton<IConsole, Console>()
+            .AddSingleton<IConsole, SystemConsole>()
             .AddSingleton<IContentHashService, ContentHashService>()
             .AddSingleton<IEnvironmentFileSerializer, EnvironmentFileSerializer>()
             .AddSingleton<IFileSystemCopyService, FileSystemCopyService>()

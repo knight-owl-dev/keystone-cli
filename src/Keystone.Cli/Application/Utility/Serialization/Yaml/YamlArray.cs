@@ -19,6 +19,7 @@ public record YamlArray(IReadOnlyList<string> Items) : YamlValue
 
     protected override bool PrintMembers(StringBuilder builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
         builder.Append(string.Join(", ", this.Items));
 
         return true;

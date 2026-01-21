@@ -128,7 +128,7 @@ public class TextFileSerializerTests
         const string path = "output.txt";
         string[] lines = ["Line 1", "Line 2", "Line 3"];
 
-        var capturingStream = new CapturingStream();
+        await using var capturingStream = new CapturingStream();
         var fileSystemService = Substitute.For<IFileSystemService>();
         fileSystemService.OpenWriteStream(path).Returns(capturingStream);
 
@@ -147,7 +147,7 @@ public class TextFileSerializerTests
     {
         const string path = "empty_output.txt";
 
-        var capturingStream = new CapturingStream();
+        await using var capturingStream = new CapturingStream();
         var fileSystemService = Substitute.For<IFileSystemService>();
         fileSystemService.OpenWriteStream(path).Returns(capturingStream);
 
@@ -166,7 +166,7 @@ public class TextFileSerializerTests
         const string path = "whitespace_output.txt";
         string[] lines = ["Line 1    ", "   Line 2", "Line 3   "];
 
-        var capturingStream = new CapturingStream();
+        await using var capturingStream = new CapturingStream();
         var fileSystemService = Substitute.For<IFileSystemService>();
         fileSystemService.OpenWriteStream(path).Returns(capturingStream);
 
@@ -210,7 +210,7 @@ public class TextFileSerializerTests
 
         string[] lines = ["Line 1", "Line 2"];
 
-        var capturingStream = new CapturingStream().SetContent(content);
+        await using var capturingStream = new CapturingStream().SetContent(content);
         var fileSystemService = Substitute.For<IFileSystemService>();
         fileSystemService.OpenWriteStream(path).Returns(capturingStream);
 
@@ -242,7 +242,7 @@ public class TextFileSerializerTests
 
         string[] lines = ["Line 1", "Line 2"];
 
-        var capturingStream = new CapturingStream().SetContent(content);
+        await using var capturingStream = new CapturingStream().SetContent(content);
         var fileSystemService = Substitute.For<IFileSystemService>();
         fileSystemService.OpenWriteStream(path).Returns(capturingStream);
 
@@ -277,7 +277,7 @@ public class TextFileSerializerTests
 
         string[] lines = ["Line 1", "Line 2"];
 
-        var capturingStream = new CapturingStream().SetContent(content);
+        await using var capturingStream = new CapturingStream().SetContent(content);
         var fileSystemService = Substitute.For<IFileSystemService>();
         fileSystemService.OpenWriteStream(path).Returns(capturingStream);
 

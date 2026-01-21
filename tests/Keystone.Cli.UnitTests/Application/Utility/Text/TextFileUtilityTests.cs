@@ -88,7 +88,8 @@ public class TextFileUtilityTests
         await TextFileUtility.WriteLinesAsync(stream, lines, CancellationToken.None);
         stream.Position = 0;
 
-        var actual = await new StreamReader(stream).ReadToEndAsync();
+        using var streamReader = new StreamReader(stream);
+        var actual = await streamReader.ReadToEndAsync();
         var expected = string.Join(Environment.NewLine, lines) + Environment.NewLine;
 
         Assert.That(actual, Is.EqualTo(expected));
@@ -102,7 +103,8 @@ public class TextFileUtilityTests
         await TextFileUtility.WriteLinesAsync(stream, [], CancellationToken.None);
         stream.Position = 0;
 
-        var actual = await new StreamReader(stream).ReadToEndAsync();
+        using var streamReader = new StreamReader(stream);
+        var actual = await streamReader.ReadToEndAsync();
 
         Assert.That(actual, Is.EqualTo(string.Empty));
     }
@@ -116,7 +118,8 @@ public class TextFileUtilityTests
         await TextFileUtility.WriteLinesAsync(stream, lines, CancellationToken.None);
         stream.Position = 0;
 
-        var actual = await new StreamReader(stream).ReadToEndAsync();
+        using var streamReader = new StreamReader(stream);
+        var actual = await streamReader.ReadToEndAsync();
         var expected = string.Join(Environment.NewLine, lines) + Environment.NewLine;
 
         Assert.That(actual, Is.EqualTo(expected));

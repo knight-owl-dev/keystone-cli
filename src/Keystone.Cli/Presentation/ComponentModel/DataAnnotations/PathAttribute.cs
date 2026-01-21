@@ -6,7 +6,7 @@ namespace Keystone.Cli.Presentation.ComponentModel.DataAnnotations;
 /// <summary>
 /// Ensures the path does not contain invalid characters.
 /// </summary>
-public class PathAttribute : ValidationAttribute
+public sealed class PathAttribute : ValidationAttribute
 {
     /// <inheritdoc />
     protected override ValidationResult? IsValid(object? value, ValidationContext? validationContext)

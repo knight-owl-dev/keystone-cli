@@ -4,6 +4,10 @@
         <LangVersion>latest</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <AnalysisLevel>latest-all</AnalysisLevel>
+        <!-- CA1515: public/internal distinction is not meaningful for application types -->
+        <!-- CA1716: Identifier/keyword conflicts with other languages are not a concern for a C#-only CLI app -->
+        <!-- CA2007: ConfigureAwait is not meaningful in a console application with no synchronization context -->
+        <NoWarn>$(NoWarn);CA1515;CA1716;CA2007</NoWarn>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>

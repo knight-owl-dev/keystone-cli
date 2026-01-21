@@ -5,6 +5,9 @@ using Keystone.Cli.Domain.Project;
 using System.Text.Json.Serialization;
 
 
+//
+#pragma warning disable CA1034
+
 namespace Keystone.Cli.Application.Data.Stores;
 
 /// <summary>
@@ -28,6 +31,8 @@ public class SyncFileProjectModelStore(
     /// <inheritdoc />
     public async Task<ProjectModel> LoadAsync(ProjectModel model, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         var syncFilePath = GetSyncFilePath(model);
 
         if (! fileSystemService.FileExists(syncFilePath))
@@ -55,6 +60,8 @@ public class SyncFileProjectModelStore(
     /// <inheritdoc />
     public Task SaveAsync(ProjectModel model, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         if (model.KeystoneSync is null)
         {
             return Task.CompletedTask;
@@ -81,6 +88,8 @@ public class SyncFileProjectModelStore(
     /// <inheritdoc />
     public string GetContentHash(ProjectModel model)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         if (model.KeystoneSync is null)
         {
             return contentHashService.ComputeFromKeyValues(new Dictionary<string, string?>());
@@ -105,7 +114,7 @@ public class SyncFileProjectModelStore(
     /// <summary>
     /// Internal data contract for serializing/deserializing the <c>sync.json.</c> file.
     /// </summary>
-    public record SyncFileData
+    public sealed record SyncFileData
     {
         [JsonPropertyName(KeySource)]
         public string? Source { get; init; }

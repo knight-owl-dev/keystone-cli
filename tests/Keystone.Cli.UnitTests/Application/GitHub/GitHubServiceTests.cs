@@ -111,7 +111,7 @@ public class GitHubServiceTests
 
         var fileSystemCopyService = Substitute.For<IFileSystemCopyService>();
         var gitHubZipEntryProviderFactory = Substitute.For<IGitHubZipEntryProviderFactory>();
-        var entryProvider = Substitute.For<IEntryProvider>();
+        var entryProvider = Substitute.For<IEntryCollection>();
 
         using var cancellationTokenSource = new CancellationTokenSource();
         var cancellationToken = cancellationTokenSource.Token;
@@ -149,7 +149,7 @@ public class GitHubServiceTests
 
         var fileSystemCopyService = Substitute.For<IFileSystemCopyService>();
         var gitHubZipEntryProviderFactory = Substitute.For<IGitHubZipEntryProviderFactory>();
-        var entryProvider = Substitute.For<IEntryProvider>();
+        var entryProvider = Substitute.For<IEntryCollection>();
 
         gitHubZipEntryProviderFactory
             .CreateAsync(repositoryUrl, branchName, Arg.Any<CancellationToken>())
@@ -179,7 +179,7 @@ public class GitHubServiceTests
 
         var fileSystemCopyService = Substitute.For<IFileSystemCopyService>();
         var gitHubZipEntryProviderFactory = Substitute.For<IGitHubZipEntryProviderFactory>();
-        var entryProvider = Substitute.For<IEntryProvider>();
+        var entryProvider = Substitute.For<IEntryCollection>();
 
         gitHubZipEntryProviderFactory
             .CreateAsync(repositoryUrl, branchName, Arg.Any<CancellationToken>())
@@ -213,7 +213,7 @@ public class GitHubServiceTests
 
         var fileSystemCopyService = Substitute.For<IFileSystemCopyService>();
         var gitHubZipEntryProviderFactory = Substitute.For<IGitHubZipEntryProviderFactory>();
-        var entryProvider = Substitute.For<IEntryProvider>();
+        var entryProvider = Substitute.For<IEntryCollection>();
         var predicate = Substitute.For<Func<EntryModel, bool>>();
 
         gitHubZipEntryProviderFactory

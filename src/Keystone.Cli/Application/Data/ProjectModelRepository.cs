@@ -25,6 +25,8 @@ public class ProjectModelRepository(IEnumerable<IProjectModelStore> projectModel
     /// <inheritdoc />
     public async Task SaveAsync(ProjectModel model, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         var storesNeedingUpdate = projectModelStores.Aggregate(
             (
                 Current: model,

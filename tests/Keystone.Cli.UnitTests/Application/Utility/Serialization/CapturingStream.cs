@@ -7,7 +7,7 @@ namespace Keystone.Cli.UnitTests.Application.Utility.Serialization;
 /// Used to capture the written bytes when testing serialization
 /// because the stream is disposed after writing.
 /// </summary>
-internal class CapturingStream : MemoryStream
+internal sealed class CapturingStream : MemoryStream
 {
     /// <summary>
     /// The captured buffer after the stream is disposed.

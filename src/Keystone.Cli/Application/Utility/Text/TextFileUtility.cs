@@ -37,6 +37,9 @@ public static class TextFileUtility
     /// <param name="cancellationToken">The cancellation token.</param>
     public static async Task WriteLinesAsync(Stream stream, IEnumerable<string> lines, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(stream);
+        ArgumentNullException.ThrowIfNull(lines);
+
         await using var writer = new StreamWriter(stream, leaveOpen: true);
 
         foreach (var line in lines)

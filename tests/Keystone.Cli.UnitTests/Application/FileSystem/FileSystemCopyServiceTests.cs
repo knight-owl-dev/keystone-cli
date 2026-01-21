@@ -21,20 +21,20 @@ public class FileSystemCopyServiceTests
         );
 
     [Test]
-    public void Copy_EntryProvider_IsNull_ThrowsArgumentNullException()
+    public void Copy_EntryCollection_IsNull_ThrowsArgumentNullException()
     {
         var sut = Ctor();
 
         Assert.That(
-            () => sut.Copy(entryProvider: null!, destinationPath: ".", overwrite: false),
-            Throws.ArgumentNullException.With.Property("ParamName").EqualTo("entryProvider")
+            () => sut.Copy(entryCollection: null!, destinationPath: ".", overwrite: false),
+            Throws.ArgumentNullException.With.Property("ParamName").EqualTo("entryCollection")
         );
     }
 
     [Test]
     public void Copy_DestinationPath_IsNull_ThrowsArgumentNullException()
     {
-        var entryProvider = Substitute.For<IEntryProvider>();
+        var entryProvider = Substitute.For<IEntryCollection>();
         var sut = Ctor();
 
         Assert.That(
@@ -46,7 +46,7 @@ public class FileSystemCopyServiceTests
     [Test]
     public void Copy_DestinationPath_IsEmpty_ThrowsArgumentException()
     {
-        var entryProvider = Substitute.For<IEntryProvider>();
+        var entryProvider = Substitute.For<IEntryCollection>();
         var sut = Ctor();
 
         Assert.That(
@@ -67,7 +67,7 @@ public class FileSystemCopyServiceTests
         fileSystemService.DirectoryExists(destinationPath).Returns(true);
         fileSystemService.DirectoryExists(directoryFullPath).Returns(false);
 
-        var entryProvider = EntryProvider.Fake([directoryEntry]);
+        var entryProvider = EntryCollection.Fake([directoryEntry]);
 
         var sut = Ctor(fileSystemService: fileSystemService);
 
@@ -88,7 +88,7 @@ public class FileSystemCopyServiceTests
         fileSystemService.DirectoryExists(destinationPath).Returns(true);
         fileSystemService.DirectoryExists(directoryFullPath).Returns(true);
 
-        var entryProvider = EntryProvider.Fake([directoryEntry]);
+        var entryProvider = EntryCollection.Fake([directoryEntry]);
 
         var sut = Ctor(fileSystemService: fileSystemService);
 
@@ -109,7 +109,7 @@ public class FileSystemCopyServiceTests
         fileSystemService.DirectoryExists(destinationPath).Returns(true);
         fileSystemService.FileExists(fileFullPath).Returns(false);
 
-        var entryProvider = EntryProvider.Fake([fileEntry]);
+        var entryProvider = EntryCollection.Fake([fileEntry]);
 
         var sut = Ctor(fileSystemService: fileSystemService);
 
@@ -130,7 +130,7 @@ public class FileSystemCopyServiceTests
         fileSystemService.DirectoryExists(destinationPath).Returns(true);
         fileSystemService.FileExists(fileFullPath).Returns(true);
 
-        var entryProvider = EntryProvider.Fake([fileEntry]);
+        var entryProvider = EntryCollection.Fake([fileEntry]);
 
         var sut = Ctor(fileSystemService: fileSystemService);
 
@@ -151,7 +151,7 @@ public class FileSystemCopyServiceTests
         fileSystemService.DirectoryExists(destinationPath).Returns(true);
         fileSystemService.FileExists(fileFullPath).Returns(true);
 
-        var entryProvider = EntryProvider.Fake([fileEntry]);
+        var entryProvider = EntryCollection.Fake([fileEntry]);
 
         var sut = Ctor(fileSystemService: fileSystemService);
 
@@ -176,7 +176,7 @@ public class FileSystemCopyServiceTests
         fileSystemService.DirectoryExists(directoryFullPath1).Returns(false);
         fileSystemService.DirectoryExists(directoryFullPath2).Returns(false);
 
-        var entryProvider = EntryProvider.Fake([directoryEntry1, directoryEntry2]);
+        var entryProvider = EntryCollection.Fake([directoryEntry1, directoryEntry2]);
 
         var predicate = Substitute.For<Func<EntryModel, bool>>();
         predicate.Invoke(directoryEntry1).Returns(false);
@@ -206,7 +206,7 @@ public class FileSystemCopyServiceTests
         fileSystemService.FileExists(fileFullPath1).Returns(false);
         fileSystemService.FileExists(fileFullPath2).Returns(false);
 
-        var entryProvider = EntryProvider.Fake([fileEntry1, fileEntry2]);
+        var entryProvider = EntryCollection.Fake([fileEntry1, fileEntry2]);
 
         var predicate = Substitute.For<Func<EntryModel, bool>>();
         predicate.Invoke(fileEntry1).Returns(false);
@@ -235,7 +235,7 @@ public class FileSystemCopyServiceTests
         fileSystemService.DirectoryExists(directoryFullPath).Returns(false);
         fileSystemService.DirectoryExists(subDirectoryFullPath).Returns(false);
 
-        var entryProvider = EntryProvider.Fake([directoryEntry, subDirectoryEntry]);
+        var entryProvider = EntryCollection.Fake([directoryEntry, subDirectoryEntry]);
 
         var predicate = Substitute.For<Func<EntryModel, bool>>();
         predicate.Invoke(directoryEntry).Returns(false); // Skip the main directory
@@ -264,7 +264,7 @@ public class FileSystemCopyServiceTests
         fileSystemService.DirectoryExists(directoryFullPath).Returns(false);
         fileSystemService.FileExists(fileFullPath).Returns(false);
 
-        var entryProvider = EntryProvider.Fake([directoryEntry, fileEntry]);
+        var entryProvider = EntryCollection.Fake([directoryEntry, fileEntry]);
 
         var predicate = Substitute.For<Func<EntryModel, bool>>();
         predicate.Invoke(directoryEntry).Returns(false); // Skip the main directory

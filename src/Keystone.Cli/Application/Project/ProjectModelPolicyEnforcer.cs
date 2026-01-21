@@ -13,6 +13,8 @@ public class ProjectModelPolicyEnforcer
     /// <inheritdoc />
     public void ThrowIfNotLoaded(ProjectModel projectModel)
     {
+        ArgumentNullException.ThrowIfNull(projectModel);
+
         if (ProjectModelLoadPolicy.IsLoaded(projectModel))
         {
             return;

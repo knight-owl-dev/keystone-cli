@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+
+
 namespace Keystone.Cli.Domain.Project;
 
 /// <summary>
@@ -65,6 +68,8 @@ public record ProjectModel(string ProjectPath)
     /// <example>
     /// a4
     /// </example>
+    [SuppressMessage("ReSharper", "CommentTypo")]
+    [SuppressMessage("ReSharper", "IdentifierTypo")]
     public string? LatexPapersize { get; init; }
 
     /// <summary>
@@ -115,6 +120,8 @@ public record ProjectModel(string ProjectPath)
     /// <example>
     /// libertine
     /// </example>
+    [SuppressMessage("ReSharper", "CommentTypo")]
+    [SuppressMessage("ReSharper", "IdentifierTypo")]
     public string? LatexFontfamily { get; init; }
 
     /// <summary>
@@ -275,7 +282,7 @@ public record ProjectModel(string ProjectPath)
     /// <example>
     /// [ "hello-world", "keystone", "book" ]
     /// </example>
-    public string[]? Keywords { get; init; }
+    public IReadOnlyList<string>? Keywords { get; init; }
 
     /// <summary>
     /// The Keystone sync model for project metadata synchronization.
@@ -307,5 +314,5 @@ public record ProjectModel(string ProjectPath)
     /// <example>
     /// [ "chapters/introduction.md", "chapters/chapter-1.md", "appendix/appendix-a.md" ]
     /// </example>
-    public string[]? ContentFilePaths { get; init; }
+    public IReadOnlyList<string>? ContentFilePaths { get; init; }
 }

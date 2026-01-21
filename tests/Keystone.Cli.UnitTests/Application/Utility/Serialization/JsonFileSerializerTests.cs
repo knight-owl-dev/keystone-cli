@@ -14,7 +14,7 @@ public class JsonFileSerializerTests
     private static JsonFileSerializer Ctor(IFileSystemService? fileSystemService = null)
         => new(fileSystemService ?? Substitute.For<IFileSystemService>());
 
-    private record TestModel
+    private sealed record TestModel
     {
         public int Value { get; init; }
     }
@@ -87,7 +87,7 @@ public class JsonFileSerializerTests
             Value = 99,
         };
 
-        var capturingStream = new CapturingStream();
+        await using var capturingStream = new CapturingStream();
         var fileSystemService = Substitute.For<IFileSystemService>();
         fileSystemService.OpenWriteStream(path).Returns(capturingStream);
 

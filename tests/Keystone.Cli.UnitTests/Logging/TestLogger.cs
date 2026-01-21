@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
@@ -21,7 +22,7 @@ public class TestLogger<TCategoryName>(LogLevel minimumLogLevel = LogLevel.Trace
     /// <summary>
     /// All captured log entries.
     /// </summary>
-    public List<LogEntry> CapturedLogEntries { get; } = [];
+    public Collection<LogEntry> CapturedLogEntries { get; } = [];
 
     /// <inheritdoc />
     public IDisposable BeginScope<TState>(TState state)
@@ -41,6 +42,8 @@ public class TestLogger<TCategoryName>(LogLevel minimumLogLevel = LogLevel.Trace
         Func<TState, Exception?, string> formatter
     )
     {
+        ArgumentNullException.ThrowIfNull(formatter);
+
         var entry = new LogEntry(
             logLevel,
             eventId,

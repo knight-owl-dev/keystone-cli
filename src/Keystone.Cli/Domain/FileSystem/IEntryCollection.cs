@@ -3,7 +3,7 @@ namespace Keystone.Cli.Domain.FileSystem;
 /// <summary>
 /// Defines an entry provider that supplies file system entries (files or directories) for reading or extraction.
 /// </summary>
-public interface IEntryProvider
+public interface IEntryCollection
     : IDisposable, IReadOnlyCollection<EntryModel>
 {
     /// <summary>
