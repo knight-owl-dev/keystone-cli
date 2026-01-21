@@ -30,6 +30,8 @@ public partial class ManPageDateTagTests
     [Test]
     public void ManPage_HasExactlyOneDdTag_WithValidEnglishMonthAndYear()
     {
+        var localDate = CliInfo.GetLocalDate();
+
         var manPagePath = GetManPagePath();
         var lines = File.ReadAllLines(manPagePath);
 
@@ -49,19 +51,30 @@ public partial class ManPageDateTagTests
             $"Line {lineNumber}: .Dd tag does not match expected pattern '.Dd Month YYYY'. Actual: '{ddLine}'"
         );
 
-        var month = match.Groups[1].Value;
+        var monthName = match.Groups[1].Value;
+        var monthIndex = Array.IndexOf(ValidEnglishMonths, monthName);
         Assert.That(
-            ValidEnglishMonths,
-            Does.Contain(month),
-            $"Line {lineNumber}: Month '{month}' is not a valid English month name"
+            monthIndex,
+            Is.GreaterThanOrEqualTo(0),
+            $"Line {lineNumber}: Month '{monthName}' is not a valid English month name"
         );
 
+        var month = monthIndex + 1;
         var year = int.Parse(match.Groups[2].Value);
         Assert.That(
             year,
-            Is.GreaterThanOrEqualTo(CliInfo.InceptionYear).And.LessThanOrEqualTo(CliInfo.CurrentYear),
-            $"Line {lineNumber}: Year {year} is outside reasonable range ({CliInfo.InceptionYear}-{CliInfo.CurrentYear})"
+            Is.GreaterThanOrEqualTo(CliInfo.InceptionYear).And.LessThanOrEqualTo(localDate.Year),
+            $"Line {lineNumber}: Year {year} is outside reasonable range ({CliInfo.InceptionYear}-{localDate.Year})"
         );
+
+        if (year == localDate.Year)
+        {
+            Assert.That(
+                month,
+                Is.LessThanOrEqualTo(localDate.Month),
+                $"Line {lineNumber}: Month '{monthName}' ({month}) is in the future for year {year} (current month: {localDate.Month})"
+            );
+        }
     }
 
     private static string GetManPagePath()

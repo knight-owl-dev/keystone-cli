@@ -16,11 +16,18 @@ public static class CliInfo
     public const int InceptionYear = 2025;
 
     /// <summary>
-    /// The current year in local time.
+    /// Returns the current local date.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Uses local time to match the date script (<c>scripts/get-english-month-year.sh</c>),
-    /// which uses <c>date '+%Y'</c> (local time, not UTC).
+    /// which uses <c>date</c> without UTC flags.
+    /// </para>
+    /// <para>
+    /// Returning a single <see cref="DateOnly"/> ensures atomic access to year and month,
+    /// avoiding race conditions at year/month boundaries.
+    /// </para>
     /// </remarks>
-    public static int CurrentYear => DateTime.Now.Year;
+    public static DateOnly GetLocalDate()
+        => DateOnly.FromDateTime(DateTime.Now);
 }
