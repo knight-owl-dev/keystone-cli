@@ -5,7 +5,7 @@ using Keystone.Cli.Domain.Project;
 using System.Text.Json.Serialization;
 
 
-//
+// Keep nested types for data contracts
 #pragma warning disable CA1034
 
 namespace Keystone.Cli.Application.Data.Stores;
