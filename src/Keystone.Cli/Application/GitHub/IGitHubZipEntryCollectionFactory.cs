@@ -4,9 +4,9 @@ using Keystone.Cli.Domain.FileSystem;
 namespace Keystone.Cli.Application.GitHub;
 
 /// <summary>
-/// Defines a factory for creating GitHub zip entry providers.
+/// Defines a factory for creating GitHub zip entry collections.
 /// </summary>
-public interface IGitHubZipEntryProviderFactory
+public interface IGitHubZipEntryCollectionFactory
 {
     /// <summary>
     /// Creates a new <see cref="IEntryCollection"/> instance that provides access to entries from the specified GitHub repository branch.

@@ -8,10 +8,10 @@ using Keystone.Cli.Domain.FileSystem;
 namespace Keystone.Cli.Application.GitHub;
 
 /// <summary>
-/// The GitHub zip entry provider factory.
+/// The GitHub zip entry collection factory.
 /// </summary>
-public class GitHubZipEntryProviderFactory(IHttpClientFactory httpClientFactory)
-    : IGitHubZipEntryProviderFactory
+public class GitHubZipEntryCollectionFactory(IHttpClientFactory httpClientFactory)
+    : IGitHubZipEntryCollectionFactory
 {
     private const string HttpClientName = "GitHub";
 

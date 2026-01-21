@@ -34,7 +34,7 @@ public static class DependenciesInstaller
             .AddSingleton<IFileSystemCopyService, FileSystemCopyService>()
             .AddSingleton<IFileSystemService, FileSystemService>()
             .AddSingleton<IGitHubService, GitHubService>()
-            .AddSingleton<IGitHubZipEntryProviderFactory, GitHubZipEntryProviderFactory>()
+            .AddSingleton<IGitHubZipEntryCollectionFactory, GitHubZipEntryCollectionFactory>()
             .AddSingleton<IInfoCommand, InfoCommand>()
             .AddSingleton<IJsonFileSerializer, JsonFileSerializer>()
             .AddSingleton<INewCommand, NewCommand>()

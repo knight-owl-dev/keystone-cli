@@ -28,7 +28,7 @@ public class DependenciesInstallerTests
         typeof(IFileSystemCopyService),
         typeof(IFileSystemService),
         typeof(IGitHubService),
-        typeof(IGitHubZipEntryProviderFactory),
+        typeof(IGitHubZipEntryCollectionFactory),
         typeof(IInfoCommand),
         typeof(IJsonFileSerializer),
         typeof(INewCommand),

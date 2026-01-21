@@ -10,7 +10,7 @@ namespace Keystone.Cli.Application.GitHub;
 /// </summary>
 public partial class GitHubService(
     IFileSystemCopyService fileSystemCopyService,
-    IGitHubZipEntryProviderFactory gitHubZipEntryProviderFactory,
+    IGitHubZipEntryCollectionFactory gitHubZipEntryCollectionFactory,
     ILogger<GitHubService> logger
 )
     : IGitHubService
@@ -31,12 +31,12 @@ public partial class GitHubService(
 
         LogDownloadingRepository(logger, repositoryUrl, branchName, destinationPath);
 
-        using var entryProvider = await gitHubZipEntryProviderFactory
+        using var entryCollection = await gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, cancellationToken)
             .ConfigureAwait(false);
 
         fileSystemCopyService.Copy(
-            entryProvider,
+            entryCollection,
             destinationPath,
             overwrite,
             predicate
