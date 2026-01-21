@@ -29,6 +29,8 @@ public class EnvFileProjectModelStore(
     /// <inheritdoc />
     public async Task<ProjectModel> LoadAsync(ProjectModel model, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         var envFilePath = GetEnvFilePath(model);
 
         if (! fileSystemService.FileExists(envFilePath))
@@ -54,6 +56,8 @@ public class EnvFileProjectModelStore(
     /// <inheritdoc />
     public Task SaveAsync(ProjectModel model, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         var envFilePath = GetEnvFilePath(model);
 
         var envValues = new Dictionary<string, string?>
@@ -74,6 +78,8 @@ public class EnvFileProjectModelStore(
     /// <inheritdoc />
     public string GetContentHash(ProjectModel model)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         var envValues = new Dictionary<string, string?>
         {
             [KeystoneProject] = model.ProjectName,

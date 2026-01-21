@@ -44,6 +44,7 @@ public static class GitHubSourceCodeArchiveFactory
     public static ZipArchive Create(string rootDirectoryName, IEnumerable<EntryModel> entries)
     {
         ArgumentNullException.ThrowIfNull(rootDirectoryName);
+        ArgumentNullException.ThrowIfNull(entries);
 
         if (Path.IsPathRooted(rootDirectoryName))
         {

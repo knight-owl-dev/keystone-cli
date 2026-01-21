@@ -1,3 +1,4 @@
+using System.Globalization;
 using Keystone.Cli.Application.Utility;
 using NSubstitute;
 
@@ -116,7 +117,7 @@ public class EnumerableAsyncExtensionsTests
     {
         int[] source = [1];
         var func = Substitute.For<Func<int, int, CancellationToken, Task<int>>>();
-        Func<int, string> selector = x => x.ToString();
+        Func<int, string> selector = x => x.ToString(CultureInfo.InvariantCulture);
 
         using var cts = new CancellationTokenSource();
         var cancellationToken = cts.Token;

@@ -30,6 +30,8 @@ public class PandocFileProjectModelStore(
     /// <inheritdoc />
     public async Task<ProjectModel> LoadAsync(ProjectModel model, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         var pandocFilePath = GetPandocFilePath(model);
 
         if (! fileSystemService.FileExists(pandocFilePath))
@@ -55,6 +57,8 @@ public class PandocFileProjectModelStore(
     /// <inheritdoc />
     public Task SaveAsync(ProjectModel model, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         var pandocFilePath = GetPandocFilePath(model);
 
         var yamlData = new Dictionary<string, YamlValue>
@@ -75,6 +79,8 @@ public class PandocFileProjectModelStore(
     /// <inheritdoc />
     public string GetContentHash(ProjectModel model)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         var pandocValues = new Dictionary<string, string?>
         {
             [KeyTitle] = model.Title,

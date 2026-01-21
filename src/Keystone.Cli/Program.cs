@@ -1,4 +1,4 @@
-﻿using Cocona;
+using Cocona;
 using Keystone.Cli.Configuration;
 using Keystone.Cli.Presentation;
 using Microsoft.Extensions.Configuration;

@@ -188,7 +188,8 @@ public class EnvironmentFileSerializerTests
             KEY4=NEW-VALUE4
             """;
 
-        var stream = new CapturingStream().SetContent(content);
+        await using var capturingStream = new CapturingStream().SetContent(content);
+        var stream = capturingStream.SetContent(content);
         var fileSystemService = Substitute.For<IFileSystemService>();
         fileSystemService.OpenWriteStream(path).Returns(stream);
 

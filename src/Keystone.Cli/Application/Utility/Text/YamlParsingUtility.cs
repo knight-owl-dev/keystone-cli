@@ -1,9 +1,13 @@
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.EventEmitters;
 
+
+// Disable warning about nested types for better organization of related types.
+#pragma warning disable CA1034
 
 namespace Keystone.Cli.Application.Utility.Text;
 
@@ -101,7 +105,11 @@ public static partial class YamlParsingUtility
     /// <c>true</c> if the entry is a YAML document terminator; otherwise, <c>false</c>.
     /// </returns>
     public static bool IsTerminatorEntry(Entry entry)
-        => entry.Kind == EntryKind.Unknown && entry.RawLines.All(IsTerminatorLine);
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+
+        return entry.Kind == EntryKind.Unknown && entry.RawLines.All(IsTerminatorLine);
+    }
 
     /// <summary>
     /// Indicates whether the specified line is a YAML document terminator line (<c>...</c>).
@@ -140,7 +148,7 @@ public static partial class YamlParsingUtility
     /// <param name="PropertyName">The property name.</param>
     /// <param name="RawLines">Raw lines representing the serialized entry.</param>
     /// <param name="Kind">The kind of YAML entry.</param>
-    public abstract record Entry(string? PropertyName, string[] RawLines, EntryKind Kind);
+    public abstract record Entry(string? PropertyName, IReadOnlyList<string> RawLines, EntryKind Kind);
 
     /// <summary>
     /// The YAML scalar entry type.
@@ -152,7 +160,8 @@ public static partial class YamlParsingUtility
     /// <param name="PropertyName">The property name.</param>
     /// <param name="Value">The value.</param>
     /// <param name="RawLines">Raw lines representing the serialized entry.</param>
-    public sealed record ScalarEntry(string PropertyName, string? Value, string[] RawLines) : Entry(PropertyName, RawLines, EntryKind.Scalar)
+    public sealed record ScalarEntry(string PropertyName, string? Value, IReadOnlyList<string> RawLines)
+        : Entry(PropertyName, RawLines, EntryKind.Scalar)
     {
         /// <inheritdoc />
         public override int GetHashCode()
@@ -167,8 +176,10 @@ public static partial class YamlParsingUtility
 
         protected override bool PrintMembers(StringBuilder builder)
         {
-            builder.Append($"{nameof(this.PropertyName)}: {this.PropertyName}, ");
-            builder.Append($"{nameof(this.Value)}: {this.Value}");
+            var formatProvider = CultureInfo.InvariantCulture;
+
+            builder.Append(formatProvider, $"{nameof(this.PropertyName)}: {this.PropertyName}, ");
+            builder.Append(formatProvider, $"{nameof(this.Value)}: {this.Value}");
 
             return true;
         }
@@ -183,7 +194,8 @@ public static partial class YamlParsingUtility
     /// <param name="PropertyName">The property name.</param>
     /// <param name="Items">A collection of items.</param>
     /// <param name="RawLines">Raw lines representing the serialized entry.</param>
-    public sealed record ArrayEntry(string PropertyName, IReadOnlyList<string> Items, string[] RawLines) : Entry(PropertyName, RawLines, EntryKind.Array)
+    public sealed record ArrayEntry(string PropertyName, IReadOnlyList<string> Items, IReadOnlyList<string> RawLines)
+        : Entry(PropertyName, RawLines, EntryKind.Array)
     {
         /// <inheritdoc />
         public override int GetHashCode()
@@ -198,8 +210,10 @@ public static partial class YamlParsingUtility
 
         protected override bool PrintMembers(StringBuilder builder)
         {
-            builder.Append($"{nameof(this.PropertyName)}: {this.PropertyName}, ");
-            builder.Append($"{nameof(this.Items)}: [{string.Join(", ", this.Items)}]");
+            var formatProvider = CultureInfo.InvariantCulture;
+
+            builder.Append(formatProvider, $"{nameof(this.PropertyName)}: {this.PropertyName}, ");
+            builder.Append(formatProvider, $"{nameof(this.Items)}: [{string.Join(", ", this.Items)}]");
 
             return true;
         }
@@ -209,7 +223,8 @@ public static partial class YamlParsingUtility
     /// The YAML unknown entry type, used for lines that do not conform to expected formats.
     /// </summary>
     /// <param name="RawLines">Raw lines representing the serialized entry.</param>
-    public sealed record UnknownEntry(string[] RawLines) : Entry(PropertyName: null, RawLines, EntryKind.Unknown)
+    public sealed record UnknownEntry(IReadOnlyList<string> RawLines)
+        : Entry(PropertyName: null, RawLines, EntryKind.Unknown)
     {
         /// <inheritdoc />
         public override int GetHashCode()
@@ -325,7 +340,7 @@ public static partial class YamlParsingUtility
                 string value => new ScalarEntry(propertyName, value, buffer),
                 IEnumerable<object?> values when IsScalarArray(values) => new ArrayEntry(
                     propertyName,
-                    [..values.Select(value => Convert.ToString(value) ?? string.Empty)],
+                    [..values.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty)],
                     buffer
                 ),
                 _ => new UnknownEntry(buffer),
@@ -379,7 +394,7 @@ public static partial class YamlParsingUtility
         public override void Emit(ScalarEventInfo eventInfo, IEmitter emitter)
         {
             ScalarEventInfo overrideEventInfo;
-            if (eventInfo.Source.Type == typeof(string) && eventInfo.Source.Value is string text && text.Contains('\n'))
+            if (eventInfo.Source.Type == typeof(string) && eventInfo.Source.Value is string text && text.Contains('\n', StringComparison.InvariantCulture))
             {
                 overrideEventInfo = new ScalarEventInfo(eventInfo.Source)
                 {

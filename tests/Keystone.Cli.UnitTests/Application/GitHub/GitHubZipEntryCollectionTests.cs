@@ -10,11 +10,12 @@ using NSubstitute;
 namespace Keystone.Cli.UnitTests.Application.GitHub;
 
 [TestFixture, Parallelizable(ParallelScope.All)]
-public class GitHubZipEntryProviderTests
+[SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope")]
+public class GitHubZipEntryCollectionTests
 {
-    private static GitHubZipEntryProvider Ctor(ExtractToFileDelegate? extractToFileDelegate = null, ZipArchive? archive = null)
+    private static GitHubZipEntryCollection Ctor(ExtractToFileHandler? extractToFileHandler = null, ZipArchive? archive = null)
         => new(
-            extractToFileDelegate ?? Substitute.For<ExtractToFileDelegate>(),
+            extractToFileHandler ?? Substitute.For<ExtractToFileHandler>(),
             archive ?? GitHubSourceCodeArchiveFactory.CreateEmpty()
         );
 
@@ -102,16 +103,16 @@ public class GitHubZipEntryProviderTests
         var noiseFileEntry = EntryModel.Create("noise-file.txt");
         var targetFileEntry = EntryModel.Create("target-file.txt");
 
-        var extractToFileDelegate = Substitute.For<ExtractToFileDelegate>();
+        var extractToFileHandler = Substitute.For<ExtractToFileHandler>();
 
         using var sut = Ctor(
-            extractToFileDelegate,
+            extractToFileHandler,
             GitHubSourceCodeArchiveFactory.Create(rootDirectoryName: "project", [noiseFileEntry, targetFileEntry])
         );
 
         sut.ExtractToFile(entry: targetFileEntry, destinationFileName);
 
-        extractToFileDelegate.Received(1).Invoke(
+        extractToFileHandler.Received(1).Invoke(
             Arg.Is<ZipArchiveEntry>(zipEntry => zipEntry.Name == targetFileEntry.Name),
             destinationFileName,
             overwrite: true

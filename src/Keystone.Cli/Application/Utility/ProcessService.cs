@@ -12,6 +12,8 @@ public class ProcessService
     /// <inheritdoc />
     public void OpenBrowser(Uri url)
     {
+        ArgumentNullException.ThrowIfNull(url);
+
         Process.Start(
             new ProcessStartInfo(url.AbsoluteUri)
             {

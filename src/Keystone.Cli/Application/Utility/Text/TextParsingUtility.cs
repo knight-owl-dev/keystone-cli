@@ -168,7 +168,7 @@ public static partial class TextParsingUtility
     /// </returns>
     private static QuoteStyle GetQuoteStyle(string value)
     {
-        if (GetLiteralControlSequenceRx().IsMatch(value) || value.Contains('"'))
+        if (GetLiteralControlSequenceRx().IsMatch(value) || value.Contains('"', StringComparison.InvariantCulture))
         {
             return QuoteStyle.Single;
         }
@@ -205,7 +205,7 @@ public static partial class TextParsingUtility
     /// </returns>
     /// <seealso cref="UnescapeDoubleQuoted"/>
     private static string EscapeDoubleQuotedString(string value)
-        => DoubleQuotedStringEscapeSequences.Aggregate(value, (acc, tuple) => acc.Replace(tuple.Unescaped, tuple.Escaped));
+        => DoubleQuotedStringEscapeSequences.Aggregate(value, (acc, tuple) => acc.Replace(tuple.Unescaped, tuple.Escaped, StringComparison.InvariantCulture));
 
     /// <summary>
     /// Unescapes special characters in a double-quoted string value.
@@ -216,7 +216,7 @@ public static partial class TextParsingUtility
     /// </returns>
     /// <seealso cref="EscapeDoubleQuotedString"/>
     private static string UnescapeDoubleQuoted(string value)
-        => DoubleQuotedStringEscapeSequences.Aggregate(value, (acc, tuple) => acc.Replace(tuple.Escaped, tuple.Unescaped));
+        => DoubleQuotedStringEscapeSequences.Aggregate(value, (acc, tuple) => acc.Replace(tuple.Escaped, tuple.Unescaped, StringComparison.InvariantCulture));
 
     /// <summary>
     /// A mapping of unescaped to escaped sequences for double-quoted strings.

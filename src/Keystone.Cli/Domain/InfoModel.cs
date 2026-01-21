@@ -27,6 +27,8 @@ public record InfoModel(
     /// </returns>
     public string GetFormattedText()
     {
+        var formatProvider = System.Globalization.CultureInfo.InvariantCulture;
+
         var version = this.Version ?? "unknown";
         var description = this.Description ?? "No description available.";
         var copyright = this.Copyright ?? "No copyright information available.";
@@ -34,18 +36,18 @@ public record InfoModel(
 
         var buffer = new StringBuilder();
 
-        buffer.AppendLine($"Keystone CLI v{version}. {copyright}");
-        buffer.AppendLine($"{description}");
+        buffer.AppendLine(formatProvider, $"Keystone CLI v{version}. {copyright}");
+        buffer.AppendLine(formatProvider, $"{description}");
         buffer.AppendLine();
 
         buffer.AppendLine("Available Keystone template targets:");
         foreach (var (name, repositoryUrl, _) in this.TemplateTargets)
         {
-            buffer.AppendLine($" - {name.PadLeft(maxTemplateNameLength, ' ')}: {repositoryUrl}");
+            buffer.AppendLine(formatProvider, $" - {name.PadLeft(maxTemplateNameLength, ' ')}: {repositoryUrl}");
         }
 
         buffer.AppendLine();
-        buffer.AppendLine($"Default template: {this.DefaultTemplateTarget.Name}");
+        buffer.AppendLine(formatProvider, $"Default template: {this.DefaultTemplateTarget.Name}");
 
         return buffer.ToString();
     }

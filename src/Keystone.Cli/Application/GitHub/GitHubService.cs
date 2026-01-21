@@ -8,9 +8,9 @@ namespace Keystone.Cli.Application.GitHub;
 /// <summary>
 /// Implementation of <see cref="IGitHubService"/> for basic GitHub operations.
 /// </summary>
-public class GitHubService(
+public partial class GitHubService(
     IFileSystemCopyService fileSystemCopyService,
-    IGitHubZipEntryProviderFactory gitHubZipEntryProviderFactory,
+    IGitHubZipEntryCollectionFactory gitHubZipEntryCollectionFactory,
     ILogger<GitHubService> logger
 )
     : IGitHubService
@@ -29,22 +29,25 @@ public class GitHubService(
         ArgumentException.ThrowIfNullOrEmpty(branchName);
         ArgumentException.ThrowIfNullOrEmpty(destinationPath);
 
-        logger.LogDebug(
-            "Downloading repository {RepositoryUrl} branch {BranchName} to {DestinationPath}",
-            repositoryUrl,
-            branchName,
-            destinationPath
-        );
+        LogDownloadingRepository(logger, repositoryUrl, branchName, destinationPath);
 
-        using var entryProvider = await gitHubZipEntryProviderFactory
+        using var entryCollection = await gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, cancellationToken)
             .ConfigureAwait(false);
 
         fileSystemCopyService.Copy(
-            entryProvider,
+            entryCollection,
             destinationPath,
             overwrite,
             predicate
         );
     }
+
+    [LoggerMessage(LogLevel.Debug, "Downloading repository {RepositoryUrl} branch {BranchName} to {DestinationPath}")]
+    static partial void LogDownloadingRepository(
+        ILogger<GitHubService> logger,
+        Uri repositoryUrl,
+        string branchName,
+        string destinationPath
+    );
 }

@@ -230,7 +230,7 @@ public class YamlFileSerializerTests
         const string path = "pandoc.yaml";
 
         var fileSystemService = Substitute.For<IFileSystemService>();
-        var captureStream = new CapturingStream().SetContent(TestYamlContent);
+        await using var captureStream = new CapturingStream().SetContent(TestYamlContent);
         fileSystemService.OpenWriteStream(path).Returns(captureStream);
 
         var data = new Dictionary<string, YamlValue>
@@ -354,7 +354,7 @@ public class YamlFileSerializerTests
         var originalStream = new MemoryStream(Encoding.UTF8.GetBytes(TestYamlContent));
         fileSystemService.OpenReadStream(path).Returns(originalStream);
 
-        var captureStream = new CapturingStream().SetContent(TestYamlContent);
+        await using var captureStream = new CapturingStream().SetContent(TestYamlContent);
         fileSystemService.OpenWriteStream(path).Returns(captureStream);
 
         var sut = Ctor(fileSystemService);
@@ -377,7 +377,7 @@ public class YamlFileSerializerTests
             """;
 
         var fileSystemService = Substitute.For<IFileSystemService>();
-        var captureStream = new CapturingStream().SetContent(initialYaml);
+        await using var captureStream = new CapturingStream().SetContent(initialYaml);
         fileSystemService.OpenWriteStream(path).Returns(captureStream);
 
         var data = new Dictionary<string, YamlValue>
@@ -411,7 +411,7 @@ public class YamlFileSerializerTests
             """;
 
         var fileSystemService = Substitute.For<IFileSystemService>();
-        var captureStream = new CapturingStream().SetContent(initialYaml);
+        await using var captureStream = new CapturingStream().SetContent(initialYaml);
         fileSystemService.OpenWriteStream(path).Returns(captureStream);
 
         var data = new Dictionary<string, YamlValue>

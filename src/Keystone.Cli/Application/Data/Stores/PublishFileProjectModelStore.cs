@@ -20,6 +20,8 @@ public class PublishFileProjectModelStore(
     /// <inheritdoc />
     public async Task<ProjectModel> LoadAsync(ProjectModel model, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(model);
+
         var publishFilePath = GetPublishFilePath(model);
 
         if (! fileSystemService.FileExists(publishFilePath))
@@ -35,11 +37,19 @@ public class PublishFileProjectModelStore(
 
     /// <inheritdoc />
     public Task SaveAsync(ProjectModel model, CancellationToken cancellationToken = default)
-        => textFileSerializer.SaveLinesAsync(GetPublishFilePath(model), model.ContentFilePaths ?? [], cancellationToken);
+    {
+        ArgumentNullException.ThrowIfNull(model);
+
+        return textFileSerializer.SaveLinesAsync(GetPublishFilePath(model), model.ContentFilePaths ?? [], cancellationToken);
+    }
 
     /// <inheritdoc />
     public string GetContentHash(ProjectModel model)
-        => contentHashService.ComputeFromLines(model.ContentFilePaths ?? []);
+    {
+        ArgumentNullException.ThrowIfNull(model);
+
+        return contentHashService.ComputeFromLines(model.ContentFilePaths ?? []);
+    }
 
     private static string GetPublishFilePath(ProjectModel model)
         => Path.Combine(model.ProjectPath, ProjectFiles.PublishFileName);

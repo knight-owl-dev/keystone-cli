@@ -9,8 +9,8 @@ namespace Keystone.Cli.Application.GitHub;
 /// <summary>
 /// The GitHub zip entry provider.
 /// </summary>
-public sealed class GitHubZipEntryProvider(ExtractToFileDelegate extractToFileDelegate, ZipArchive archive)
-    : IEntryProvider
+public sealed class GitHubZipEntryCollection(ExtractToFileHandler extractToFileHandler, ZipArchive archive)
+    : IEntryCollection
 {
     /// <summary>
     /// Maps <see cref="EntryModel"/> to <see cref="ZipArchiveEntry"/> for quick access to entries in the zip archive.
@@ -37,6 +37,8 @@ public sealed class GitHubZipEntryProvider(ExtractToFileDelegate extractToFileDe
     /// <inheritdoc />
     public void ExtractToFile(EntryModel entry, string destinationFileName)
     {
+        ArgumentNullException.ThrowIfNull(entry);
+
         if (entry.Type != EntryType.File)
         {
             throw new ArgumentException($"The entry type must be '{EntryType.File}'.", nameof(entry));
@@ -47,7 +49,7 @@ public sealed class GitHubZipEntryProvider(ExtractToFileDelegate extractToFileDe
             throw new InvalidOperationException($"The '{entry.Name}' entry does not exist in the zip archive at {entry.RelativePath}.");
         }
 
-        extractToFileDelegate.Invoke(archiveEntry, destinationFileName, overwrite: true);
+        extractToFileHandler.Invoke(archiveEntry, destinationFileName, overwrite: true);
     }
 
     /// <summary>
@@ -88,5 +90,5 @@ public sealed class GitHubZipEntryProvider(ExtractToFileDelegate extractToFileDe
     /// The relative path to the root entry.
     /// </returns>
     private static string MakeRelative(ZipArchiveEntry root, string path)
-        => path.StartsWith(root.FullName) ? path[root.FullName.Length..] : path;
+        => path.StartsWith(root.FullName, StringComparison.InvariantCulture) ? path[root.FullName.Length..] : path;
 }

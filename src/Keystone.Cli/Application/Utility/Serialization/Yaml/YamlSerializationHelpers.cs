@@ -82,6 +82,8 @@ public static class YamlSerializationHelpers
     /// <returns>The scalar value or null if not found or not a scalar.</returns>
     public static string? GetScalarValueOrDefault(IDictionary<string, YamlValue> yamlData, string key)
     {
+        ArgumentNullException.ThrowIfNull(yamlData);
+
         if (yamlData.TryGetValue(key, out var yamlValue) && yamlValue is YamlScalar scalar)
         {
             return scalar.Value;
@@ -98,6 +100,8 @@ public static class YamlSerializationHelpers
     /// <returns>The array values or null if not found or not an array.</returns>
     public static string[]? GetArrayValueOrDefault(IDictionary<string, YamlValue> yamlData, string key)
     {
+        ArgumentNullException.ThrowIfNull(yamlData);
+
         if (yamlData.TryGetValue(key, out var yamlValue) && yamlValue is YamlArray array)
         {
             return array.Items.ToArray();
@@ -119,6 +123,6 @@ public static class YamlSerializationHelpers
     /// </summary>
     /// <param name="items">The string array.</param>
     /// <returns>A <see cref="YamlArray"/> or <see cref="YamlScalar.Null"/> if the array is null.</returns>
-    public static YamlValue CreateYamlArray(string[]? items)
+    public static YamlValue CreateYamlArray(IReadOnlyList<string>? items)
         => items != null ? new YamlArray(items) : YamlScalar.Null;
 }

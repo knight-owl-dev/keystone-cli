@@ -53,8 +53,8 @@ public class CoconaCommandMethodConventionsTests
         [
             ..typeof(BrowseCommandController).Assembly
                 .GetTypes()
-                .Where(t => t.Namespace?.StartsWith(PresentationNamespace) == true)
-                .Where(t => t is { IsClass: true, IsPublic: true } && t.Name.EndsWith("Controller")),
+                .Where(t => t.Namespace?.StartsWith(PresentationNamespace, StringComparison.InvariantCulture) == true)
+                .Where(t => t is { IsClass: true, IsPublic: true } && t.Name.EndsWith("Controller", StringComparison.InvariantCulture)),
         ];
 
         foreach (var controllerType in controllerTypes)
@@ -87,7 +87,7 @@ public class CoconaCommandMethodConventionsTests
             // Get public *Async methods from subcommand types
             var asyncMethods = subCommandType
                 .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-                .Where(m => m.Name.EndsWith("Async"));
+                .Where(m => m.Name.EndsWith("Async", StringComparison.InvariantCulture));
 
             foreach (var method in asyncMethods)
             {

@@ -6,7 +6,7 @@ namespace Keystone.Cli.Presentation.ComponentModel.DataAnnotations;
 /// <summary>
 /// Enforces that the value is not padded with whitespace.
 /// </summary>
-public class NotPaddedWhitespaceAttribute : ValidationAttribute
+public sealed class NotPaddedWhitespaceAttribute : ValidationAttribute
 {
     /// <inheritdoc />
     protected override ValidationResult? IsValid(object? value, ValidationContext? validationContext)

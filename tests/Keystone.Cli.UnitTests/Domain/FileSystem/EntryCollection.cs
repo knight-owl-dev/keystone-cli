@@ -6,21 +6,21 @@ using NSubstitute;
 namespace Keystone.Cli.UnitTests.Domain.FileSystem;
 
 /// <summary>
-/// Fake implementation of <see cref="IEntryProvider"/> for easier testing.
+/// Fake implementation of <see cref="IEntryCollection"/> for easier testing.
 /// </summary>
 /// <param name="entries">A collection of entries.</param>
-public sealed class EntryProvider(IReadOnlyCollection<EntryModel> entries)
-    : IEntryProvider
+public sealed class EntryCollection(IReadOnlyCollection<EntryModel> entries)
+    : IEntryCollection
 {
     /// <summary>
-    /// Fakes the <see cref="IEntryProvider"/> interface for testing purposes.
+    /// Fakes the <see cref="IEntryCollection"/> interface for testing purposes.
     /// </summary>
     /// <param name="entries">Stubbed entries to use with the fake.</param>
     /// <returns>
-    /// A fake <see cref="IEntryProvider"/> that can be used in tests.
+    /// A fake <see cref="IEntryCollection"/> that can be used in tests.
     /// </returns>
-    public static IEntryProvider Fake(IReadOnlyCollection<EntryModel> entries)
-        => Substitute.ForTypeForwardingTo<IEntryProvider, EntryProvider>(entries);
+    public static IEntryCollection Fake(IReadOnlyCollection<EntryModel> entries)
+        => Substitute.ForTypeForwardingTo<IEntryCollection, EntryCollection>(entries);
 
     /// <inheritdoc />
     public int Count => entries.Count;
@@ -42,6 +42,8 @@ public sealed class EntryProvider(IReadOnlyCollection<EntryModel> entries)
     /// <inheritdoc />
     public void ExtractToFile(EntryModel entry, string destinationFileName)
     {
+        ArgumentNullException.ThrowIfNull(entry);
+
         if (entry.Type != EntryType.File)
         {
             throw new ArgumentException($"The entry type must be '{EntryType.File}'.", nameof(entry));

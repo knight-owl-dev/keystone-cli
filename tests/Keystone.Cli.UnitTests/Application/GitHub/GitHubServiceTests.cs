@@ -13,12 +13,12 @@ public class GitHubServiceTests
 {
     private static GitHubService Ctor(
         IFileSystemCopyService? fileSystemCopyService = null,
-        IGitHubZipEntryProviderFactory? gitHubZipEntryProviderFactory = null,
+        IGitHubZipEntryCollectionFactory? gitHubZipEntryCollectionFactory = null,
         ILogger<GitHubService>? logger = null
     )
         => new(
             fileSystemCopyService ?? Substitute.For<IFileSystemCopyService>(),
-            gitHubZipEntryProviderFactory ?? Substitute.For<IGitHubZipEntryProviderFactory>(),
+            gitHubZipEntryCollectionFactory ?? Substitute.For<IGitHubZipEntryCollectionFactory>(),
             logger ?? new TestLogger<GitHubService>()
         );
 
@@ -110,19 +110,19 @@ public class GitHubServiceTests
         const string destinationPath = "test/path";
 
         var fileSystemCopyService = Substitute.For<IFileSystemCopyService>();
-        var gitHubZipEntryProviderFactory = Substitute.For<IGitHubZipEntryProviderFactory>();
-        var entryProvider = Substitute.For<IEntryProvider>();
+        var gitHubZipEntryCollectionFactory = Substitute.For<IGitHubZipEntryCollectionFactory>();
+        var entryCollection = Substitute.For<IEntryCollection>();
 
         using var cancellationTokenSource = new CancellationTokenSource();
         var cancellationToken = cancellationTokenSource.Token;
 
-        gitHubZipEntryProviderFactory
+        gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, cancellationToken)
-            .Returns(Task.FromResult(entryProvider));
+            .Returns(Task.FromResult(entryCollection));
 
         var sut = Ctor(
             fileSystemCopyService: fileSystemCopyService,
-            gitHubZipEntryProviderFactory: gitHubZipEntryProviderFactory
+            gitHubZipEntryCollectionFactory: gitHubZipEntryCollectionFactory
         );
 
         await sut.CopyPublicRepositoryAsync(
@@ -134,7 +134,7 @@ public class GitHubServiceTests
         );
 
         fileSystemCopyService.Received(1).Copy(
-            entryProvider,
+            entryCollection,
             destinationPath,
             overwrite: false
         );
@@ -148,16 +148,16 @@ public class GitHubServiceTests
         const string destinationPath = "test/path";
 
         var fileSystemCopyService = Substitute.For<IFileSystemCopyService>();
-        var gitHubZipEntryProviderFactory = Substitute.For<IGitHubZipEntryProviderFactory>();
-        var entryProvider = Substitute.For<IEntryProvider>();
+        var gitHubZipEntryCollectionFactory = Substitute.For<IGitHubZipEntryCollectionFactory>();
+        var entryCollection = Substitute.For<IEntryCollection>();
 
-        gitHubZipEntryProviderFactory
+        gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(entryProvider));
+            .Returns(Task.FromResult(entryCollection));
 
         var sut = Ctor(
             fileSystemCopyService: fileSystemCopyService,
-            gitHubZipEntryProviderFactory: gitHubZipEntryProviderFactory
+            gitHubZipEntryCollectionFactory: gitHubZipEntryCollectionFactory
         );
 
         await sut.CopyPublicRepositoryAsync(
@@ -167,7 +167,7 @@ public class GitHubServiceTests
             overwrite: false
         );
 
-        entryProvider.Received(1).Dispose();
+        entryCollection.Received(1).Dispose();
     }
 
     [Test]
@@ -178,16 +178,16 @@ public class GitHubServiceTests
         const string destinationPath = "test/path";
 
         var fileSystemCopyService = Substitute.For<IFileSystemCopyService>();
-        var gitHubZipEntryProviderFactory = Substitute.For<IGitHubZipEntryProviderFactory>();
-        var entryProvider = Substitute.For<IEntryProvider>();
+        var gitHubZipEntryCollectionFactory = Substitute.For<IGitHubZipEntryCollectionFactory>();
+        var entryCollection = Substitute.For<IEntryCollection>();
 
-        gitHubZipEntryProviderFactory
+        gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(entryProvider));
+            .Returns(Task.FromResult(entryCollection));
 
         var sut = Ctor(
             fileSystemCopyService: fileSystemCopyService,
-            gitHubZipEntryProviderFactory: gitHubZipEntryProviderFactory
+            gitHubZipEntryCollectionFactory: gitHubZipEntryCollectionFactory
         );
 
         await sut.CopyPublicRepositoryAsync(
@@ -198,7 +198,7 @@ public class GitHubServiceTests
         );
 
         fileSystemCopyService.Received(1).Copy(
-            entryProvider,
+            entryCollection,
             destinationPath,
             overwrite: true
         );
@@ -212,17 +212,17 @@ public class GitHubServiceTests
         const string destinationPath = "test/path";
 
         var fileSystemCopyService = Substitute.For<IFileSystemCopyService>();
-        var gitHubZipEntryProviderFactory = Substitute.For<IGitHubZipEntryProviderFactory>();
-        var entryProvider = Substitute.For<IEntryProvider>();
+        var gitHubZipEntryCollectionFactory = Substitute.For<IGitHubZipEntryCollectionFactory>();
+        var entryCollection = Substitute.For<IEntryCollection>();
         var predicate = Substitute.For<Func<EntryModel, bool>>();
 
-        gitHubZipEntryProviderFactory
+        gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(entryProvider));
+            .Returns(Task.FromResult(entryCollection));
 
         var sut = Ctor(
             fileSystemCopyService: fileSystemCopyService,
-            gitHubZipEntryProviderFactory: gitHubZipEntryProviderFactory
+            gitHubZipEntryCollectionFactory: gitHubZipEntryCollectionFactory
         );
 
         await sut.CopyPublicRepositoryAsync(
@@ -234,7 +234,7 @@ public class GitHubServiceTests
         );
 
         fileSystemCopyService.Received(1).Copy(
-            entryProvider,
+            entryCollection,
             destinationPath,
             overwrite: false,
             predicate

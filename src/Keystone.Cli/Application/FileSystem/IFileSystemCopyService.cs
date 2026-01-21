@@ -14,7 +14,7 @@ public interface IFileSystemCopyService
     /// <remarks>
     /// If the destination path does not exist, it is created.
     /// </remarks>
-    /// <param name="entryProvider">The source entry provider.</param>
+    /// <param name="entryCollection">The source entry provider.</param>
     /// <param name="destinationPath">The destination path.</param>
     /// <param name="overwrite">Indicates if overwriting existing files is permitted.</param>
     /// <param name="predicate">
@@ -22,13 +22,13 @@ public interface IFileSystemCopyService
     /// for file paths relative to the repository root.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="entryProvider"/> or <paramref name="destinationPath"/> is <c>null</c>.
+    /// Thrown when <paramref name="entryCollection"/> or <paramref name="destinationPath"/> is <c>null</c>.
     /// </exception>
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="destinationPath"/> is an empty string.
     /// </exception>
     void Copy(
-        IEntryProvider entryProvider,
+        IEntryCollection entryCollection,
         string destinationPath,
         bool overwrite,
         Func<EntryModel, bool>? predicate = null

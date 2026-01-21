@@ -10,4 +10,4 @@ namespace Keystone.Cli.Domain.FileSystem;
 /// This delegate matches the signature of <see cref="ZipFileExtensions.ExtractToFile(ZipArchiveEntry, string, bool)"/>
 /// and serves as a testable seam.
 /// </remarks>
-public delegate void ExtractToFileDelegate(ZipArchiveEntry entry, string path, bool overwrite);
+public delegate void ExtractToFileHandler(ZipArchiveEntry entry, string path, bool overwrite);

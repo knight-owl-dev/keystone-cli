@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Keystone.Cli.Domain;
 using Keystone.Cli.UnitTests.TestUtilities;
@@ -37,7 +38,7 @@ public partial class ManPageDateTagTests
 
         var ddLines = lines
             .Select((line, index) => (Line: line, LineNumber: index + 1))
-            .Where(x => x.Line.StartsWith(".Dd"))
+            .Where(x => x.Line.StartsWith(".Dd", StringComparison.InvariantCulture))
             .ToList();
 
         Assert.That(ddLines, Has.Count.EqualTo(1), "Expected exactly one .Dd line in the man page");
@@ -60,7 +61,7 @@ public partial class ManPageDateTagTests
         );
 
         var month = monthIndex + 1;
-        var year = int.Parse(match.Groups[2].Value);
+        var year = int.Parse(match.Groups[2].Value, CultureInfo.InvariantCulture);
         Assert.That(
             year,
             Is.GreaterThanOrEqualTo(CliInfo.InceptionYear).And.LessThanOrEqualTo(localDate.Year),

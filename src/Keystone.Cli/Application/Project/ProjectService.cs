@@ -12,7 +12,12 @@ namespace Keystone.Cli.Application.Project;
 /// <summary>
 /// Default implementation of <see cref="IProjectService"/> that manages project settings and metadata.
 /// </summary>
-public class ProjectService(IGitHubService gitHubService, ILogger<ProjectService> logger, IProjectModelRepository projectModelRepository) : IProjectService
+public partial class ProjectService(
+    IGitHubService gitHubService,
+    ILogger<ProjectService> logger,
+    IProjectModelRepository projectModelRepository
+)
+    : IProjectService
 {
     /// <inheritdoc />
     public async Task<ProjectModel> CreateNewAsync(
@@ -23,12 +28,11 @@ public class ProjectService(IGitHubService gitHubService, ILogger<ProjectService
         CancellationToken cancellationToken
     )
     {
-        logger.LogInformation(
-            "Creating project '{ProjectName}' from {RepositoryUrl} in {Path}",
-            projectName,
-            templateTarget.RepositoryUrl,
-            fullPathToProject
-        );
+        ArgumentNullException.ThrowIfNull(projectName);
+        ArgumentException.ThrowIfNullOrEmpty(fullPathToProject);
+        ArgumentNullException.ThrowIfNull(templateTarget);
+
+        LogCreatingProject(logger, projectName, templateTarget.RepositoryUrl, fullPathToProject);
 
         try
         {
@@ -67,25 +71,19 @@ public class ProjectService(IGitHubService gitHubService, ILogger<ProjectService
     /// <inheritdoc />
     public async Task<bool> SwitchTemplateAsync(string fullPathToProject, TemplateTargetModel templateTarget, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(fullPathToProject);
+        ArgumentNullException.ThrowIfNull(templateTarget);
+
         var originalProjectModel = await projectModelRepository.LoadAsync(fullPathToProject, cancellationToken);
 
         if (originalProjectModel.KeystoneSync?.TemplateRepositoryName == templateTarget.Name)
         {
-            logger.LogInformation(
-                "Project '{ProjectName}' already uses {RepositoryUrl} template, no change made",
-                originalProjectModel.ProjectName,
-                templateTarget.RepositoryUrl
-            );
+            LogProjectAlreadyUsesRepository(logger, originalProjectModel.ProjectName!, templateTarget.RepositoryUrl);
 
             return false;
         }
 
-        logger.LogInformation(
-            "Switching project '{ProjectName}' to use {RepositoryUrl} template in {Path}",
-            originalProjectModel.ProjectName,
-            templateTarget.RepositoryUrl,
-            fullPathToProject
-        );
+        LogSwitchingProject(logger, originalProjectModel.ProjectName!, templateTarget.RepositoryUrl, fullPathToProject);
 
         await gitHubService.CopyPublicRepositoryAsync(
             templateTarget.RepositoryUrl,
@@ -109,4 +107,13 @@ public class ProjectService(IGitHubService gitHubService, ILogger<ProjectService
 
         return true;
     }
+
+    [LoggerMessage(LogLevel.Information, "Creating project '{ProjectName}' from {RepositoryUrl} in {Path}")]
+    static partial void LogCreatingProject(ILogger<ProjectService> logger, string projectName, Uri repositoryUrl, string path);
+
+    [LoggerMessage(LogLevel.Information, "Project '{ProjectName}' already uses {RepositoryUrl} template, no change made")]
+    static partial void LogProjectAlreadyUsesRepository(ILogger<ProjectService> logger, string projectName, Uri repositoryUrl);
+
+    [LoggerMessage(LogLevel.Information, "Switching project '{ProjectName}' to use {RepositoryUrl} template in {Path}")]
+    static partial void LogSwitchingProject(ILogger<ProjectService> logger, string projectName, Uri repositoryUrl, string path);
 }

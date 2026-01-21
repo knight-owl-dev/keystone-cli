@@ -36,18 +36,19 @@ public record LogEntry(LogLevel LogLevel, EventId EventId, string Message, Excep
     /// </returns>
     public override string ToString()
     {
+        var formatProvider = System.Globalization.CultureInfo.InvariantCulture;
         var builder = new StringBuilder();
 
-        builder.Append($"[{this.LogLevel}]: {this.Message}");
+        builder.Append(formatProvider, $"[{this.LogLevel}]: {this.Message}");
 
         if (this.Exception is not null)
         {
-            builder.Append($" ({this.Exception.Message})");
+            builder.Append(formatProvider, $" ({this.Exception.Message})");
         }
 
         if (this.EventId != default)
         {
-            builder.Append($", event {this.EventId}");
+            builder.Append(formatProvider, $", event {this.EventId}");
         }
 
         return builder.ToString();
