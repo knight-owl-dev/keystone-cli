@@ -211,9 +211,6 @@ gh pr create \
 The `--head` flag must include the fork owner prefix (e.g., `alice:my-feature-branch`) so
 GitHub knows which fork contains the branch.
 
-> **Note**: The `--head <owner>:<branch>` syntax does not support organization names.
-> If creating a PR from an organization-owned fork fails, use the GitHub web interface.
-
 ### 12. Output
 
 After successful creation:
@@ -231,4 +228,4 @@ After successful creation:
 - **Branch not pushed**: Offer to push the branch automatically
 - **PR already exists**: Show the existing PR URL instead
 - **Fork not synced**: If the fork's main branch is behind upstream, suggest syncing first
-- **Head reference not found**: Likely missing fork owner prefix — verify topology detection
+- **Head reference not found**: Likely missing fork owner prefix. Verify topology detection
