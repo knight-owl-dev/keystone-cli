@@ -139,7 +139,7 @@ If the user chose "Save thoughts":
 
    ```markdown
    <details>
-   <summary>📝 Dev Notes — <current date></summary>
+   <summary>📝 Dev Notes — <current date in YYYY-MM-DD format></summary>
 
    <user's thoughts>
 
@@ -196,5 +196,5 @@ After successful posting:
 - **Issue not found**: Inform user the issue doesn't exist
 - **No network/auth**: Remind user to check `gh auth status`
 - **Empty comment**: Do not allow posting empty comments
-- **Not on issue branch**: If progress update is selected but not on an issue branch, fall back to simple comment with a
-  note
+- **Not on issue branch**: If a progress update is selected but the current branch does not match an issue pattern, fall
+  back to a simple comment and inform the user: "Note: No issue branch detected; git context will not be included."
