@@ -22,6 +22,20 @@
       },
       "commandLineArgs": "new hello-world"
     },
+    "project-switch-template-core": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "commandLineArgs": "project switch-template --project-path hello-world core"
+    },
+    "project-switch-template-core-slim": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "commandLineArgs": "project switch-template --project-path hello-world core-slim"
+    },
     "help": {
       "commandName": "Project",
       "environmentVariables": {
