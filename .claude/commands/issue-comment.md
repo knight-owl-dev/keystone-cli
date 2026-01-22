@@ -184,7 +184,7 @@ EOF
 After successful posting:
 
 - Display "Comment posted to issue #<number>"
-- Show the issue URL: `https://github.com/knight-owl-dev/lekeystone-cli/issues/<number>`
+- Show the issue URL: `https://github.com/knight-owl-dev/keystone-cli/issues/<number>`
 - Offer to open in browser:
 
   ```bash
