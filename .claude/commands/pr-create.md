@@ -2,6 +2,9 @@
 
 Create a pull request following the project's PR template and conventions.
 
+This command supports both **cloned** repositories (direct push access) and **forked**
+repositories (contributor forks).
+
 ## Arguments: $ARGUMENTS
 
 ## Instructions
@@ -19,9 +22,45 @@ git log main..HEAD --oneline
 
 # Check for uncommitted changes
 git status --short
+
+# Check repository fork status and get parent info
+gh repo view --json isFork,parent,nameWithOwner
 ```
 
-### 2. Extract Issue Reference
+### 2. Determine Repository Topology
+
+Analyze the `gh repo view` output to determine the workflow type:
+
+**Cloned repository (direct access):**
+
+```json
+{
+  "isFork": false,
+  "nameWithOwner": "knight-owl-dev/keystone-cli",
+  "parent": null
+}
+```
+
+**Forked repository (contributor fork):**
+
+```json
+{
+  "isFork": true,
+  "nameWithOwner": "alice/keystone-cli",
+  "parent": {
+    "name": "keystone-cli",
+    "owner": { "login": "knight-owl-dev" }
+  }
+}
+```
+
+Store these values for later steps:
+
+- `is_fork`: boolean from `isFork`
+- `fork_owner`: extract from `nameWithOwner` (e.g., "alice" from "alice/keystone-cli")
+- `upstream_repo`: if fork, use `parent.owner.login/parent.name`; otherwise use `nameWithOwner`
+
+### 3. Extract Issue Reference
 
 Parse the branch name to extract the issue number:
 
@@ -30,7 +69,7 @@ Parse the branch name to extract the issue number:
 - Extract the leading number as the issue reference
 - If no issue number is found, ask the user if this PR relates to an issue
 
-### 3. Fetch Issue Details
+### 4. Fetch Issue Details
 
 If an issue number was found, fetch the issue to understand the scope:
 
@@ -40,7 +79,7 @@ gh issue view <issue-number> --repo knight-owl-dev/keystone-cli
 
 Use the issue's Goal, Scope, and context to inform the PR summary.
 
-### 4. Analyze Commits
+### 5. Analyze Commits
 
 Review the git log output to understand what changes were made:
 
@@ -48,7 +87,7 @@ Review the git log output to understand what changes were made:
 - Identify the high-level changes (not commit-by-commit detail)
 - Focus on what behavior/functionality changed
 
-### 5. Determine Labels
+### 6. Determine Labels
 
 Based on the issue labels and commit content, recommend applicable labels:
 
@@ -63,7 +102,7 @@ Based on the issue labels and commit content, recommend applicable labels:
 
 If the related issue has labels, prefer to match them.
 
-### 6. Draft PR Content
+### 7. Draft PR Content
 
 Follow the PR template (`.github/pull_request_template.md`):
 
@@ -98,7 +137,7 @@ Group related changes conceptually.]
 Omit this section if not needed.]
 ```
 
-### 7. Generate PR Title
+### 8. Generate PR Title
 
 Create an outcome-focused title that:
 
@@ -107,7 +146,7 @@ Create an outcome-focused title that:
 - Matches the issue title style when applicable
 - Is concise (50-72 characters preferred)
 
-### 8. Preview and Confirm
+### 9. Preview and Confirm
 
 Show the user a preview of:
 
@@ -122,7 +161,7 @@ Use AskUserQuestion to confirm before creating, with options to:
 - Edit the content
 - Add/remove labels
 
-### 9. Push Branch if Needed
+### 10. Push Branch if Needed
 
 Check if the branch has been pushed to remote:
 
@@ -136,9 +175,16 @@ If not pushed (no upstream), push with tracking:
 git push -u origin <branch-name>
 ```
 
-### 10. Create the Pull Request
+This works for both workflows:
 
-Use gh CLI to create the PR:
+- **Clone**: `origin` is the main repository
+- **Fork**: `origin` is the user's fork (correct destination for PR branches)
+
+### 11. Create the Pull Request
+
+Use gh CLI to create the PR. The `--head` flag format differs based on repository topology.
+
+**For cloned repositories** (direct access):
 
 ```bash
 gh pr create \
@@ -150,7 +196,22 @@ gh pr create \
   --body "<body>"
 ```
 
-### 11. Output
+**For forked repositories** (contributor fork):
+
+```bash
+gh pr create \
+  --repo knight-owl-dev/keystone-cli \
+  --base main \
+  --head <fork-owner>:<branch-name> \
+  --label "<labels>" \
+  --title "<title>" \
+  --body "<body>"
+```
+
+The `--head` flag must include the fork owner prefix (e.g., `alice:my-feature-branch`) so
+GitHub knows which fork contains the branch.
+
+### 12. Output
 
 After successful creation:
 
@@ -166,3 +227,5 @@ After successful creation:
 - **No commits**: Inform user there are no changes to create a PR for
 - **Branch not pushed**: Offer to push the branch automatically
 - **PR already exists**: Show the existing PR URL instead
+- **Fork not synced**: If the fork's main branch is behind upstream, suggest syncing first
+- **Head reference not found**: Likely missing fork owner prefix. Verify topology detection
