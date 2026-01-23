@@ -37,11 +37,8 @@ jobs:
             exit 1
           fi
 
-      - name: Restore
-        run: dotnet restore --locked-mode
-
       - name: Run unit tests (gate release)
-        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release --no-restore
+        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
 
   build-assets:
     name: Build assets (${{ matrix.rid }})
@@ -70,11 +67,8 @@ jobs:
       - name: Setup .NET
         uses: ./.github/actions/setup-dotnet
 
-      - name: Restore
-        run: dotnet restore --locked-mode
-
       - name: Publish (${{ matrix.rid }})
-        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r ${{ matrix.rid }} --no-restore
+        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r ${{ matrix.rid }}
 
       - name: Package tarball (${{ matrix.rid }})
         shell: bash

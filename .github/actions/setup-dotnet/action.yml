@@ -1,15 +1,11 @@
 name: "Setup .NET"
-description: "Installs .NET SDK from global.json and enables NuGet and runtime packs caching."
+description: "Installs .NET SDK from global.json for centralized version management."
 
 inputs:
   dotnet-version:
     description: "Optional override (e.g. 10.0.x). If omitted, global.json is used."
     required: false
     default: ""
-  cache-runtime-packs:
-    description: "Also cache ~/.dotnet (runtime packs, targeting packs, true/false)."
-    required: false
-    default: "true"
 
 runs:
   using: "composite"
@@ -19,22 +15,9 @@ runs:
       uses: actions/setup-dotnet@v5
       with:
         global-json-file: global.json
-        cache: true
-        cache-dependency-path: '**/packages.lock.json'
 
     - name: Setup .NET SDK (from input override)
       if: inputs.dotnet-version != ''
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
-        cache: true
-        cache-dependency-path: '**/packages.lock.json'
-
-    - name: Cache .NET runtime packs (~/.dotnet)
-      if: inputs.cache-runtime-packs == 'true'
-      uses: actions/cache@v5
-      with:
-        path: ~/.dotnet
-        key: dotnet-runtime-${{ runner.os }}-${{ hashFiles('global.json', '**/*.csproj', '**/Directory.Build.props') }}
-        restore-keys: |
-          dotnet-runtime-${{ runner.os }}-

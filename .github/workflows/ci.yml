@@ -13,8 +13,5 @@ jobs:
 
       - uses: ./.github/actions/setup-dotnet
 
-      - name: Restore
-        run: dotnet restore --locked-mode
-
       - name: Test
-        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release --no-restore
+        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
