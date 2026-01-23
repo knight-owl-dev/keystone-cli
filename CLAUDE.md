@@ -34,6 +34,8 @@ keystone-cli/
 │   │   └── how-to-workflow.md      # Development workflow guide
 │   └── man/                        # Manual pages in mdoc format
 ├── .github/
+│   ├── actions/                    # Composite actions
+│   │   └── setup-dotnet/           # Shared .NET setup with caching
 │   ├── ISSUE_TEMPLATE/             # Issue templates
 │   ├── workflows/                  # GitHub Actions
 │   │   ├── ci.yml                  # CI pipeline (tests on PR/push)
@@ -52,7 +54,8 @@ keystone-cli/
 │   └── package-release.sh          # Tarball packaging script
 ├── nfpm.yaml                       # nfpm configuration for .deb packaging
 ├── artifacts/                      # Build outputs
-├── Directory.Build.props           # MSBuild configuration
+├── global.json                     # .NET SDK version (used by local and CI builds)
+├── Directory.Build.props           # MSBuild configuration (target framework, build settings)
 └── keystone-cli.sln                # Visual Studio solution
 ```
 
@@ -91,6 +94,30 @@ The project uses strict code analysis:
 - `TreatWarningsAsErrors` is enabled
 - Extensive .editorconfig with C# and ReSharper rules
 - Uses Microsoft.VisualStudio.Threading.Analyzers
+
+### Managing NuGet Packages
+
+The project uses NuGet lock files (`packages.lock.json`) for deterministic builds. When adding
+or updating packages, you must regenerate the lock files.
+
+```bash
+# Add a new package
+dotnet add src/Keystone.Cli package <PackageName>
+dotnet restore --force-evaluate
+
+# Update a package
+dotnet add src/Keystone.Cli package <PackageName> --version <Version>
+dotnet restore --force-evaluate
+
+# After any package change, commit the updated lock files
+git add "**/packages.lock.json"
+```
+
+CI runs `dotnet restore --locked-mode` which fails if lock files are out of sync. If you see
+restore failures in CI, regenerate lock files locally with `dotnet restore --force-evaluate`
+and commit the changes.
+
+Dependabot automatically updates lock files when it creates dependency update PRs.
 
 ### Manual Pages
 
@@ -234,6 +261,10 @@ Template repository URLs are configurable via settings.
 ## CI/CD and Release Process
 
 ### GitHub Workflows
+
+All workflows use a shared composite action (`.github/actions/setup-dotnet`) that reads the
+SDK version from `global.json` and enables NuGet and runtime packs caching. Workflows use
+`--locked-mode` during restore to enforce lock file verification.
 
 - **ci.yml**: Runs unit tests on PRs and pushes to main
 - **tag-release.yml**: Manual workflow to create a version tag from csproj version

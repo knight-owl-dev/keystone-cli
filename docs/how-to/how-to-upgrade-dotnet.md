@@ -4,13 +4,24 @@ This guide explains how to upgrade the project to a new .NET version (e.g., from
 
 ## Overview
 
-The project is designed to minimize hardcoded .NET version references. The target framework is
-defined in a single location, and packaging scripts dynamically extract this value at runtime.
-This architecture means most files automatically adapt when you update the central configuration.
+The project is designed to minimize hardcoded .NET version references. Both the SDK version and
+target framework are defined in central locations, and packaging scripts dynamically extract
+values at runtime. This architecture means most files automatically adapt when you update the
+central configuration.
 
 ## Architecture
 
-### Single Source of Truth
+### SDK Version (global.json)
+
+The .NET SDK version is defined in [`global.json`](../../global.json). This file is honored by:
+
+- **Local builds** — The `dotnet` CLI searches upward for `global.json` and uses the specified SDK
+- **CI builds** — The composite action at [`.github/actions/setup-dotnet`](
+  ../../.github/actions/setup-dotnet/action.yml) reads from `global.json`
+
+This ensures local and CI builds use the same SDK version.
+
+### Target Framework (Directory.Build.props)
 
 The target framework is defined once in [`Directory.Build.props`](../../Directory.Build.props).
 All `.csproj` files inherit this value, so there's no need to update individual project files.
@@ -32,19 +43,27 @@ The following files use dynamic resolution and **do not need manual updates**:
 
 When upgrading to a new .NET version, update these files:
 
-### 1. Directory.Build.props
+### 1. global.json
 
-Update the `<TargetFramework>` element in
-[`Directory.Build.props`](../../Directory.Build.props).
+Update the `version` field in [`global.json`](../../global.json):
 
-### 2. GitHub Workflows
+```json
+{
+    "sdk": {
+        "version": "11.0.x",
+        "rollForward": "latestFeature"
+    }
+}
+```
 
-Update the `dotnet-version` in the `setup-dotnet` action across three workflow files:
+### 2. Directory.Build.props
 
-- [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml) — Setup .NET step
-- [`.github/workflows/release.yml`](../../.github/workflows/release.yml) — Setup .NET steps
-  in both `validate` and `build-assets` jobs
-- [`.github/workflows/tag-release.yml`](../../.github/workflows/tag-release.yml) — Setup .NET step
+Update the `<TargetFramework>` element in [`Directory.Build.props`](../../Directory.Build.props):
+
+```xml
+
+<TargetFramework>net11.0</TargetFramework>
+```
 
 ### 3. CLAUDE.md (Optional)
 
@@ -56,6 +75,9 @@ If the Framework and Dependencies section in [`CLAUDE.md`](../../CLAUDE.md) ment
 After making the changes, verify the upgrade:
 
 ```bash
+# Verify SDK version is detected
+dotnet --version
+
 # Clean previous build artifacts
 rm -rf artifacts
 
@@ -75,13 +97,13 @@ dotnet publish src/Keystone.Cli -c Release -r osx-arm64
 
 ## Summary
 
-| File                                | Update Required | Notes                                 |
-|-------------------------------------|-----------------|---------------------------------------|
-| `Directory.Build.props`             | Yes             | Single source of truth for TFM        |
-| `.github/workflows/ci.yml`          | Yes             | SDK version for CI                    |
-| `.github/workflows/release.yml`     | Yes             | SDK version (2 locations)             |
-| `.github/workflows/tag-release.yml` | Yes             | SDK version for tagging               |
-| `CLAUDE.md`                         | Optional        | Documentation reference               |
-| `scripts/*.sh`                      | No              | Uses dynamic `${TFM}`                 |
-| `nfpm.yaml`                         | No              | Uses dynamic `${TFM}`                 |
-| `*.csproj`                          | No              | Inherits from `Directory.Build.props` |
+| File                                      | Update Required | Notes                                 |
+|-------------------------------------------|-----------------|---------------------------------------|
+| `global.json`                             | Yes             | SDK version for local and CI builds   |
+| `Directory.Build.props`                   | Yes             | Target framework (TFM)                |
+| `CLAUDE.md`                               | Optional        | Documentation reference               |
+| `.github/actions/setup-dotnet/action.yml` | No              | Reads from `global.json`              |
+| `.github/workflows/*.yml`                 | No              | Uses composite action                 |
+| `scripts/*.sh`                            | No              | Uses dynamic `${TFM}`                 |
+| `nfpm.yaml`                               | No              | Uses dynamic `${TFM}`                 |
+| `*.csproj`                                | No              | Inherits from `Directory.Build.props` |

@@ -27,7 +27,9 @@
         <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)artifacts\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 
         <!-- Set deterministic builds -->
+        <Deterministic>true</Deterministic>
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     </PropertyGroup>
     <ItemGroup>
         <!-- Global references, analyzers -->

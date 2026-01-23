@@ -15,9 +15,7 @@ jobs:
           fetch-depth: 0 # required to create/push tags reliably
           ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
 
-      - uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "10.0.x"
+      - uses: ./.github/actions/setup-dotnet
 
       - name: Add github.com to known_hosts
         shell: bash
@@ -36,8 +34,11 @@ jobs:
         shell: bash
         run: echo "version=$(./scripts/get-version.sh)" >> "$GITHUB_OUTPUT"
 
+      - name: Restore
+        run: dotnet restore --locked-mode
+
       - name: Run unit tests (gate tagging)
-        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
+        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release --no-restore
 
       - name: Ensure tag does not already exist
         shell: bash

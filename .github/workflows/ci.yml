@@ -11,12 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "10.0.x"
+      - uses: ./.github/actions/setup-dotnet
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore --locked-mode
 
       - name: Test
-        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
+        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release --no-restore
