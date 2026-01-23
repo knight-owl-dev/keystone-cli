@@ -1,5 +1,5 @@
 name: "Setup .NET"
-description: "Installs .NET SDK from global.json and enables NuGet package caching."
+description: "Installs .NET SDK from global.json and enables NuGet and runtime packs caching."
 
 inputs:
   dotnet-version:
