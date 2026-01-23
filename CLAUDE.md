@@ -34,6 +34,8 @@ keystone-cli/
 │   │   └── how-to-workflow.md      # Development workflow guide
 │   └── man/                        # Manual pages in mdoc format
 ├── .github/
+│   ├── actions/                    # Composite actions
+│   │   └── setup-dotnet/           # Shared .NET setup with caching
 │   ├── ISSUE_TEMPLATE/             # Issue templates
 │   ├── workflows/                  # GitHub Actions
 │   │   ├── ci.yml                  # CI pipeline (tests on PR/push)
@@ -52,7 +54,8 @@ keystone-cli/
 │   └── package-release.sh          # Tarball packaging script
 ├── nfpm.yaml                       # nfpm configuration for .deb packaging
 ├── artifacts/                      # Build outputs
-├── Directory.Build.props           # MSBuild configuration
+├── global.json                     # .NET SDK version (used by local and CI builds)
+├── Directory.Build.props           # MSBuild configuration (target framework, build settings)
 └── keystone-cli.sln                # Visual Studio solution
 ```
 
@@ -234,6 +237,9 @@ Template repository URLs are configurable via settings.
 ## CI/CD and Release Process
 
 ### GitHub Workflows
+
+All workflows use a shared composite action (`.github/actions/setup-dotnet`) that reads the
+SDK version from `global.json` and enables NuGet package caching.
 
 - **ci.yml**: Runs unit tests on PRs and pushes to main
 - **tag-release.yml**: Manual workflow to create a version tag from csproj version
