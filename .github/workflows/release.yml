@@ -20,9 +20,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "10.0.x"
+        uses: ./.github/actions/setup-dotnet
 
       - name: Extract version from tag
         id: v
@@ -67,9 +65,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "10.0.x"
+        uses: ./.github/actions/setup-dotnet
 
       - name: Publish (${{ matrix.rid }})
         run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r ${{ matrix.rid }}
