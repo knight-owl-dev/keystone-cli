@@ -17,4 +17,4 @@ jobs:
         run: dotnet restore --locked-mode
 
       - name: Test
-        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
+        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release --no-restore
