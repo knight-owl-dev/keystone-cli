@@ -34,11 +34,8 @@ jobs:
         shell: bash
         run: echo "version=$(./scripts/get-version.sh)" >> "$GITHUB_OUTPUT"
 
-      - name: Restore
-        run: dotnet restore --locked-mode
-
       - name: Run unit tests (gate tagging)
-        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release --no-restore
+        run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
 
       - name: Ensure tag does not already exist
         shell: bash
