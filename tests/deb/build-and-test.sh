@@ -17,30 +17,48 @@
 #   0 - All builds and tests passed
 #   1 - Build or test failed
 #
+# Notes:
+#   - Only packages matching the host architecture are tested
+#   - Cross-architecture testing requires QEMU emulation (slow)
+#
 
-set -euo pipefail
+set -eo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 cd "$REPO_ROOT"
 
+# Detect host architecture
+HOST_ARCH=$(uname -m)
+case "$HOST_ARCH" in
+    x86_64)  HOST_DEB_ARCH="amd64"; HOST_RID="linux-x64" ;;
+    aarch64) HOST_DEB_ARCH="arm64"; HOST_RID="linux-arm64" ;;
+    arm64)   HOST_DEB_ARCH="arm64"; HOST_RID="linux-arm64" ;;
+    *) echo "Unknown host architecture: $HOST_ARCH"; exit 1 ;;
+esac
+
 # Get version from csproj
 VERSION=$(./scripts/get-version.sh)
 echo "Building and testing keystone-cli v$VERSION"
+echo "Host architecture: $HOST_ARCH ($HOST_DEB_ARCH)"
 echo "==========================================="
 
-# Define architectures and their test images
-declare -A ARCH_IMAGES=(
-    ["linux-x64"]="debian:bookworm ubuntu:24.04"
-    ["linux-arm64"]="debian:bookworm ubuntu:24.04"
+# Define build targets: RID|arch
+BUILD_TARGETS=(
+    "linux-x64|amd64"
+    "linux-arm64|arm64"
 )
+
+# Test images to use
+TEST_IMAGES="debian:bookworm ubuntu:24.04"
 
 # Build all packages first
 echo ""
 echo "=== Building packages ==="
 
-for rid in "${!ARCH_IMAGES[@]}"; do
+for target in "${BUILD_TARGETS[@]}"; do
+    rid="${target%%|*}"
     echo ""
     echo "--- Building $rid ---"
 
@@ -55,19 +73,16 @@ echo ""
 echo "=== Built packages ==="
 ls -la artifacts/release/*.deb
 
-# Test each package
+# Test packages
 echo ""
 echo "=== Testing packages ==="
 
 FAILED=0
+TESTED=0
 
-for rid in "${!ARCH_IMAGES[@]}"; do
-    # Map RID to Debian architecture
-    case "$rid" in
-        linux-x64)  arch="amd64" ;;
-        linux-arm64) arch="arm64" ;;
-        *) echo "Unknown RID: $rid"; exit 1 ;;
-    esac
+for target in "${BUILD_TARGETS[@]}"; do
+    rid="${target%%|*}"
+    arch="${target##*|}"
 
     deb_file="artifacts/release/keystone-cli_${VERSION}_${arch}.deb"
 
@@ -77,13 +92,22 @@ for rid in "${!ARCH_IMAGES[@]}"; do
         continue
     fi
 
-    # Test on each image for this architecture
-    for image in ${ARCH_IMAGES[$rid]}; do
+    # Check if we can test this architecture
+    if [[ "$arch" != "$HOST_DEB_ARCH" ]]; then
+        echo ""
+        echo "--- Skipping $deb_file (requires $arch, host is $HOST_DEB_ARCH) ---"
+        echo "    To test cross-architecture, use QEMU emulation."
+        continue
+    fi
+
+    # Test on each image
+    for image in $TEST_IMAGES; do
         echo ""
         echo "--- Testing $deb_file on $image ---"
 
         if ./tests/deb/test-package.sh "$deb_file" "$image"; then
             echo "PASSED: $rid on $image"
+            ((TESTED++))
         else
             echo "FAILED: $rid on $image"
             FAILED=1
@@ -94,8 +118,13 @@ done
 echo ""
 echo "==========================================="
 
-if [[ $FAILED -eq 0 ]]; then
-    echo "All tests passed!"
+if [[ $TESTED -eq 0 ]]; then
+    echo "WARNING: No packages were tested."
+    echo "Built packages (untested):"
+    ls artifacts/release/*.deb
+    exit 1
+elif [[ $FAILED -eq 0 ]]; then
+    echo "All tests passed! ($TESTED tests)"
     echo ""
     echo "Packages ready for release:"
     ls artifacts/release/*.deb
