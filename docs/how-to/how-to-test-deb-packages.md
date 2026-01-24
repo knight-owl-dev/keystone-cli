@@ -1,6 +1,6 @@
 # How to Test .deb Packages
 
-This guide explains how to test `.deb` packages locally before releasing to the apt repository.
+This guide explains how to test `.deb` packages _locally_ before releasing to the apt repository.
 
 ## Why Test Locally?
 
@@ -15,7 +15,7 @@ The release workflow includes automated `.deb` testing in CI, but testing locall
 
 - Docker installed and running
 - .NET SDK installed
-- nfpm installed:
+- `nfpm` installed:
 
   ```bash
   # macOS/Linux with Homebrew
@@ -60,12 +60,12 @@ dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r linux-x64
 
 The test script verifies:
 
-| Check | Purpose |
-|-------|---------|
-| Package installs | Dependencies are satisfied |
-| `keystone-cli info` | Binary runs without crashes |
-| `keystone-cli --version` | Version output works |
-| `man keystone-cli` | Man page is installed correctly |
+| Check                    | Purpose                         |
+|--------------------------|---------------------------------|
+| Package installs         | Dependencies are satisfied      |
+| `keystone-cli info`      | Binary runs without crashes     |
+| `keystone-cli --version` | Version output works            |
+| `man keystone-cli`       | Man page is installed correctly |
 
 ## Testing on Additional Distributions
 
