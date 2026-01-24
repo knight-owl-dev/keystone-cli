@@ -105,9 +105,49 @@ jobs:
           path: artifacts/release/keystone-cli_*.deb
           if-no-files-found: error
 
+  test-deb:
+    name: Test .deb (${{ matrix.distro }})
+    needs: [validate, build-assets]
+    runs-on: ubuntu-latest
+    container: ${{ matrix.image }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: debian-bookworm
+            image: debian:bookworm
+            arch: amd64
+          - distro: ubuntu-24.04
+            image: ubuntu:24.04
+            arch: amd64
+
+    steps:
+      - name: Download .deb artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: deb-linux-x64
+          path: deb
+
+      - name: Install package
+        run: |
+          apt-get update
+          apt-get install -y ./deb/keystone-cli_${{ needs.validate.outputs.version }}_${{ matrix.arch }}.deb
+
+      - name: Verify installation
+        run: |
+          which keystone-cli
+          keystone-cli info
+          keystone-cli --version
+
+      - name: Check man page
+        run: |
+          apt-get install -y man-db
+          man -w keystone-cli
+
   publish-release:
     name: Publish Release
-    needs: [validate, build-assets]
+    needs: [validate, build-assets, test-deb]
     runs-on: ubuntu-latest
 
     permissions:

@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch:  # Manual trigger runs all jobs
   pull_request:
   push:
     branches: [main]
@@ -15,3 +16,122 @@ jobs:
 
       - name: Test
         run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
+
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      packaging: ${{ steps.filter.outputs.packaging }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            packaging:
+              - 'src/**/*.csproj'
+              - 'Directory.Build.props'
+              - 'nfpm.yaml'
+              - 'scripts/package-deb.sh'
+              - 'tests/deb/**'
+
+  build-deb:
+    name: Build .deb (${{ matrix.arch }})
+    needs: changes
+    if: needs.changes.outputs.packaging == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ${{ matrix.runner }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: amd64
+            rid: linux-x64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+            rid: linux-arm64
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-dotnet
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: stable
+          cache: false
+
+      - name: Install nfpm
+        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+
+      - name: Publish
+        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r ${{ matrix.rid }}
+
+      - name: Build .deb package
+        run: ./scripts/package-deb.sh ${{ matrix.rid }}
+
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: deb-${{ matrix.rid }}
+          path: artifacts/release/keystone-cli_*.deb
+          if-no-files-found: error
+
+  test-deb:
+    name: Test .deb (${{ matrix.distro }}-${{ matrix.arch }})
+    needs: [changes, build-deb]
+    if: needs.changes.outputs.packaging == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ${{ matrix.runner }}
+    container: ${{ matrix.image }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: amd64
+            rid: linux-x64
+            distro: debian
+            image: debian:bookworm
+          - runner: ubuntu-latest
+            arch: amd64
+            rid: linux-x64
+            distro: ubuntu
+            image: ubuntu:24.04
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+            rid: linux-arm64
+            distro: debian
+            image: debian:bookworm
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+            rid: linux-arm64
+            distro: ubuntu
+            image: ubuntu:24.04
+
+    steps:
+      - name: Download .deb artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: deb-${{ matrix.rid }}
+          path: deb
+
+      - name: Install package
+        run: |
+          apt-get update
+          apt-get install -y ./deb/keystone-cli_*_${{ matrix.arch }}.deb
+
+      - name: Verify installation
+        run: |
+          which keystone-cli
+          keystone-cli info
+          keystone-cli --version
+
+      - name: Check man page
+        run: |
+          apt-get install -y man-db
+          man -w keystone-cli
