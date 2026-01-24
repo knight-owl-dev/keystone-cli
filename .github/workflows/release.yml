@@ -140,6 +140,7 @@ jobs:
       - name: Trigger apt repository update
         uses: peter-evans/repository-dispatch@v4
         with:
+          # Fine-grained PAT scoped to knight-owl-dev/apt with Contents: Read and write
           token: ${{ secrets.APT_REPO_TOKEN }}
           repository: knight-owl-dev/apt
           event-type: release-published
