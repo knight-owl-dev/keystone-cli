@@ -266,3 +266,42 @@ the GitHub Release is still created successfully, but the apt repo won't have th
 
 **Prevention:** Set a calendar reminder to refresh the token before expiration. Consider migrating
 to a GitHub App for automated token refresh (see [issue #99](https://github.com/knight-owl-dev/keystone-cli/issues/99)).
+
+#### Release workflow fails (test failure, build error, etc.)
+
+The release workflow validates and tests packages before publishing. If any step fails, the tag
+exists but no GitHub Release is created.
+
+**Symptoms:**
+
+- Tag `vX.Y.Z` exists on the remote
+- No GitHub Release for that version
+- Workflow shows failure in build, test, or publish steps
+
+**Resolution:**
+
+1. Delete the remote and local tags:
+
+   ```bash
+   git push origin --delete vX.Y.Z
+   git tag -d vX.Y.Z
+   ```
+
+2. Fix the issue, commit, and push to `main`:
+
+   ```bash
+   git add .
+   git commit -m "Fix release issue"
+   git push origin main
+   ```
+
+3. Re-run the **Tag release** workflow (or manually recreate the tag):
+
+   ```bash
+   git tag -a vX.Y.Z -m "keystone-cli vX.Y.Z"
+   git push origin vX.Y.Z
+   ```
+
+**Alternative:** If the fix is trivial, and you want to avoid tag reuse, bump the version
+(`0.1.10` → `0.1.11`) and release the new version instead. This avoids confusion if anyone
+already pulled the failed tag.
