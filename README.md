@@ -1,6 +1,7 @@
 # Keystone CLI
 
 [![Homebrew](https://img.shields.io/badge/install-homebrew-brightgreen)](https://brew.sh)
+[![Apt](https://img.shields.io/badge/install-apt-blue)](https://apt.knight-owl.dev)
 
 A command-line interface for Keystone.
 
@@ -40,11 +41,28 @@ keystone-cli info
 man keystone-cli
 ```
 
-### Apt (Debian/Ubuntu) — Coming Soon
+### Apt (Debian/Ubuntu)
 
-See [issue #49](https://github.com/knight-owl-dev/keystone-cli/issues/49) for progress on apt
-repository support. In the meantime, `.deb` packages are available in
-[GitHub Releases](https://github.com/Knight-Owl-Dev/keystone-cli/releases).
+First, import the GPG signing key and add the repository:
+
+```bash
+curl -fsSL https://apt.knight-owl.dev/PUBLIC.KEY | sudo gpg --dearmor -o /usr/share/keyrings/knight-owl.gpg
+echo "deb [signed-by=/usr/share/keyrings/knight-owl.gpg] https://apt.knight-owl.dev stable main" | sudo tee /etc/apt/sources.list.d/knight-owl.list
+```
+
+Then install the CLI:
+
+```bash
+sudo apt-get update
+sudo apt-get install keystone-cli
+```
+
+After installation, verify that everything is working:
+
+```bash
+keystone-cli info
+man keystone-cli
+```
 
 ## Project Structure
 

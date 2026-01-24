@@ -14,6 +14,7 @@ Keystone CLI uses **tag-driven releases**.
 - Unit tests are green on `main`.
 - Homebrew tap repository [Knight-Owl-Dev/homebrew-tap](https://github.com/knight-owl-dev/homebrew-tap) is available for
   formula updates.
+- Apt repository [Knight-Owl-Dev/apt](https://github.com/knight-owl-dev/apt) is configured with GPG signing secrets.
 
 ---
 
@@ -74,38 +75,50 @@ This is the **recommended** way to publish a new version.
 
 3. Trigger the **Tag release** workflow in GitHub:
 
-   - Go to **Actions → Tag release**
-   - Click **Run workflow**
+    - Go to **Actions → Tag release**
+    - Click **Run workflow**
 
    The workflow will:
 
-   - read `<Version>` from `Keystone.Cli.csproj`
-   - run unit tests (release gate)
-   - create and push the annotated tag `vX.Y.Z`
+    - read `<Version>` from `Keystone.Cli.csproj`
+    - run unit tests (release gate)
+    - create and push the annotated tag `vX.Y.Z`
 
 4. The tag push automatically triggers the **Release** workflow.
 
    That workflow will:
 
-   - validate `<Version>` matches the tag
-   - build and publish binaries (matrix-based by RID)
-   - package `.tar.gz` release assets
-   - build `.deb` packages for Linux architectures (amd64, arm64)
-   - compute SHA-256 checksums for all assets
-   - generate release notes
-   - create a GitHub Release and upload all assets
+    - validate `<Version>` matches the tag
+    - build and publish binaries (matrix-based by RID)
+    - package `.tar.gz` release assets
+    - build `.deb` packages for Linux architectures (amd64, arm64)
+    - compute SHA-256 checksums for all assets
+    - generate release notes
+    - create a GitHub Release and upload all assets
+    - trigger the apt repository update (via `repository_dispatch` to `knight-owl-dev/apt`)
 
 5. (Optional) Update the Homebrew formula in `Knight-Owl-Dev/homebrew-tap`:
 
-   - Update the version and release URLs to `vX.Y.Z`
-   - Replace the `sha256` values using `checksums.txt` from the release
-   - Commit and push (or merge the automated PR, if enabled)
+    - Update the version and release URLs to `vX.Y.Z`
+    - Replace the `sha256` values using `checksums.txt` from the release
+    - Commit and push (or merge the automated PR, if enabled)
 
-6. Validate installation on macOS:
+6. Validate installation:
+
+   **macOS (Homebrew):**
 
    ```bash
    brew update
    brew install keystone-cli
+   keystone-cli info
+   man keystone-cli
+   ```
+
+   **Linux (apt):**
+
+   ```bash
+   sudo apt-get update
+   sudo apt-get install keystone-cli
    keystone-cli info
    man keystone-cli
    ```
@@ -149,9 +162,9 @@ Use this flow **only** if GitHub Actions is unavailable or requires debugging.
 
 5. Create the GitHub Release manually if it didn't get created automatically:
 
-   - Upload the generated `.tar.gz` files
-   - Include `checksums.txt` in the release assets
-   - Paste checksum contents into the release description
+    - Upload the generated `.tar.gz` files
+    - Include `checksums.txt` in the release assets
+    - Paste checksum contents into the release description
 
 6. Update the Homebrew formula as usual.
 
@@ -192,7 +205,64 @@ The `.deb` packages install:
 - `/usr/share/doc/keystone-cli/copyright` — license file
 - `/usr/local/bin/keystone-cli` — symlink to the binary
 
-### Future: apt repository
+### Apt repository
 
-See [issue #49](https://github.com/knight-owl-dev/keystone-cli/issues/49) for progress on hosting
-these packages in an apt repository for easier installation on Debian/Ubuntu systems.
+The `.deb` packages are automatically published to the [Knight Owl apt repository](https://apt.knight-owl.dev)
+after each release. The release workflow triggers an update to the `knight-owl-dev/apt` repository,
+which regenerates the package metadata and GPG signatures.
+
+Users can install via:
+
+```bash
+curl -fsSL https://apt.knight-owl.dev/PUBLIC.KEY | sudo gpg --dearmor -o /usr/share/keyrings/knight-owl.gpg
+echo "deb [signed-by=/usr/share/keyrings/knight-owl.gpg] https://apt.knight-owl.dev stable main" | sudo tee /etc/apt/sources.list.d/knight-owl.list
+sudo apt-get update && sudo apt-get install keystone-cli
+```
+
+For details on the apt repository infrastructure, see
+the [apt repo documentation](https://github.com/knight-owl-dev/apt).
+
+### Troubleshooting apt repository updates
+
+#### Release succeeds but apt repo is not updated
+
+The release workflow triggers the apt repository update via `repository_dispatch`. If this step fails,
+the GitHub Release is still created successfully, but the apt repo won't have the new version.
+
+**Symptoms:**
+
+- Release workflow shows failure in the "Trigger apt repository update" step
+- Error message mentions authentication or 401/403 status
+
+**Cause:** The `APT_REPO_TOKEN` Personal Access Token (PAT) has expired.
+
+**Resolution:**
+
+1. Go to [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens?type=beta)
+   and either:
+
+   **Option A: Regenerate existing token (recommended)**
+    - Find the `apt-repo-dispatch` token
+    - Click **Regenerate token**
+    - This preserves the existing scope and permissions
+
+   **Option B: Create a new token**
+    - **Name:** `apt-repo-dispatch`
+    - **Expiration:** 1 year (or your preference)
+    - **Repository access:** Select `knight-owl-dev/apt`
+    - **Permissions:** Contents → Read and write
+
+2. Update the secret in keystone-cli:
+
+   ```bash
+   gh secret set APT_REPO_TOKEN --repo knight-owl-dev/keystone-cli
+   ```
+
+3. Manually trigger the apt repo update for the failed release:
+
+    - Go to [knight-owl-dev/apt Actions](https://github.com/knight-owl-dev/apt/actions)
+    - Run the "Update Repository" workflow
+    - Enter the version that failed (e.g., `0.2.0`)
+
+**Prevention:** Set a calendar reminder to refresh the token before expiration. Consider migrating
+to a GitHub App for automated token refresh (see [issue #99](https://github.com/knight-owl-dev/keystone-cli/issues/99)).
