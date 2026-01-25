@@ -42,7 +42,7 @@ runs:
       shell: bash
       env:
         VERSION: ${{ inputs.version }}
-      run: ./scripts/validate-version.sh "$VERSION"
+      run: ./scripts/validate-version.sh "$VERSION" > /dev/null
 
     - name: Setup Go
       uses: actions/setup-go@v6

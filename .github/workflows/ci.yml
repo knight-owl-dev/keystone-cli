@@ -126,10 +126,9 @@ jobs:
           path: deb
 
       - name: Verify installation
-        # Glob expands to exactly one file (the downloaded artifact); script validates argument count.
-        # Note: $ARCH is unquoted to allow glob expansion; validate-arch.sh ensures it's safe.
+        # Glob * is unquoted so it expands; $SAFE_ARCH is quoted but outside the glob so expansion still works.
         env:
           ARCH: ${{ matrix.arch }}
         run: |
-          ./scripts/validate-arch.sh "$ARCH" > /dev/null
-          bash ./scripts/verify-deb-install.sh ./deb/keystone-cli_*_$ARCH.deb
+          SAFE_ARCH="$(./scripts/validate-arch.sh "$ARCH")"
+          bash ./scripts/verify-deb-install.sh ./deb/keystone-cli_*_"$SAFE_ARCH".deb
