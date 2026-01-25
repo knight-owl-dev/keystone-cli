@@ -28,11 +28,16 @@ runs:
   steps:
     - name: Validate RID
       shell: bash
-      run: |
-        if [[ "${{ inputs.rid }}" != "linux-x64" && "${{ inputs.rid }}" != "linux-arm64" ]]; then
-          echo "ERROR: Invalid RID '${{ inputs.rid }}'. Must be linux-x64 or linux-arm64." >&2
-          exit 1
-        fi
+      env:
+        RID: ${{ inputs.rid }}
+      run: ./scripts/validate-rid.sh --linux "$RID" > /dev/null
+
+    - name: Validate version
+      if: inputs.version != ''
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+      run: ./scripts/validate-version.sh "$VERSION" > /dev/null
 
     - name: Setup Go
       uses: actions/setup-go@v6
@@ -46,9 +51,12 @@ runs:
 
     - name: Build .deb package
       shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        RID: ${{ inputs.rid }}
       run: |
-        if [[ -n "${{ inputs.version }}" ]]; then
-          bash ./scripts/package-deb.sh "${{ inputs.version }}" "${{ inputs.rid }}"
+        if [[ -n "$VERSION" ]]; then
+          bash ./scripts/package-deb.sh "$VERSION" "$RID"
         else
-          bash ./scripts/package-deb.sh "${{ inputs.rid }}"
+          bash ./scripts/package-deb.sh "$RID"
         fi

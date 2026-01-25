@@ -6,6 +6,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -61,7 +64,9 @@ jobs:
       - uses: ./.github/actions/setup-dotnet
 
       - name: Publish
-        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r ${{ matrix.rid }}
+        env:
+          RID: ${{ matrix.rid }}
+        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r "$RID"
 
       - name: Build .deb package
         uses: ./.github/actions/build-deb
@@ -121,5 +126,9 @@ jobs:
           path: deb
 
       - name: Verify installation
-        # Glob expands to exactly one file (the downloaded artifact); script validates argument count
-        run: bash ./scripts/verify-deb-install.sh ./deb/keystone-cli_*_${{ matrix.arch }}.deb
+        # SAFE_ARCH is the validated architecture; * is left unquoted for globbing and "$SAFE_ARCH" is quoted after the glob.
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: |
+          SAFE_ARCH="$(./scripts/validate-arch.sh "$ARCH")"
+          bash ./scripts/verify-deb-install.sh ./deb/keystone-cli_*_"$SAFE_ARCH".deb

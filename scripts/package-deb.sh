@@ -79,6 +79,9 @@ if [[ -z "$VERSION" ]]; then
   VERSION="$("${SCRIPT_DIR}/get-version.sh")"
 fi
 
+# Validate version format for safe use in filenames
+VERSION="$("${SCRIPT_DIR}/validate-version.sh" "$VERSION")"
+
 OUT_DIR="artifacts/release"
 
 mkdir -p "$OUT_DIR"
@@ -95,12 +98,16 @@ package() {
   local RID="$1"
   local ARCH
 
+  # Validate RID (--linux restricts to linux-x64, linux-arm64)
+  RID="$("${SCRIPT_DIR}/validate-rid.sh" --linux "$RID")"
+
+  # Map RID to Debian architecture (validate-rid.sh --linux restricts values,
+  # but we guard against unexpected RIDs for safety)
   case "$RID" in
-    linux-x64)  ARCH="amd64" ;;
+    linux-x64)   ARCH="amd64" ;;
     linux-arm64) ARCH="arm64" ;;
     *)
-      echo "ERROR: Unsupported RID for .deb packaging: $RID" >&2
-      echo "Supported RIDs: linux-x64, linux-arm64" >&2
+      echo "ERROR: Unexpected RID: $RID" >&2
       exit 1
       ;;
   esac

@@ -39,8 +39,10 @@ jobs:
 
       - name: Ensure tag does not already exist
         shell: bash
+        env:
+          VERSION: ${{ steps.v.outputs.version }}
         run: |
-          TAG="v${{ steps.v.outputs.version }}"
+          TAG="v$VERSION"
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "ERROR: Tag already exists: $TAG" >&2
             exit 1
@@ -48,12 +50,16 @@ jobs:
 
       - name: Create and push tag
         shell: bash
+        env:
+          VERSION: ${{ steps.v.outputs.version }}
         run: |
-          TAG="v${{ steps.v.outputs.version }}"
+          TAG="v$VERSION"
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "$TAG" -m "keystone-cli $TAG"
           git push origin "$TAG"
 
       - name: Summary
-        run: echo "Pushed tag v${{ steps.v.outputs.version }}. This will trigger the Release workflow."
+        env:
+          VERSION: ${{ steps.v.outputs.version }}
+        run: echo "Pushed tag v$VERSION. This will trigger the Release workflow."

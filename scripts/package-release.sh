@@ -79,12 +79,18 @@ if [[ -z "$VERSION" ]]; then
   VERSION="$("${SCRIPT_DIR}/get-version.sh")"
 fi
 
+# Validate version format for safe use in filenames
+VERSION="$("${SCRIPT_DIR}/validate-version.sh" "$VERSION")"
+
 OUT_DIR="artifacts/release"
 
 mkdir -p "$OUT_DIR"
 
 package() {
   local RID="$1"
+
+  # Validate RID format for safe use in paths
+  RID="$("${SCRIPT_DIR}/validate-rid.sh" "$RID")"
 
   local PUBLISH_DIR="artifacts/bin/Keystone.Cli/Release/${TFM}/${RID}/publish"
 

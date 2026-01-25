@@ -51,7 +51,11 @@ keystone-cli/
 │   ├── get-tfm.sh                  # Extract target framework from Directory.Build.props
 │   ├── get-version.sh              # Extract version from csproj
 │   ├── package-deb.sh              # Debian package script (requires nfpm)
-│   └── package-release.sh          # Tarball packaging script
+│   ├── package-release.sh          # Tarball packaging script
+│   ├── validate-arch.sh            # Validate Debian architecture
+│   ├── validate-rid.sh             # Validate .NET runtime identifier
+│   ├── validate-version.sh         # Validate semantic version format
+│   └── verify-deb-install.sh       # Verify .deb package installation
 ├── nfpm.yaml                       # nfpm configuration for .deb packaging
 ├── artifacts/                      # Build outputs
 ├── global.json                     # .NET SDK version (used by local and CI builds)
@@ -278,6 +282,13 @@ SDK version from `global.json` for centralized version management.
   Usage: `./scripts/package-deb.sh [version] [rid]`
 - **package-release.sh**: Creates release tarballs with binary, config, and man page.
   Usage: `./scripts/package-release.sh [version] [rid]`
+- **validate-arch.sh**: Validates Debian architecture (amd64, arm64) for safe use in scripts.
+  Usage: `./scripts/validate-arch.sh <arch>`
+- **validate-rid.sh**: Validates .NET runtime identifier for safe use in scripts.
+  Use `--linux` to restrict to Linux RIDs only (for .deb packaging).
+  Usage: `./scripts/validate-rid.sh [--linux] <rid>`
+- **validate-version.sh**: Validates semantic version format for safe use in filenames.
+  Usage: `./scripts/validate-version.sh <version>`
 - **verify-deb-install.sh**: Verifies .deb package installation inside a container;
   used by CI workflows and `tests/deb/test-package.sh`.
   Usage: `./scripts/verify-deb-install.sh <path-to-deb>`
