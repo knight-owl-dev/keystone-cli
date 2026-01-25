@@ -81,21 +81,12 @@ jobs:
           path: artifacts/release/keystone-cli_${{ needs.validate.outputs.version }}_${{ matrix.rid }}.tar.gz
           if-no-files-found: error
 
-      - name: Setup Go
-        if: startsWith(matrix.rid, 'linux-')
-        uses: actions/setup-go@v6
-        with:
-          go-version: stable
-          cache: false
-
-      - name: Install nfpm
-        if: startsWith(matrix.rid, 'linux-')
-        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
-
       - name: Build .deb package (${{ matrix.rid }})
         if: startsWith(matrix.rid, 'linux-')
-        shell: bash
-        run: bash ./scripts/package-deb.sh "${{ needs.validate.outputs.version }}" "${{ matrix.rid }}"
+        uses: ./.github/actions/build-deb
+        with:
+          rid: ${{ matrix.rid }}
+          version: ${{ needs.validate.outputs.version }}
 
       - name: Upload .deb artifact
         if: startsWith(matrix.rid, 'linux-')

@@ -1,0 +1,54 @@
+name: "Build .deb Package"
+description: |
+  Builds a Debian package for keystone-cli using nfpm.
+
+  Prerequisites:
+    - Published binaries must exist (run dotnet publish -c Release -r <rid> first)
+
+  Produces artifact at:
+    artifacts/release/keystone-cli_<version>_<arch>.deb
+
+  Where <arch> is "amd64" for linux-x64 or "arm64" for linux-arm64.
+
+  Callers are responsible for uploading artifacts if needed.
+
+  See scripts/package-deb.sh for implementation details.
+
+inputs:
+  rid:
+    description: "Runtime identifier (linux-x64 or linux-arm64)"
+    required: true
+  version:
+    description: "Package version. If omitted, extracted from csproj."
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Validate RID
+      shell: bash
+      run: |
+        if [[ "${{ inputs.rid }}" != "linux-x64" && "${{ inputs.rid }}" != "linux-arm64" ]]; then
+          echo "ERROR: Invalid RID '${{ inputs.rid }}'. Must be linux-x64 or linux-arm64." >&2
+          exit 1
+        fi
+
+    - name: Setup Go
+      uses: actions/setup-go@v6
+      with:
+        go-version: stable
+        cache: false
+
+    - name: Install nfpm
+      shell: bash
+      run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+
+    - name: Build .deb package
+      shell: bash
+      run: |
+        if [[ -n "${{ inputs.version }}" ]]; then
+          bash ./scripts/package-deb.sh "${{ inputs.version }}" "${{ inputs.rid }}"
+        else
+          bash ./scripts/package-deb.sh "${{ inputs.rid }}"
+        fi

@@ -59,20 +59,13 @@ jobs:
 
       - uses: ./.github/actions/setup-dotnet
 
-      - name: Setup Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: stable
-          cache: false
-
-      - name: Install nfpm
-        run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
-
       - name: Publish
         run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r ${{ matrix.rid }}
 
       - name: Build .deb package
-        run: ./scripts/package-deb.sh ${{ matrix.rid }}
+        uses: ./.github/actions/build-deb
+        with:
+          rid: ${{ matrix.rid }}
 
       - name: Upload .deb artifact
         uses: actions/upload-artifact@v6
