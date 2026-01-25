@@ -1,4 +1,31 @@
 #!/usr/bin/env bash
+#
+# Generate SHA256 checksums for release artifacts.
+#
+# This script computes checksums for all .tar.gz and .deb files in the
+# distribution directory and outputs them in GNU coreutils format.
+#
+# Usage:
+#   ./scripts/generate-checksums.sh [dist-dir]
+#
+# Arguments:
+#   dist-dir  Directory containing release artifacts (.tar.gz, .deb files).
+#             Defaults to 'artifacts/release' if omitted.
+#
+# Outputs (in artifacts/release/):
+#   checksums.txt    - SHA256 checksums in GNU coreutils format
+#   release-body.md  - Markdown-formatted checksums for GitHub release
+#
+# Examples:
+#   ./scripts/generate-checksums.sh
+#   ./scripts/generate-checksums.sh dist
+#
+# Exit codes:
+#   0 - Checksums generated successfully
+#   1 - No artifacts found or directory not found
+#   2 - Invalid arguments
+#
+
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

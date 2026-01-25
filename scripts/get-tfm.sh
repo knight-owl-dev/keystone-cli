@@ -1,4 +1,21 @@
 #!/usr/bin/env bash
+#
+# Extract the target framework moniker (TFM) from Directory.Build.props.
+#
+# Reads the <TargetFramework> element and outputs the value (e.g., "net10.0").
+# Used by build scripts to locate publish output directories.
+#
+# Usage:
+#   ./scripts/get-tfm.sh
+#
+# Output:
+#   Prints the TFM to stdout (e.g., "net10.0")
+#
+# Exit codes:
+#   0 - Success
+#   1 - Could not read TargetFramework from Directory.Build.props
+#
+
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
