@@ -285,7 +285,8 @@ SDK version from `global.json` for centralized version management.
 - **validate-arch.sh**: Validates Debian architecture (amd64, arm64) for safe use in scripts.
   Usage: `./scripts/validate-arch.sh <arch>`
 - **validate-rid.sh**: Validates .NET runtime identifier for safe use in scripts.
-  Usage: `./scripts/validate-rid.sh <rid>`
+  Use `--linux` to restrict to Linux RIDs only (for .deb packaging).
+  Usage: `./scripts/validate-rid.sh [--linux] <rid>`
 - **validate-version.sh**: Validates semantic version format for safe use in filenames.
   Usage: `./scripts/validate-version.sh <version>`
 - **verify-deb-install.sh**: Verifies .deb package installation inside a container;

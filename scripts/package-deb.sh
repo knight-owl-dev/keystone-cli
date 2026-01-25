@@ -98,17 +98,13 @@ package() {
   local RID="$1"
   local ARCH
 
-  # Validate RID format
-  RID="$("${SCRIPT_DIR}/validate-rid.sh" "$RID")"
+  # Validate RID (--linux restricts to linux-x64, linux-arm64)
+  RID="$("${SCRIPT_DIR}/validate-rid.sh" --linux "$RID")"
 
+  # Map RID to Debian architecture
   case "$RID" in
-    linux-x64)  ARCH="amd64" ;;
+    linux-x64)   ARCH="amd64" ;;
     linux-arm64) ARCH="arm64" ;;
-    *)
-      echo "ERROR: Unsupported RID for .deb packaging: $RID" >&2
-      echo "Supported RIDs: linux-x64, linux-arm64" >&2
-      exit 1
-      ;;
   esac
 
   local PUBLISH_DIR="artifacts/bin/Keystone.Cli/Release/${TFM}/${RID}/publish"
