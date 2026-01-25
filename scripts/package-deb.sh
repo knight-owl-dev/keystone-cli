@@ -98,6 +98,9 @@ package() {
   local RID="$1"
   local ARCH
 
+  # Validate RID format
+  RID="$("${SCRIPT_DIR}/validate-rid.sh" "$RID")"
+
   case "$RID" in
     linux-x64)  ARCH="amd64" ;;
     linux-arm64) ARCH="arm64" ;;

@@ -89,6 +89,9 @@ mkdir -p "$OUT_DIR"
 package() {
   local RID="$1"
 
+  # Validate RID format for safe use in paths
+  RID="$("${SCRIPT_DIR}/validate-rid.sh" "$RID")"
+
   local PUBLISH_DIR="artifacts/bin/Keystone.Cli/Release/${TFM}/${RID}/publish"
 
   if [[ ! -d "$PUBLISH_DIR" ]]; then

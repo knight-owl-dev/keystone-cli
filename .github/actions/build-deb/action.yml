@@ -31,8 +31,9 @@ runs:
       env:
         RID: ${{ inputs.rid }}
       run: |
-        if [[ "$RID" != "linux-x64" && "$RID" != "linux-arm64" ]]; then
-          echo "ERROR: Invalid RID '$RID'. Must be linux-x64 or linux-arm64." >&2
+        ./scripts/validate-rid.sh "$RID" > /dev/null
+        if [[ "$RID" != linux-* ]]; then
+          echo "ERROR: .deb packaging requires a Linux RID (linux-x64 or linux-arm64), got '$RID'" >&2
           exit 1
         fi
 
