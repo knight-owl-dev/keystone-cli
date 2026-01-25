@@ -126,7 +126,7 @@ jobs:
           path: deb
 
       - name: Verify installation
-        # Glob * is unquoted so it expands; $SAFE_ARCH is quoted but outside the glob so expansion still works.
+        # SAFE_ARCH is the validated architecture; * is left unquoted for globbing and "$SAFE_ARCH" is quoted after the glob.
         env:
           ARCH: ${{ matrix.arch }}
         run: |
