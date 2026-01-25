@@ -29,6 +29,7 @@ keystone-cli/
 ├── docs/
 │   ├── how-to/                     # Procedural guides
 │   │   ├── how-to-release.md       # Release process documentation
+│   │   ├── how-to-security.md      # Workflow and script security guide
 │   │   ├── how-to-test-man-page.md # Man page testing guide
 │   │   ├── how-to-upgrade-dotnet.md # .NET version upgrade guide
 │   │   └── how-to-workflow.md      # Development workflow guide
@@ -292,3 +293,6 @@ SDK version from `global.json` for centralized version management.
 - **verify-deb-install.sh**: Verifies .deb package installation inside a container;
   used by CI workflows and `tests/deb/test-package.sh`.
   Usage: `./scripts/verify-deb-install.sh <path-to-deb>`
+
+For security best practices when modifying workflows or scripts, see
+[docs/how-to/how-to-security.md](docs/how-to/how-to-security.md).
