@@ -184,4 +184,4 @@ jobs:
           token: ${{ secrets.APT_REPO_TOKEN }}
           repository: knight-owl-dev/apt
           event-type: release-published
-          client-payload: '{"version": "${{ needs.validate.outputs.version }}"}'
+          client-payload: '{"versions": "keystone-cli:${{ needs.validate.outputs.version }}"}'
