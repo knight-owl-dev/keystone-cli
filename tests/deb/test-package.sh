@@ -2,8 +2,9 @@
 #
 # Test a locally-built .deb package in a Docker container.
 #
-# This script verifies that the .deb package installs and runs correctly
-# on minimal Debian/Ubuntu systems before publishing to the apt repository.
+# This script runs verify-deb-install.sh inside a Docker container to verify
+# that the .deb package installs and runs correctly on minimal Debian/Ubuntu
+# systems before publishing to the apt repository.
 #
 # Usage:
 #   ./tests/deb/test-package.sh <path-to-deb> [image]
@@ -24,6 +25,9 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
 if [[ $# -lt 1 ]]; then
     echo "Usage: $0 <path-to-deb> [image]"
     echo ""
@@ -41,43 +45,15 @@ if [[ ! -f "$DEB_FILE" ]]; then
     exit 1
 fi
 
+DEB_DIR="$(cd "$(dirname "$DEB_FILE")" && pwd)"
 DEB_FILENAME=$(basename "$DEB_FILE")
 
 echo "Testing .deb package: $DEB_FILE"
 echo "Image: $IMAGE"
 echo "==========================================="
 
-docker run --rm -v "$(cd "$(dirname "$DEB_FILE")" && pwd):/deb:ro" "$IMAGE" bash -c "
-set -e
-
-echo '=== Installing dependencies ==='
-apt-get update
-apt-get install -y man-db
-
-echo ''
-echo '=== Installing .deb package ==='
-apt-get install -y /deb/$DEB_FILENAME
-
-echo ''
-echo '=== Verifying installation ==='
-which keystone-cli
-ls -la /opt/keystone-cli/
-ls -la /usr/local/bin/keystone-cli
-
-echo ''
-echo '=== Running keystone-cli info ==='
-keystone-cli info
-
-echo ''
-echo '=== Checking man page ==='
-man -w keystone-cli
-
-echo ''
-echo '=== Testing basic commands ==='
-keystone-cli --version
-
-echo ''
-echo '==========================================='
-echo 'SUCCESS: Package installed and working'
-echo '==========================================='
-"
+docker run --rm \
+    -v "$DEB_DIR:/deb:ro" \
+    -v "$REPO_ROOT/scripts:/scripts:ro" \
+    "$IMAGE" \
+    bash /scripts/verify-deb-install.sh "/deb/$DEB_FILENAME"

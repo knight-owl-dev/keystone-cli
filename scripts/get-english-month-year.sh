@@ -1,8 +1,22 @@
 #!/usr/bin/env bash
-set -euo pipefail
+#
+# Get the current month and year in English format.
+#
+# Returns "Month YYYY" (e.g., "January 2025") regardless of system locale.
+# Used for updating man page dates consistently across different environments.
+#
+# Usage:
+#   ./scripts/get-english-month-year.sh
+#
+# Output:
+#   Prints "Month YYYY" to stdout (e.g., "January 2025")
+#
+# Exit codes:
+#   0 - Success
+#   1 - Unexpected error
+#
 
-# Returns the current month and year in English format: "Month YYYY"
-# This script is locale-independent and works on both macOS (BSD) and Linux (GNU).
+set -euo pipefail
 
 month_num=$(date '+%m')
 year=$(date '+%Y')

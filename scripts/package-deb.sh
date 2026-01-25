@@ -1,4 +1,35 @@
 #!/usr/bin/env bash
+#
+# Create .deb packages for Linux distributions.
+#
+# This script packages the published keystone-cli binary into .deb format
+# for Debian/Ubuntu systems using nfpm.
+#
+# Usage:
+#   ./scripts/package-deb.sh [version] [rid]
+#
+# Arguments:
+#   version  Optional release version (e.g., 0.1.0).
+#            Extracted from Keystone.Cli.csproj if omitted.
+#   rid      Optional runtime identifier (linux-x64 or linux-arm64).
+#            If omitted, packages both architectures.
+#
+# Examples:
+#   ./scripts/package-deb.sh                    # Both archs, version from csproj
+#   ./scripts/package-deb.sh 0.1.0              # Both archs, explicit version
+#   ./scripts/package-deb.sh 0.1.0 linux-x64    # Single arch, explicit version
+#   ./scripts/package-deb.sh linux-arm64        # Single arch, version from csproj
+#
+# Requirements:
+#   - nfpm (brew install nfpm or go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest)
+#   - Published binary: dotnet publish -c Release -r <rid>
+#
+# Exit codes:
+#   0 - Package(s) created successfully
+#   1 - Missing requirements or build failed
+#   2 - Invalid arguments
+#
+
 set -euo pipefail
 
 # Always run relative to the repo root.

@@ -1,4 +1,34 @@
 #!/usr/bin/env bash
+#
+# Create release tarballs for distribution.
+#
+# This script packages the published keystone-cli binary, config, man page,
+# and LICENSE into a .tar.gz archive for each platform.
+#
+# Usage:
+#   ./scripts/package-release.sh [version] [rid]
+#
+# Arguments:
+#   version  Optional release version (e.g., 0.1.0).
+#            Extracted from Keystone.Cli.csproj if omitted.
+#   rid      Optional runtime identifier (e.g., osx-arm64, linux-x64).
+#            If omitted, packages all platforms.
+#
+# Examples:
+#   ./scripts/package-release.sh                    # All platforms, version from csproj
+#   ./scripts/package-release.sh 0.1.0              # All platforms, explicit version
+#   ./scripts/package-release.sh 0.1.0 osx-arm64    # Single platform, explicit version
+#   ./scripts/package-release.sh linux-x64          # Single platform, version from csproj
+#
+# Requirements:
+#   - Published binary: dotnet publish -c Release -r <rid>
+#
+# Exit codes:
+#   0 - Archive(s) created successfully
+#   1 - Missing requirements or build failed
+#   2 - Invalid arguments
+#
+
 set -euo pipefail
 
 # Always run relative to the repo root.

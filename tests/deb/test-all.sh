@@ -6,7 +6,7 @@
 # one in Docker containers before releasing.
 #
 # Usage:
-#   ./tests/deb/build-and-test.sh
+#   ./tests/deb/test-all.sh
 #
 # Requirements:
 #   - Docker must be installed and running

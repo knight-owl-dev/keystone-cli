@@ -30,7 +30,7 @@ The release workflow includes automated `.deb` testing in CI, but testing locall
 Run the full build and test suite:
 
 ```bash
-./tests/deb/build-and-test.sh
+./tests/deb/test-all.sh
 ```
 
 This script:
@@ -66,6 +66,10 @@ The test script verifies:
 | `keystone-cli info`      | Binary runs without crashes     |
 | `keystone-cli --version` | Version output works            |
 | `man keystone-cli`       | Man page is installed correctly |
+
+The actual verification logic lives in `scripts/verify-deb-install.sh`, which is shared between
+local Docker tests (`test-package.sh`) and CI workflows. This ensures consistent verification
+across all environments.
 
 ## Testing on Additional Distributions
 
