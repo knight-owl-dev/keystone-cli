@@ -120,6 +120,7 @@ documented in [docs/how-to/how-to-release.md](docs/how-to/how-to-release.md).
 - [Development workflow](docs/how-to/how-to-workflow.md) — issue tracking, PRs, and merging
 - [Release process](docs/how-to/how-to-release.md) — version management and publishing
 - [Testing man pages](docs/how-to/how-to-test-man-page.md) — local man page validation
+- [Security best practices](docs/how-to/how-to-security.md) — GitHub Actions and shell script security
 - [Architecture and commands](CLAUDE.md) — project structure and development reference
 
 ## Questions
