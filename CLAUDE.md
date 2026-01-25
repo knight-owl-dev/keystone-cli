@@ -278,3 +278,6 @@ SDK version from `global.json` for centralized version management.
   Usage: `./scripts/package-deb.sh [version] [rid]`
 - **package-release.sh**: Creates release tarballs with binary, config, and man page.
   Usage: `./scripts/package-release.sh [version] [rid]`
+- **verify-deb-install.sh**: Verifies .deb package installation inside a container;
+  used by CI workflows and `tests/deb/test-package.sh`.
+  Usage: `./scripts/verify-deb-install.sh <path-to-deb>`

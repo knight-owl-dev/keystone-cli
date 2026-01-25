@@ -114,27 +114,20 @@ jobs:
             arch: amd64
 
     steps:
+      - name: Checkout (for verify script)
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: scripts
+          sparse-checkout-cone-mode: false
+
       - name: Download .deb artifact
         uses: actions/download-artifact@v7
         with:
           name: deb-linux-x64
           path: deb
 
-      - name: Install package
-        run: |
-          apt-get update
-          apt-get install -y ./deb/keystone-cli_${{ needs.validate.outputs.version }}_${{ matrix.arch }}.deb
-
       - name: Verify installation
-        run: |
-          which keystone-cli
-          keystone-cli info
-          keystone-cli --version
-
-      - name: Check man page
-        run: |
-          apt-get install -y man-db
-          man -w keystone-cli
+        run: bash ./scripts/verify-deb-install.sh ./deb/keystone-cli_${{ needs.validate.outputs.version }}_${{ matrix.arch }}.deb
 
   publish-release:
     name: Publish Release
