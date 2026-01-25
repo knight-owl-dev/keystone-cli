@@ -79,6 +79,9 @@ if [[ -z "$VERSION" ]]; then
   VERSION="$("${SCRIPT_DIR}/get-version.sh")"
 fi
 
+# Validate version format for safe use in filenames
+VERSION="$("${SCRIPT_DIR}/validate-version.sh" "$VERSION")"
+
 OUT_DIR="artifacts/release"
 
 mkdir -p "$OUT_DIR"

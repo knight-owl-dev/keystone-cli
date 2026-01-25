@@ -36,6 +36,13 @@ runs:
           exit 1
         fi
 
+    - name: Validate version
+      if: inputs.version != ''
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+      run: ./scripts/validate-version.sh "$VERSION"
+
     - name: Setup Go
       uses: actions/setup-go@v6
       with:
