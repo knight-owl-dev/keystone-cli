@@ -107,7 +107,7 @@ for target in "${BUILD_TARGETS[@]}"; do
 
         if ./tests/deb/test-package.sh "$deb_file" "$image"; then
             echo "PASSED: $rid on $image"
-            ((TESTED++))
+            TESTED=$((TESTED + 1))
         else
             echo "FAILED: $rid on $image"
             FAILED=1
