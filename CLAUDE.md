@@ -25,17 +25,23 @@ keystone-cli/
 │       │   └── Project/            # Project-specific controllers
 │       └── Configuration/          # Dependency injection setup
 ├── tests/
-│   └── Keystone.Cli.UnitTests/     # Unit tests mirroring src structure
+│   ├── Keystone.Cli.UnitTests/     # Unit tests mirroring src structure
+│   └── deb/                        # Debian package integration tests
+│       ├── test-all.sh             # Run all .deb tests across architectures
+│       └── test-package.sh         # Test single .deb package installation
 ├── docs/
 │   ├── how-to/                     # Procedural guides
+│   │   ├── how-to-handle-globalization.md # Globalization and locale handling
 │   │   ├── how-to-release.md       # Release process documentation
 │   │   ├── how-to-security.md      # Workflow and script security guide
+│   │   ├── how-to-test-deb-packages.md # Debian package testing guide
 │   │   ├── how-to-test-man-page.md # Man page testing guide
 │   │   ├── how-to-upgrade-dotnet.md # .NET version upgrade guide
 │   │   └── how-to-workflow.md      # Development workflow guide
 │   └── man/                        # Manual pages in mdoc format
 ├── .github/
 │   ├── actions/                    # Composite actions
+│   │   ├── build-deb/              # Debian package build action
 │   │   └── setup-dotnet/           # Shared .NET setup
 │   ├── ISSUE_TEMPLATE/             # Issue templates
 │   ├── workflows/                  # GitHub Actions
