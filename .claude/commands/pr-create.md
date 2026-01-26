@@ -145,6 +145,9 @@ Create an outcome-focused title that:
 - Uses imperative mood ("Add...", "Enable...", "Fix...")
 - Matches the issue title style when applicable
 - Is concise (50-72 characters preferred)
+- **Does NOT include issue references** (e.g., avoid `Fix bug (#42)`)—GitHub automatically
+  appends the PR number during squash merge; issue linking belongs in the body via `Refs #NN`
+  or `Fixes #NN`
 
 ### 9. Preview and Confirm
 
