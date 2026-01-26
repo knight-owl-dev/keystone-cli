@@ -25,7 +25,7 @@ public interface IFileSystemService
     /// </summary>
     /// <param name="path">The directory to create.</param>
     /// <returns>An object that represents the directory at the specified path. This object is returned regardless of whether a directory at the specified path already exists.</returns>
-    /// <exception cref="ArgumentException"><paramref name="path" /> is a zero-length string, or contains one or more invalid characters. You can query for invalid characters by using the <see cref="M:System.IO.Path.GetInvalidPathChars" /> method.</exception>
+    /// <exception cref="ArgumentException"><paramref name="path" /> is a zero-length string, or contains one or more invalid characters. You can query for invalid characters by using the <see cref="System.IO.Path.GetInvalidPathChars" /> method.</exception>
     /// <exception cref="ArgumentNullException"><paramref name="path" /> is <see langword="null" />.</exception>
     /// <exception cref="UnauthorizedAccessException">The caller does not have the required permission.</exception>
     /// <exception cref="PathTooLongException">The specified path exceeds the system-defined maximum length.</exception>
