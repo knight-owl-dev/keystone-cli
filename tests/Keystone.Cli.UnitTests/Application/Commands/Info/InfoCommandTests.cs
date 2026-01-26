@@ -34,7 +34,7 @@ public class InfoCommandTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(actual.Version, Does.StartWith("0.2.0"));
-            Assert.That(actual.Description, Is.EqualTo("A command-line interface for Keystone."));
+            Assert.That(actual.Description, Is.EqualTo("Command-line interface for Keystone."));
             Assert.That(actual.Copyright, Is.EqualTo("© 2025 Knight Owl LLC. All rights reserved."));
             Assert.That(actual.DefaultTemplateTarget, Is.EqualTo(defaultTemplateTarget));
             Assert.That(actual.TemplateTargets, Is.EqualTo(templateTargets));

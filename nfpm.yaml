@@ -2,7 +2,7 @@ name: keystone-cli
 arch: "${ARCH}"
 version: "${VERSION}"
 maintainer: "Knight Owl Dev"
-description: "A command-line interface for Keystone"
+description: "Command-line interface for Keystone"
 homepage: "https://github.com/knight-owl-dev/keystone-cli"
 license: "MIT"
 

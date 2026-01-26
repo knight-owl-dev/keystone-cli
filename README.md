@@ -3,7 +3,7 @@
 [![Homebrew](https://img.shields.io/badge/install-homebrew-brightgreen)](https://brew.sh)
 [![Apt](https://img.shields.io/badge/install-apt-blue)](https://apt.knight-owl.dev)
 
-A command-line interface for Keystone.
+Command-line interface for Keystone.
 
 - 📦 [Releases](https://github.com/Knight-Owl-Dev/keystone-cli/releases) — binaries & checksums
 - 📄 [License & Notices](NOTICE.md)
