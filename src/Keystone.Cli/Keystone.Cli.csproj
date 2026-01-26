@@ -10,7 +10,7 @@
         <Authors>Oleksandr Akhtyrskiy</Authors>
         <Company>Knight Owl LLC</Company>
         <Copyright>© 2025 Knight Owl LLC. All rights reserved.</Copyright>
-        <Description>A command-line interface for Keystone.</Description>
+        <Description>Command-line interface for Keystone.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Version>0.2.0</Version>
         <ApplicationVersion>0.2.0</ApplicationVersion>
