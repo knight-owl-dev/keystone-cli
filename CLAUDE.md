@@ -245,6 +245,16 @@ Template repository URLs are configurable via settings.
 - Target framework defined centrally in `Directory.Build.props`; see
   `docs/how-to/how-to-upgrade-dotnet.md` for upgrade instructions
 
+## Git Workflow
+
+This project uses squash merges. Follow the conventions in
+[docs/how-to/how-to-workflow.md](docs/how-to/how-to-workflow.md), particularly:
+
+- **Commit messages**: Do not reference issue numbers; short descriptive summaries are fine
+- **PR titles**: Must be release-note quality; do not include issue references (GitHub appends
+  the PR number on squash merge)
+- **Issue linking**: Use `Fixes #NN` or `Refs #NN` in the PR **description**, not the title
+
 ## CI/CD and Release Process
 
 ### GitHub Workflows

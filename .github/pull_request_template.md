@@ -1,9 +1,10 @@
 <!--
 PR workflow reminder:
 - Use a clear, outcome-focused title (this becomes a release note entry)
+- Do NOT include issue numbers in the title — GitHub appends the PR number on squash merge
 - Apply appropriate labels (e.g. enhancement, documentation, bug)
 - Use special labels (`breaking-change`, `security`, `dependencies`) intentionally — they affect release notes
-- Reference related issues using `Refs #NN` or `Fixes #NN`
+- Reference related issues in the description using `Refs #NN` or `Fixes #NN`
 - Squash merge is preferred unless stated otherwise
 -->
 
