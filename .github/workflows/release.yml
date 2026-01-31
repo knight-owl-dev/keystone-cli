@@ -185,3 +185,12 @@ jobs:
           repository: knight-owl-dev/apt
           event-type: release-published
           client-payload: '{"versions": "keystone-cli:${{ needs.validate.outputs.version }}"}'
+
+      - name: Trigger Homebrew tap update
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          # Fine-grained PAT scoped to knight-owl-dev/homebrew-tap with Contents: Read and write
+          token: ${{ secrets.HOMEBREW_TAP_REPO_TOKEN }}
+          repository: knight-owl-dev/homebrew-tap
+          event-type: release-published
+          client-payload: '{"formulas": "keystone-cli:${{ needs.validate.outputs.version }}"}'
