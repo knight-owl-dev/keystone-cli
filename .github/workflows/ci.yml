@@ -21,6 +21,9 @@ jobs:
       - name: Check shell script formatting (shfmt)
         run: shfmt -d -i 2 -ci -bn -sr scripts/ tests/
 
+      - name: Check shell scripts (shellcheck)
+        run: find scripts tests -name '*.sh' -type f -exec shellcheck --severity=warning {} +
+
   test:
     runs-on: ubuntu-latest
     steps:

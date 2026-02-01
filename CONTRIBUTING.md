@@ -87,7 +87,9 @@ This project follows a structured workflow documented in
 - The project uses `TreatWarningsAsErrors` — all warnings must be resolved
 - Follow existing code patterns and architecture
 - Include unit tests for new functionality
-- Shell scripts must pass `shfmt` formatting (see [CLAUDE.md](CLAUDE.md) for details)
+- Shell scripts must pass `shfmt` formatting and `shellcheck` analysis
+  - Run `make lint` to check locally
+  - Run `make lint-fix` to auto-fix formatting
 - Run `dotnet test` before submitting
 
 ## Labels

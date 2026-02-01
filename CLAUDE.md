@@ -64,6 +64,8 @@ keystone-cli/
 │   ├── validate-version.sh         # Validate semantic version format
 │   └── verify-deb-install.sh       # Verify .deb package installation
 ├── nfpm.yaml                       # nfpm configuration for .deb packaging
+├── .shellcheckrc                   # ShellCheck configuration
+├── Makefile                        # Development task automation (lint targets)
 ├── artifacts/                      # Build outputs
 ├── global.json                     # .NET SDK version (used by local and CI builds)
 ├── Directory.Build.props           # MSBuild configuration (target framework, build settings)
@@ -105,21 +107,34 @@ The project uses strict code analysis:
 - `TreatWarningsAsErrors` is enabled
 - Extensive .editorconfig with C# and ReSharper rules
 - Uses Microsoft.VisualStudio.Threading.Analyzers
-- Shell scripts use shfmt for formatting (`shfmt -i 2 -ci -bn -sr`)
+- Shell scripts use shfmt for formatting and shellcheck for static analysis
 
-### Shell Script Formatting
+### Shell Script Linting
 
-Scripts in `scripts/` and `tests/deb/` are formatted with shfmt:
+Scripts in `scripts/` and `tests/deb/` are checked with shfmt (formatting) and
+shellcheck (static analysis).
 
 ```bash
-# Check formatting (CI uses this)
-shfmt -d -i 2 -ci -bn -sr scripts/ tests/
+# Run all linters (recommended)
+make lint
 
-# Format in place (local development)
-shfmt -w -i 2 -ci -bn -sr scripts/ tests/
+# Auto-fix formatting issues
+make lint-fix
+
+# Individual commands (if not using make)
+shfmt -d -i 2 -ci -bn -sr scripts/ tests/
+shellcheck --severity=warning scripts/*.sh tests/deb/*.sh
 ```
 
-Install shfmt: `brew install shfmt` (macOS) or `go install mvdan.cc/sh/v3/cmd/shfmt@latest`
+Install tools:
+
+- **shfmt**: `brew install shfmt` (macOS) or `go install mvdan.cc/sh/v3/cmd/shfmt@latest`
+- **shellcheck**: `brew install shellcheck` (macOS) or `apt-get install shellcheck` (Debian/Ubuntu)
+
+Configuration:
+
+- shfmt: Flags in Makefile (`-i 2 -ci -bn -sr`)
+- shellcheck: `.shellcheckrc` (bash dialect, stricter optional checks enabled)
 
 ### Manual Pages
 

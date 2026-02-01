@@ -1,0 +1,16 @@
+# ShellCheck configuration for keystone-cli
+# https://www.shellcheck.net/wiki/ShellCheckRC
+
+# Default shell dialect
+shell=bash
+
+# Follow source statements to check sourced files
+external-sources=true
+
+# Enable stricter optional checks
+enable=require-variable-braces
+enable=quote-safe-variables
+enable=check-unassigned-uppercase
+enable=check-extra-masked-returns
+enable=require-double-brackets
+enable=deprecate-which
