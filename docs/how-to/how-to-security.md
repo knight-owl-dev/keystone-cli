@@ -108,6 +108,12 @@ set -euo pipefail
 | `-u`          | Error on unset variables | Catches typos and missing inputs |
 | `-o pipefail` | Propagate pipe errors    | Catches failures in pipelines    |
 
+### Automated Analysis
+
+ShellCheck is integrated into CI to catch common issues automatically. Run `make lint`
+locally before committing. The `.shellcheckrc` configuration enables stricter checks
+including `require-variable-braces`, `quote-safe-variables`, and `deprecate-which`.
+
 ### Input Validation with Allowlists
 
 Validate all external inputs against explicit allowlists. The pattern is:

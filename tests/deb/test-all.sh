@@ -34,15 +34,9 @@ HOST_ARCH=$(uname -m)
 case "$HOST_ARCH" in
   x86_64)
     HOST_DEB_ARCH="amd64"
-    HOST_RID="linux-x64"
     ;;
-  aarch64)
+  aarch64 | arm64)
     HOST_DEB_ARCH="arm64"
-    HOST_RID="linux-arm64"
-    ;;
-  arm64)
-    HOST_DEB_ARCH="arm64"
-    HOST_RID="linux-arm64"
     ;;
   *)
     echo "Unknown host architecture: $HOST_ARCH"

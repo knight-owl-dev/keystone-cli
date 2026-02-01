@@ -32,7 +32,7 @@ jobs:
       - name: Read version from csproj
         id: v
         shell: bash
-        run: echo "version=$(./scripts/get-version.sh)" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(./scripts/get-version.sh)" >> "${GITHUB_OUTPUT}"
 
       - name: Run unit tests (gate tagging)
         run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
@@ -42,9 +42,9 @@ jobs:
         env:
           VERSION: ${{ steps.v.outputs.version }}
         run: |
-          TAG="v$VERSION"
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "ERROR: Tag already exists: $TAG" >&2
+          TAG="v${VERSION}"
+          if git rev-parse "${TAG}" >/dev/null 2>&1; then
+            echo "ERROR: Tag already exists: ${TAG}" >&2
             exit 1
           fi
 
@@ -53,13 +53,13 @@ jobs:
         env:
           VERSION: ${{ steps.v.outputs.version }}
         run: |
-          TAG="v$VERSION"
+          TAG="v${VERSION}"
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG" -m "keystone-cli $TAG"
-          git push origin "$TAG"
+          git tag -a "${TAG}" -m "keystone-cli ${TAG}"
+          git push origin "${TAG}"
 
       - name: Summary
         env:
           VERSION: ${{ steps.v.outputs.version }}
-        run: echo "Pushed tag v$VERSION. This will trigger the Release workflow."
+        run: echo "Pushed tag v${VERSION}. This will trigger the Release workflow."
