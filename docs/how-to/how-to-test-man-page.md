@@ -12,7 +12,7 @@ To read the [mdoc(7)](https://man.openbsd.org/mdoc.7) documentation in your term
 man 7 mdoc
 ```
 
-### Using `mandoc`
+## Using `mandoc`
 
 To test the generated man page locally:
 
@@ -20,7 +20,7 @@ To test the generated man page locally:
 mandoc docs/man/man1/keystone-cli.1
 ```
 
-### Using `man`
+## Using `man`
 
 To view the man page with man, you must supply an absolute path for the man path:
 

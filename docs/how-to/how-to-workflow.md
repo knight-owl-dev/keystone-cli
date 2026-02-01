@@ -40,11 +40,13 @@ Since PRs are squash-merged, individual commits don't need to be release-note qu
 good commit messages still help reviewers and your future self understand the progression of changes.
 
 **Do:**
+
 - Write short, descriptive summaries (e.g., `Add validation for empty input`)
 - Use commits to mark logical checkpoints (e.g., `WIP: basic structure`, `Add tests`, `Fix edge case`)
 - Feel free to use `WIP`, `fixup`, or `checkpoint` prefixes for in-progress work
 
 **Don't:**
+
 - Reference issue numbers in commit messages—the PR description handles issue linking
 - Worry about perfect formatting—squash merge discards individual commit messages
 - Write multi-paragraph commit bodies unless the context is genuinely useful for review
