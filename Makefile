@@ -4,7 +4,7 @@
 #   make lint       Run all linters (shell scripts and workflows)
 #   make lint-fix   Auto-fix shell script formatting
 
-.PHONY: help lint lint-fix lint-shfmt lint-shfmt-fix lint-shellcheck lint-actionlint
+.PHONY: help lint lint-fix lint-shfmt lint-shfmt-fix lint-shellcheck lint-actionlint lint-markdown
 
 .DEFAULT_GOAL := help
 
@@ -20,7 +20,7 @@ help: ## Show available targets
 	@echo "Targets:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 
-lint: lint-shfmt lint-shellcheck lint-actionlint ## Run all linters
+lint: lint-shfmt lint-shellcheck lint-actionlint lint-markdown ## Run all linters
 	@echo "All checks passed"
 
 lint-fix: lint-shfmt-fix ## Auto-fix formatting issues (shfmt only)
@@ -41,3 +41,7 @@ lint-shellcheck: ## Run shellcheck on shell scripts
 lint-actionlint: ## Validate GitHub Actions workflows
 	@echo "Checking GitHub Actions workflows (actionlint)..."
 	@actionlint
+
+lint-markdown: ## Check Markdown file formatting
+	@echo "Checking Markdown files (markdownlint)..."
+	@markdownlint-cli2 "*.md" "docs/**/*.md" ".github/**/*.md" ".claude/**/*.md"

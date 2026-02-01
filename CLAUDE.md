@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Structure
 
-```
+```text
 keystone-cli/
 ├── src/
 │   └── Keystone.Cli/               # Main application
@@ -65,6 +65,7 @@ keystone-cli/
 │   └── verify-deb-install.sh       # Verify .deb package installation
 ├── nfpm.yaml                       # nfpm configuration for .deb packaging
 ├── .shellcheckrc                   # ShellCheck configuration
+├── .markdownlint.json              # Markdownlint configuration
 ├── Makefile                        # Development task automation (lint targets)
 ├── artifacts/                      # Build outputs
 ├── global.json                     # .NET SDK version (used by local and CI builds)
@@ -109,10 +110,12 @@ The project uses strict code analysis:
 - Uses Microsoft.VisualStudio.Threading.Analyzers
 - Shell scripts use shfmt for formatting and shellcheck for static analysis
 - GitHub Actions workflows validated with actionlint
+- Markdown files checked with markdownlint
 
 ### Linting
 
-Shell scripts and GitHub Actions workflows are checked in CI and can be validated locally.
+Shell scripts, GitHub Actions workflows, and Markdown files are checked in CI and can be
+validated locally.
 
 ```bash
 # Run all linters (recommended)
@@ -125,6 +128,7 @@ make lint-fix
 make lint-shfmt       # Shell formatting
 make lint-shellcheck  # Shell static analysis
 make lint-actionlint  # GitHub Actions workflows
+make lint-markdown    # Markdown files
 ```
 
 Install tools:
@@ -132,12 +136,14 @@ Install tools:
 - **shfmt**: `brew install shfmt` (macOS) or `go install mvdan.cc/sh/v3/cmd/shfmt@latest`
 - **shellcheck**: `brew install shellcheck` (macOS) or `apt-get install shellcheck` (Debian/Ubuntu)
 - **actionlint**: `brew install actionlint` (macOS) or `go install github.com/rhysd/actionlint/cmd/actionlint@latest`
+- **markdownlint**: `brew install markdownlint-cli2` (macOS) or `npm install -g markdownlint-cli2`
 
 Configuration:
 
 - shfmt: Flags in Makefile (`-i 2 -ci -bn -sr`)
 - shellcheck: `.shellcheckrc` (bash dialect, stricter optional checks enabled)
 - actionlint: Uses shellcheck for `run:` blocks when available
+- markdownlint: `.markdownlint.json` (4-space list indent, line length disabled)
 
 Shell code in GitHub workflow `run:` blocks should follow the same conventions—use
 `${VAR}` (braced) instead of `$VAR` for consistency with shellcheck's

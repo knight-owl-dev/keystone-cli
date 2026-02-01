@@ -147,7 +147,7 @@ If no branch exists:
 
 **For existing branch with commits**:
 
-```
+```text
 You're continuing work on issue #91.
 
 Branch: 91-add-issue-checkout-command
@@ -168,7 +168,7 @@ Suggested next steps:
 
 **For existing branch with no commits**:
 
-```
+```text
 You have an empty branch for issue #91.
 
 Branch: 91-add-issue-checkout-command
@@ -184,7 +184,7 @@ Suggested next steps:
 
 **For new branch**:
 
-```
+```text
 Created new branch for issue #91.
 
 Branch: 91-add-issue-checkout-command
