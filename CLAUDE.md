@@ -136,6 +136,10 @@ Configuration:
 - shfmt: Flags in Makefile (`-i 2 -ci -bn -sr`)
 - shellcheck: `.shellcheckrc` (bash dialect, stricter optional checks enabled)
 
+Shell code in GitHub workflow `run:` blocks should follow the same conventions—use
+`${VAR}` (braced) instead of `$VAR` for consistency with shellcheck's
+`require-variable-braces` rule.
+
 ### Manual Pages
 
 To test the man page locally:

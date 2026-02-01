@@ -80,7 +80,7 @@ jobs:
       - name: Publish
         env:
           RID: ${{ matrix.rid }}
-        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r "$RID"
+        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r "${RID}"
 
       - name: Build .deb package
         uses: ./.github/actions/build-deb
@@ -144,5 +144,5 @@ jobs:
         env:
           ARCH: ${{ matrix.arch }}
         run: |
-          SAFE_ARCH="$(./scripts/validate-arch.sh "$ARCH")"
-          bash ./scripts/verify-deb-install.sh ./deb/keystone-cli_*_"$SAFE_ARCH".deb
+          SAFE_ARCH="$(./scripts/validate-arch.sh "${ARCH}")"
+          bash ./scripts/verify-deb-install.sh ./deb/keystone-cli_*_"${SAFE_ARCH}".deb

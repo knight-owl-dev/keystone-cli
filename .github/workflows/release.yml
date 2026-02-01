@@ -28,7 +28,7 @@ jobs:
         id: v
         shell: bash
         run: |
-          echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          echo "version=${GITHUB_REF_NAME#v}" >> "${GITHUB_OUTPUT}"
 
       - name: Validate csproj version matches tag
         shell: bash
@@ -36,8 +36,8 @@ jobs:
           TAG_VERSION: ${{ steps.v.outputs.version }}
         run: |
           CS_VERSION="$(./scripts/get-version.sh)"
-          if [[ "$CS_VERSION" != "$TAG_VERSION" ]]; then
-            echo "ERROR: csproj <Version> ($CS_VERSION) does not match tag (v$TAG_VERSION)" >&2
+          if [[ "${CS_VERSION}" != "${TAG_VERSION}" ]]; then
+            echo "ERROR: csproj <Version> (${CS_VERSION}) does not match tag (v${TAG_VERSION})" >&2
             exit 1
           fi
 
@@ -76,14 +76,14 @@ jobs:
       - name: Publish (${{ matrix.rid }})
         env:
           RID: ${{ matrix.rid }}
-        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r "$RID"
+        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r "${RID}"
 
       - name: Package tarball (${{ matrix.rid }})
         shell: bash
         env:
           VERSION: ${{ needs.validate.outputs.version }}
           RID: ${{ matrix.rid }}
-        run: bash ./scripts/package-release.sh "$VERSION" "$RID"
+        run: bash ./scripts/package-release.sh "${VERSION}" "${RID}"
 
       - name: Upload tarball artifact
         uses: actions/upload-artifact@v6
