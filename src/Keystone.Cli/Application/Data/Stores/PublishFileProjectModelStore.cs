@@ -24,14 +24,14 @@ public class PublishFileProjectModelStore(
 
         var publishFilePath = GetPublishFilePath(model);
 
-        if (! fileSystemService.FileExists(publishFilePath))
+        if (!fileSystemService.FileExists(publishFilePath))
         {
             return model;
         }
 
         return model with
         {
-            ContentFilePaths = [..await textFileSerializer.LoadLinesAsync(publishFilePath, cancellationToken)],
+            ContentFilePaths = [.. await textFileSerializer.LoadLinesAsync(publishFilePath, cancellationToken)],
         };
     }
 

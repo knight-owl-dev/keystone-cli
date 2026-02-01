@@ -20,7 +20,7 @@ public class InfoCommand(ITemplateService templateService)
             Description: assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description,
             Copyright: assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright,
             DefaultTemplateTarget: templateService.GetTemplateTarget(name: null),
-            TemplateTargets: [..templateService.GetTemplateTargets()]
+            TemplateTargets: [.. templateService.GetTemplateTargets()]
         );
     }
 }

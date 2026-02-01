@@ -41,7 +41,7 @@ public static class EntryModelPolicies
 
         return entry.Type switch
         {
-            EntryType.File => ! GitFiles.Contains(entry.Name),
+            EntryType.File => !GitFiles.Contains(entry.Name),
             EntryType.Directory => entry.DirectoryName != ".git",
             _ => true,
         };
@@ -60,8 +60,8 @@ public static class EntryModelPolicies
 
         return entry.Type switch
         {
-            EntryType.File => ! entry.IsInAnyDirectory(UserContentDirectories),
-            EntryType.Directory => ! UserContentDirectories.Contains(entry.DirectoryName),
+            EntryType.File => !entry.IsInAnyDirectory(UserContentDirectories),
+            EntryType.Directory => !UserContentDirectories.Contains(entry.DirectoryName),
             _ => true,
         };
     }

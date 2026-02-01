@@ -104,7 +104,7 @@ public static partial class TextParsingUtility
     public static KeyValuePair<string, string?> ParseKeyValuePair(string line)
     {
         var match = GetKeyValuePairParsingRx().Match(line);
-        if (! match.Success)
+        if (!match.Success)
         {
             return default;
         }

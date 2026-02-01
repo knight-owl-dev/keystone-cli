@@ -75,7 +75,7 @@ public class YamlFileSerializer(IFileSystemService fileSystemService)
                 if (currentEntry is { PropertyName: not null })
                 {
                     var key = currentEntry.PropertyName!;
-                    var newEntry = acc.Values.TryGetValue(key, out var newValue) && ! YamlSerializationHelpers.IsEqualValue(currentEntry, newValue)
+                    var newEntry = acc.Values.TryGetValue(key, out var newValue) && !YamlSerializationHelpers.IsEqualValue(currentEntry, newValue)
                         ? YamlSerializationHelpers.ToEntry(key, newValue)
                         : currentEntry;
 
@@ -94,7 +94,7 @@ public class YamlFileSerializer(IFileSystemService fileSystemService)
                 var existingKeys = acc.ExistingKeys.ToImmutable();
 
                 var newEntries = acc.Values
-                    .Where(kvp => ! existingKeys.Contains(kvp.Key))
+                    .Where(kvp => !existingKeys.Contains(kvp.Key))
                     .Select(YamlSerializationHelpers.AsEntry);
 
                 // insert new lines before the terminator entry, if any

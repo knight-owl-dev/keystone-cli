@@ -34,7 +34,7 @@ public class PandocFileProjectModelStore(
 
         var pandocFilePath = GetPandocFilePath(model);
 
-        if (! fileSystemService.FileExists(pandocFilePath))
+        if (!fileSystemService.FileExists(pandocFilePath))
         {
             return model;
         }

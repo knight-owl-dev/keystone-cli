@@ -82,7 +82,7 @@ public partial class ManPageDateTagTests
     {
         var manPagePath = Path.Combine(RepoPathResolver.GetRepoRoot(), "docs", "man", "man1", "keystone-cli.1");
 
-        return ! File.Exists(manPagePath)
+        return !File.Exists(manPagePath)
             ? throw new FileNotFoundException($"Man page not found at expected path: {manPagePath}")
             : manPagePath;
     }

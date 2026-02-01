@@ -23,7 +23,7 @@ public class CoconaCommandMethodConventionsTests
     [Test]
     public void CommandMethods_ShouldNotExposeCancellationTokenAsParameter()
     {
-        MethodInfo[] commandMethods = [..DiscoverCommandMethods().Distinct()];
+        MethodInfo[] commandMethods = [.. DiscoverCommandMethods().Distinct()];
 
         string[] violations =
         [

@@ -173,7 +173,7 @@ public class EntryNode(EntryModel entry)
         ArgumentNullException.ThrowIfNull(predicate);
         ArgumentNullException.ThrowIfNull(func);
 
-        if (! predicate(entry))
+        if (!predicate(entry))
         {
             return seed;
         }
@@ -238,7 +238,7 @@ public class EntryNode(EntryModel entry)
                     entryTypeGroup => entryTypeGroup.ToList()
                 );
 
-                if (directoryName.Length == 0 || ! entriesByType.TryGetValue(EntryType.Directory, out var directories))
+                if (directoryName.Length == 0 || !entriesByType.TryGetValue(EntryType.Directory, out var directories))
                 {
                     // all top-level files
                     acc.TopLevelNodes.AddRange(group.Select(entry => new EntryNode(entry)));

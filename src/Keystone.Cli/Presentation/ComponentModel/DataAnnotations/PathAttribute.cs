@@ -24,5 +24,5 @@ public sealed class PathAttribute : ValidationAttribute
         => this.ErrorMessage ?? $"'{name}' must be a valid path.";
 
     private static bool IsValidPath(string path)
-        => ! string.IsNullOrWhiteSpace(path) && path.IndexOfAny(Path.GetInvalidPathChars()) == -1;
+        => !string.IsNullOrWhiteSpace(path) && path.IndexOfAny(Path.GetInvalidPathChars()) == -1;
 }

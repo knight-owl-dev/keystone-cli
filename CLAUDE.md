@@ -108,14 +108,15 @@ The project uses strict code analysis:
 - `TreatWarningsAsErrors` is enabled
 - Extensive .editorconfig with C# and ReSharper rules
 - Uses Microsoft.VisualStudio.Threading.Analyzers
+- C# code is formatted with `dotnet format` (enforced in CI)
 - Shell scripts use shfmt for formatting and shellcheck for static analysis
 - GitHub Actions workflows validated with actionlint
 - Markdown files checked with markdownlint
 
 ### Linting
 
-Shell scripts, GitHub Actions workflows, and Markdown files are checked in CI and can be
-validated locally.
+C# code, shell scripts, GitHub Actions workflows, and Markdown files are checked in CI and
+can be validated locally.
 
 ```bash
 # Run all linters (recommended)
@@ -125,6 +126,7 @@ make lint
 make lint-fix
 
 # Individual linters
+make lint-dotnet      # C# formatting
 make lint-shfmt       # Shell formatting
 make lint-shellcheck  # Shell static analysis
 make lint-actionlint  # GitHub Actions workflows
@@ -133,6 +135,7 @@ make lint-markdown    # Markdown files
 
 Install tools:
 
+- **dotnet**: Install .NET SDK from [dot.net](https://dot.net)
 - **shfmt**: `brew install shfmt` (macOS) or `go install mvdan.cc/sh/v3/cmd/shfmt@latest`
 - **shellcheck**: `brew install shellcheck` (macOS) or `apt-get install shellcheck` (Debian/Ubuntu)
 - **actionlint**: `brew install actionlint` (macOS) or `go install github.com/rhysd/actionlint/cmd/actionlint@latest`
@@ -140,6 +143,7 @@ Install tools:
 
 Configuration:
 
+- dotnet format: Uses `.editorconfig` for code style rules
 - shfmt: Flags in Makefile (`-i 2 -ci -bn -sr`)
 - shellcheck: `.shellcheckrc` (bash dialect, stricter optional checks enabled)
 - actionlint: Uses shellcheck for `run:` blocks when available

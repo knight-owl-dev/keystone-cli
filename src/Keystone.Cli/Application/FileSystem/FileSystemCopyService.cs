@@ -22,7 +22,7 @@ public partial class FileSystemCopyService(IFileSystemService fileSystemService,
         ArgumentNullException.ThrowIfNull(entryCollection);
         ArgumentException.ThrowIfNullOrEmpty(destinationPath);
 
-        if (! fileSystemService.DirectoryExists(destinationPath))
+        if (!fileSystemService.DirectoryExists(destinationPath))
         {
             LogCreatingDirectory(logger, destinationPath);
             fileSystemService.CreateDirectory(destinationPath);
@@ -47,7 +47,7 @@ public partial class FileSystemCopyService(IFileSystemService fileSystemService,
 
             switch (entry.Type)
             {
-                case EntryType.File when ! overwrite && fileSystemService.FileExists(destinationEntryPath):
+                case EntryType.File when !overwrite && fileSystemService.FileExists(destinationEntryPath):
                     LogFileAlreadyExists(logger, destinationEntryPath);
                     continue;
 
