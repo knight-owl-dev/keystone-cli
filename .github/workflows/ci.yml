@@ -15,6 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Setup actionlint
+        uses: raven-actions/actionlint@v2
+
       - name: Setup shfmt
         uses: mfinelli/setup-shfmt@v4
 
@@ -23,6 +26,9 @@ jobs:
 
       - name: Check shell scripts (shellcheck)
         run: find scripts tests -name '*.sh' -type f -exec shellcheck --severity=warning {} +
+
+      - name: Check GitHub Actions workflows (actionlint)
+        run: actionlint
 
   test:
     runs-on: ubuntu-latest

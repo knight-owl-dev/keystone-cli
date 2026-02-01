@@ -1,10 +1,10 @@
 # Makefile for keystone-cli development tasks
 #
 # Usage:
-#   make lint       Check shell script formatting and lint errors
+#   make lint       Run all linters (shell scripts and workflows)
 #   make lint-fix   Auto-fix shell script formatting
 
-.PHONY: help lint lint-fix lint-shfmt lint-shfmt-fix lint-shellcheck
+.PHONY: help lint lint-fix lint-shfmt lint-shfmt-fix lint-shellcheck lint-actionlint
 
 .DEFAULT_GOAL := help
 
@@ -20,7 +20,7 @@ help: ## Show available targets
 	@echo "Targets:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
 
-lint: lint-shfmt lint-shellcheck ## Run all linters (shfmt + shellcheck)
+lint: lint-shfmt lint-shellcheck lint-actionlint ## Run all linters
 	@echo "All checks passed"
 
 lint-fix: lint-shfmt-fix ## Auto-fix formatting issues (shfmt only)
@@ -37,3 +37,7 @@ lint-shfmt-fix: ## Fix shell script formatting
 lint-shellcheck: ## Run shellcheck on shell scripts
 	@echo "Running shellcheck..."
 	@shellcheck --severity=warning $(SHELL_SCRIPTS)
+
+lint-actionlint: ## Validate GitHub Actions workflows
+	@echo "Checking GitHub Actions workflows (actionlint)..."
+	@actionlint

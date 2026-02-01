@@ -108,33 +108,36 @@ The project uses strict code analysis:
 - Extensive .editorconfig with C# and ReSharper rules
 - Uses Microsoft.VisualStudio.Threading.Analyzers
 - Shell scripts use shfmt for formatting and shellcheck for static analysis
+- GitHub Actions workflows validated with actionlint
 
-### Shell Script Linting
+### Linting
 
-Scripts in `scripts/` and `tests/deb/` are checked with shfmt (formatting) and
-shellcheck (static analysis).
+Shell scripts and GitHub Actions workflows are checked in CI and can be validated locally.
 
 ```bash
 # Run all linters (recommended)
 make lint
 
-# Auto-fix formatting issues
+# Auto-fix shell script formatting
 make lint-fix
 
-# Individual commands (if not using make)
-shfmt -d -i 2 -ci -bn -sr scripts/ tests/
-shellcheck --severity=warning scripts/*.sh tests/deb/*.sh
+# Individual linters
+make lint-shfmt       # Shell formatting
+make lint-shellcheck  # Shell static analysis
+make lint-actionlint  # GitHub Actions workflows
 ```
 
 Install tools:
 
 - **shfmt**: `brew install shfmt` (macOS) or `go install mvdan.cc/sh/v3/cmd/shfmt@latest`
 - **shellcheck**: `brew install shellcheck` (macOS) or `apt-get install shellcheck` (Debian/Ubuntu)
+- **actionlint**: `brew install actionlint` (macOS) or `go install github.com/rhysd/actionlint/cmd/actionlint@latest`
 
 Configuration:
 
 - shfmt: Flags in Makefile (`-i 2 -ci -bn -sr`)
 - shellcheck: `.shellcheckrc` (bash dialect, stricter optional checks enabled)
+- actionlint: Uses shellcheck for `run:` blocks when available
 
 Shell code in GitHub workflow `run:` blocks should follow the same conventions—use
 `${VAR}` (braced) instead of `$VAR` for consistency with shellcheck's
