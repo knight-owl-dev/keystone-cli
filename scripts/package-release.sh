@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 #
 # Create release tarballs for distribution.
 #
@@ -28,8 +30,6 @@
 #   1 - Missing requirements or build failed
 #   2 - Invalid arguments
 #
-
-set -euo pipefail
 
 # Always run relative to the repo root.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -131,7 +131,7 @@ package() {
     -C "$REPO_ROOT" LICENSE \
     -C "$REPO_ROOT/docs/man/man1" keystone-cli.1
 
-  if command -v shasum >/dev/null 2>&1; then
+  if command -v shasum > /dev/null 2>&1; then
     shasum -a 256 "$ARCHIVE"
   else
     sha256sum "$ARCHIVE"

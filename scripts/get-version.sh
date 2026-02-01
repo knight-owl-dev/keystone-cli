@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 #
 # Extract the project version from Keystone.Cli.csproj.
 #
@@ -15,8 +17,6 @@
 #   0 - Success
 #   1 - Could not read Version from csproj
 #
-
-set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"

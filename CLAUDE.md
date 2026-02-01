@@ -105,6 +105,21 @@ The project uses strict code analysis:
 - `TreatWarningsAsErrors` is enabled
 - Extensive .editorconfig with C# and ReSharper rules
 - Uses Microsoft.VisualStudio.Threading.Analyzers
+- Shell scripts use shfmt for formatting (`shfmt -i 2 -ci -bn -sr`)
+
+### Shell Script Formatting
+
+Scripts in `scripts/` and `tests/deb/` are formatted with shfmt:
+
+```bash
+# Check formatting (CI uses this)
+shfmt -d -i 2 -ci -bn -sr scripts/ tests/
+
+# Format in place (local development)
+shfmt -w -i 2 -ci -bn -sr scripts/ tests/
+```
+
+Install shfmt: `brew install shfmt` (macOS) or `go install mvdan.cc/sh/v3/cmd/shfmt@latest`
 
 ### Manual Pages
 

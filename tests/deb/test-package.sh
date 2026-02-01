@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 #
 # Test a locally-built .deb package in a Docker container.
 #
@@ -23,26 +25,24 @@
 #   1 - Test failed or invalid arguments
 #
 
-set -euo pipefail
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 if [[ $# -lt 1 ]]; then
-    echo "Usage: $0 <path-to-deb> [image]"
-    echo ""
-    echo "Examples:"
-    echo "  $0 artifacts/release/keystone-cli_0.1.10_amd64.deb"
-    echo "  $0 artifacts/release/keystone-cli_0.1.10_arm64.deb ubuntu:24.04"
-    exit 1
+  echo "Usage: $0 <path-to-deb> [image]"
+  echo ""
+  echo "Examples:"
+  echo "  $0 artifacts/release/keystone-cli_0.1.10_amd64.deb"
+  echo "  $0 artifacts/release/keystone-cli_0.1.10_arm64.deb ubuntu:24.04"
+  exit 1
 fi
 
 DEB_FILE="$1"
 IMAGE="${2:-debian:bookworm-slim}"
 
 if [[ ! -f "$DEB_FILE" ]]; then
-    echo "ERROR: File not found: $DEB_FILE"
-    exit 1
+  echo "ERROR: File not found: $DEB_FILE"
+  exit 1
 fi
 
 DEB_DIR="$(cd "$(dirname "$DEB_FILE")" && pwd)"
@@ -53,7 +53,7 @@ echo "Image: $IMAGE"
 echo "==========================================="
 
 docker run --rm \
-    -v "$DEB_DIR:/deb:ro" \
-    -v "$REPO_ROOT/scripts:/scripts:ro" \
-    "$IMAGE" \
-    bash /scripts/verify-deb-install.sh "/deb/$DEB_FILENAME"
+  -v "$DEB_DIR:/deb:ro" \
+  -v "$REPO_ROOT/scripts:/scripts:ro" \
+  "$IMAGE" \
+  bash /scripts/verify-deb-install.sh "/deb/$DEB_FILENAME"

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 #
 # Extract the target framework moniker (TFM) from Directory.Build.props.
 #
@@ -15,8 +17,6 @@
 #   0 - Success
 #   1 - Could not read TargetFramework from Directory.Build.props
 #
-
-set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"

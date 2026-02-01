@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 #
 # Validate a .NET runtime identifier (RID) for safe use in scripts.
 #
@@ -17,42 +19,40 @@
 #   1 - Invalid RID or missing argument
 #
 
-set -euo pipefail
-
 LINUX_ONLY=false
 
 if [[ $# -ge 1 && "$1" == "--linux" ]]; then
-    LINUX_ONLY=true
-    shift
+  LINUX_ONLY=true
+  shift
 fi
 
 if [[ $# -ne 1 ]]; then
-    echo "Usage: $(basename "$0") [--linux] <rid>" >&2
-    exit 1
+  echo "Usage: $(basename "$0") [--linux] <rid>" >&2
+  exit 1
 fi
 
 RID="$1"
 
 if [[ "$LINUX_ONLY" == true ]]; then
-    case "$RID" in
-        linux-x64|linux-arm64)
-            echo "$RID"
-            ;;
-        *)
-            echo "ERROR: Invalid Linux RID: $RID" >&2
-            echo "Supported Linux RIDs: linux-x64, linux-arm64" >&2
-            exit 1
-            ;;
-    esac
+  case "$RID" in
+    linux-x64 | linux-arm64)
+      echo "$RID"
+      ;;
+    *)
+      echo "ERROR: Invalid Linux RID: $RID" >&2
+      echo "Supported Linux RIDs: linux-x64, linux-arm64" >&2
+      exit 1
+      ;;
+  esac
 else
-    case "$RID" in
-        osx-arm64|osx-x64|linux-x64|linux-arm64)
-            echo "$RID"
-            ;;
-        *)
-            echo "ERROR: Invalid RID: $RID" >&2
-            echo "Supported RIDs: osx-arm64, osx-x64, linux-x64, linux-arm64" >&2
-            exit 1
-            ;;
-    esac
+  case "$RID" in
+    osx-arm64 | osx-x64 | linux-x64 | linux-arm64)
+      echo "$RID"
+      ;;
+    *)
+      echo "ERROR: Invalid RID: $RID" >&2
+      echo "Supported RIDs: osx-arm64, osx-x64, linux-x64, linux-arm64" >&2
+      exit 1
+      ;;
+  esac
 fi

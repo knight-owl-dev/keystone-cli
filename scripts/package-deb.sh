@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 #
 # Create .deb packages for Linux distributions.
 #
@@ -29,8 +31,6 @@
 #   1 - Missing requirements or build failed
 #   2 - Invalid arguments
 #
-
-set -euo pipefail
 
 # Always run relative to the repo root.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -87,7 +87,7 @@ OUT_DIR="artifacts/release"
 mkdir -p "$OUT_DIR"
 
 # Check for nfpm
-if ! command -v nfpm >/dev/null 2>&1; then
+if ! command -v nfpm > /dev/null 2>&1; then
   echo "ERROR: nfpm is not installed." >&2
   echo "Install with: brew install nfpm" >&2
   echo "         or: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest" >&2
@@ -104,7 +104,7 @@ package() {
   # Map RID to Debian architecture (validate-rid.sh --linux restricts values,
   # but we guard against unexpected RIDs for safety)
   case "$RID" in
-    linux-x64)   ARCH="amd64" ;;
+    linux-x64) ARCH="amd64" ;;
     linux-arm64) ARCH="arm64" ;;
     *)
       echo "ERROR: Unexpected RID: $RID" >&2
@@ -147,7 +147,7 @@ package() {
   ARCH="$ARCH" VERSION="$VERSION" RID="$RID" TFM="$TFM" \
     nfpm package --packager deb --target "$PACKAGE"
 
-  if command -v shasum >/dev/null 2>&1; then
+  if command -v shasum > /dev/null 2>&1; then
     shasum -a 256 "$PACKAGE"
   else
     sha256sum "$PACKAGE"

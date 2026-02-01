@@ -10,6 +10,17 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup shfmt
+        uses: mfinelli/setup-shfmt@v4
+
+      - name: Check shell script formatting (shfmt)
+        run: shfmt -d -i 2 -ci -bn -sr scripts/ tests/
+
   test:
     runs-on: ubuntu-latest
     steps:
