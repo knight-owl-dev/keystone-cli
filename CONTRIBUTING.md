@@ -87,6 +87,7 @@ This project follows a structured workflow documented in
 - The project uses `TreatWarningsAsErrors` — all warnings must be resolved
 - Follow existing code patterns and architecture
 - Include unit tests for new functionality
+- Shell scripts must pass `shfmt` formatting (see [CLAUDE.md](CLAUDE.md) for details)
 - Run `dotnet test` before submitting
 
 ## Labels

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 #
 # Validate a Debian architecture for safe use in scripts.
 #
@@ -12,22 +14,20 @@
 #   1 - Invalid architecture or missing argument
 #
 
-set -euo pipefail
-
 if [[ $# -ne 1 ]]; then
-    echo "Usage: $(basename "$0") <arch>" >&2
-    exit 1
+  echo "Usage: $(basename "$0") <arch>" >&2
+  exit 1
 fi
 
 ARCH="$1"
 
 case "$ARCH" in
-    amd64|arm64)
-        echo "$ARCH"
-        ;;
-    *)
-        echo "ERROR: Invalid architecture: $ARCH" >&2
-        echo "Supported architectures: amd64, arm64" >&2
-        exit 1
-        ;;
+  amd64 | arm64)
+    echo "$ARCH"
+    ;;
+  *)
+    echo "ERROR: Invalid architecture: $ARCH" >&2
+    echo "Supported architectures: amd64, arm64" >&2
+    exit 1
+    ;;
 esac

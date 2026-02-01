@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 #
 # Verify a .deb package installs and runs correctly.
 #
@@ -13,19 +15,17 @@
 #   1 - Verification failed or invalid arguments
 #
 
-set -euo pipefail
-
 if [[ $# -ne 1 ]]; then
-    echo "Usage: $0 <path-to-deb>"
-    echo "Error: Expected exactly 1 argument, got $#"
-    exit 1
+  echo "Usage: $0 <path-to-deb>"
+  echo "Error: Expected exactly 1 argument, got $#"
+  exit 1
 fi
 
 DEB_FILE="$1"
 
 if [[ ! -f "$DEB_FILE" ]]; then
-    echo "ERROR: File not found: $DEB_FILE"
-    exit 1
+  echo "ERROR: File not found: $DEB_FILE"
+  exit 1
 fi
 
 echo "=== Installing dependencies ==="

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 #
 # Get the current month and year in English format.
 #
@@ -15,8 +17,6 @@
 #   0 - Success
 #   1 - Unexpected error
 #
-
-set -euo pipefail
 
 month_num=$(date '+%m')
 year=$(date '+%Y')

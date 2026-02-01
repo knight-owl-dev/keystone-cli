@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 #
 # Generate SHA256 checksums for release artifacts.
 #
@@ -25,8 +27,6 @@
 #   1 - No artifacts found or directory not found
 #   2 - Invalid arguments
 #
-
-set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
