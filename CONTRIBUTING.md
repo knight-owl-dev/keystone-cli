@@ -88,8 +88,9 @@ This project follows a structured workflow documented in
 - Follow existing code patterns and architecture
 - Include unit tests for new functionality
 - Shell scripts must pass `shfmt` formatting and `shellcheck` analysis
-  - Run `make lint` to check locally
-  - Run `make lint-fix` to auto-fix formatting
+- GitHub Actions workflows must pass `actionlint` validation
+  - Run `make lint` to check all locally
+  - Run `make lint-fix` to auto-fix shell formatting
 - Run `dotnet test` before submitting
 
 ## Labels
