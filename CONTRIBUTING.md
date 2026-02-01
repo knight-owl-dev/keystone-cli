@@ -87,11 +87,12 @@ This project follows a structured workflow documented in
 - The project uses `TreatWarningsAsErrors` — all warnings must be resolved
 - Follow existing code patterns and architecture
 - Include unit tests for new functionality
+- C# code must pass `dotnet format` validation
 - Shell scripts must pass `shfmt` formatting and `shellcheck` analysis
 - GitHub Actions workflows must pass `actionlint` validation
 - Markdown files must pass `markdownlint` validation
     - Run `make lint` to check all locally
-    - Run `make lint-fix` to auto-fix shell formatting
+    - Run `make lint-fix` to auto-fix C# and shell formatting
 - Run `dotnet test` before submitting
 
 ## Labels

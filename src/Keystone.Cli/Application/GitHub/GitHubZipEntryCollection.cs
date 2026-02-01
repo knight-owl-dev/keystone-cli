@@ -44,7 +44,7 @@ public sealed class GitHubZipEntryCollection(ExtractToFileHandler extractToFileH
             throw new ArgumentException($"The entry type must be '{EntryType.File}'.", nameof(entry));
         }
 
-        if (! this.Entries.TryGetValue(entry, out var archiveEntry))
+        if (!this.Entries.TryGetValue(entry, out var archiveEntry))
         {
             throw new InvalidOperationException($"The '{entry.Name}' entry does not exist in the zip archive at {entry.RelativePath}.");
         }

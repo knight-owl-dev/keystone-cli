@@ -5,7 +5,7 @@ using Keystone.Cli.UnitTests.Domain.FileSystem.TestData;
 
 namespace Keystone.Cli.UnitTests.Domain.Policies;
 
-partial class EntryModelPoliciesTests
+public partial class EntryModelPoliciesTests
 {
     private static class ExcludeGitAndUserContentTestCases
     {

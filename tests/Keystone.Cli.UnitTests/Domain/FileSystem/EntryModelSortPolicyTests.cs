@@ -12,7 +12,7 @@ public class EntryModelSortPolicyTests
         EntryModel[] entries = [EntryModel.Create("C.txt"), EntryModel.Create("A.txt"), EntryModel.Create("B.txt")];
         EntryModel[] expected = [EntryModel.Create("A.txt"), EntryModel.Create("B.txt"), EntryModel.Create("C.txt")];
 
-        EntryModel[] actual = [..EntryModelSortPolicy.DirectoriesFirst(entries)];
+        EntryModel[] actual = [.. EntryModelSortPolicy.DirectoriesFirst(entries)];
 
         Assert.That(actual, Is.EqualTo(expected));
     }
@@ -40,7 +40,7 @@ public class EntryModelSortPolicyTests
             EntryModel.Create("3.txt"),
         ];
 
-        EntryModel[] actual = [..EntryModelSortPolicy.DirectoriesFirst(entries)];
+        EntryModel[] actual = [.. EntryModelSortPolicy.DirectoriesFirst(entries)];
 
         Assert.That(actual, Is.EqualTo(expected));
     }
@@ -51,7 +51,7 @@ public class EntryModelSortPolicyTests
         EntryModel[] entries = [EntryModel.Create("a.txt"), EntryModel.Create("A.txt"), EntryModel.Create("b.txt"), EntryModel.Create("B.txt")];
         EntryModel[] expected = [EntryModel.Create("A.txt"), EntryModel.Create("B.txt"), EntryModel.Create("a.txt"), EntryModel.Create("b.txt")];
 
-        EntryModel[] actual = [..EntryModelSortPolicy.DirectoriesFirst(entries)];
+        EntryModel[] actual = [.. EntryModelSortPolicy.DirectoriesFirst(entries)];
 
         Assert.That(actual, Is.EqualTo(expected));
     }

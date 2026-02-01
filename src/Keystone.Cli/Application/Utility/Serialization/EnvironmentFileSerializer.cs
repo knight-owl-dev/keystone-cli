@@ -90,7 +90,7 @@ public class EnvironmentFileSerializer(IFileSystemService fileSystemService)
                 var existingKeys = acc.ExistingKeys.ToImmutable();
 
                 var newLines = acc.Values
-                    .Where(kvp => ! existingKeys.Contains(kvp.Key))
+                    .Where(kvp => !existingKeys.Contains(kvp.Key))
                     .Select(TextParsingUtility.GetKeyValueString);
 
                 acc.Lines.AddRange(newLines);

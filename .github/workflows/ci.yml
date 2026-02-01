@@ -15,6 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: ./.github/actions/setup-dotnet
+
+      - name: Check C# formatting (dotnet format)
+        run: dotnet format --verify-no-changes
+
       - name: Setup actionlint
         uses: raven-actions/actionlint@v2
 

@@ -33,7 +33,7 @@ public class EnvFileProjectModelStore(
 
         var envFilePath = GetEnvFilePath(model);
 
-        if (! fileSystemService.FileExists(envFilePath))
+        if (!fileSystemService.FileExists(envFilePath))
         {
             return model;
         }

@@ -84,7 +84,7 @@ public static partial class YamlParsingUtility
     /// A <see cref="ScalarEntry"/> representing the provided value.
     /// </returns>
     public static ScalarEntry ToScalarEntry(string propertyName, string? value)
-        => new(propertyName, value, [..WriteYamlFragment(propertyName, value)]);
+        => new(propertyName, value, [.. WriteYamlFragment(propertyName, value)]);
 
     /// <summary>
     /// Prepares an <see cref="ArrayEntry"/> from a collection of string items.
@@ -95,7 +95,7 @@ public static partial class YamlParsingUtility
     /// A <see cref="ArrayEntry"/> representing the provided items.
     /// </returns>
     public static ArrayEntry ToArrayEntry(string propertyName, IReadOnlyList<string> items)
-        => new(propertyName, items, [..WriteYamlFragment(propertyName, items)]);
+        => new(propertyName, items, [.. WriteYamlFragment(propertyName, items)]);
 
     /// <summary>
     /// Indicates whether the specified entry is a YAML document terminator entry (<c>...</c>).
@@ -340,7 +340,7 @@ public static partial class YamlParsingUtility
                 string value => new ScalarEntry(propertyName, value, buffer),
                 IEnumerable<object?> values when IsScalarArray(values) => new ArrayEntry(
                     propertyName,
-                    [..values.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty)],
+                    [.. values.Select(value => Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty)],
                     buffer
                 ),
                 _ => new UnknownEntry(buffer),

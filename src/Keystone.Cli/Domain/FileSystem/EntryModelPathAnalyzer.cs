@@ -34,7 +34,7 @@ public static class EntryModelPathAnalyzer
             ArgumentNullException.ThrowIfNull(directoryName);
 
             return entry.Type == EntryType.File
-                && ! string.IsNullOrEmpty(directoryName)
+                && !string.IsNullOrEmpty(directoryName)
                 && entry.RelativePath.StartsWith($"{directoryName}/", StringComparison.InvariantCulture);
         }
 

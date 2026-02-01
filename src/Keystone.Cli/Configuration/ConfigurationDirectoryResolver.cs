@@ -47,7 +47,7 @@ public sealed class ConfigurationDirectoryResolver(IEnvironmentService environme
     {
         // 1. Environment variable (all platforms)
         var envPath = environmentService.GetEnvironmentVariable(EnvVarName);
-        if (! string.IsNullOrEmpty(envPath) && ContainsConfigFile(envPath))
+        if (!string.IsNullOrEmpty(envPath) && ContainsConfigFile(envPath))
         {
             return envPath;
         }

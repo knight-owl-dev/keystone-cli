@@ -49,7 +49,7 @@ public sealed class EntryCollection(IReadOnlyCollection<EntryModel> entries)
             throw new ArgumentException($"The entry type must be '{EntryType.File}'.", nameof(entry));
         }
 
-        if (! entries.Contains(entry))
+        if (!entries.Contains(entry))
         {
             throw new InvalidOperationException($"The '{entry.Name}' entry does not exist.");
         }

@@ -1,8 +1,8 @@
+using System.Text.Json.Serialization;
 using Keystone.Cli.Application.FileSystem;
 using Keystone.Cli.Application.Utility;
 using Keystone.Cli.Application.Utility.Serialization;
 using Keystone.Cli.Domain.Project;
-using System.Text.Json.Serialization;
 
 
 // Keep nested types for data contracts
@@ -35,7 +35,7 @@ public class SyncFileProjectModelStore(
 
         var syncFilePath = GetSyncFilePath(model);
 
-        if (! fileSystemService.FileExists(syncFilePath))
+        if (!fileSystemService.FileExists(syncFilePath))
         {
             return model;
         }

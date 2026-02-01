@@ -28,7 +28,7 @@ public class TemplateService(
     /// <inheritdoc />
     public TemplateTargetModel GetTemplateTarget(string? name)
     {
-        if (! string.IsNullOrWhiteSpace(name))
+        if (!string.IsNullOrWhiteSpace(name))
         {
             return templateTargetsRepository.GetTemplateTarget(name)
                 ?? throw CreateKeyNotFoundException(name);
