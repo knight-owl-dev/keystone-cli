@@ -231,41 +231,40 @@ the GitHub Release is still created successfully, but the apt repo won't have th
 
 **Symptoms:**
 
-- Release workflow shows failure in the "Trigger apt repository update" step
-- Error message mentions authentication or 401/403 status
+- Release workflow shows failure in the "Trigger apt repository update" or "Generate GitHub App token" step
+- Error message mentions authentication, 401/403 status, or token generation failure
 
-**Cause:** The `APT_REPO_TOKEN` Personal Access Token (PAT) has expired.
+**Cause:** GitHub App authentication issue. Common causes:
+
+- The GitHub App is not installed on the target repository
+- The `APP_ID` or `APP_PRIVATE_KEY` org secrets are missing or invalid
+- The App's permissions were changed or revoked
 
 **Resolution:**
 
-1. Go to [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens?type=beta)
-   and either:
+1. Verify the GitHub App is installed on the `apt` repository:
+    - Go to [knight-owl-dev org settings → GitHub Apps](https://github.com/organizations/knight-owl-dev/settings/installations)
+    - Confirm the automation App is installed on `apt`
 
-   **Option A: Regenerate existing token (recommended)**
-    - Find the `apt-repo-dispatch` token
-    - Click **Regenerate token**
-    - This preserves the existing scope and permissions
-
-   **Option B: Create a new token**
-    - **Name:** `apt-repo-dispatch`
-    - **Expiration:** 1 year (or your preference)
-    - **Repository access:** Select `knight-owl-dev/apt`
-    - **Permissions:** Contents → Read and write
-
-2. Update the secret in keystone-cli:
+2. Verify org secrets exist:
 
    ```bash
-   gh secret set APT_REPO_TOKEN --repo knight-owl-dev/keystone-cli
+   gh secret list --org knight-owl-dev
    ```
 
-3. Manually trigger the apt repo update for the failed release:
+   You should see `APP_ID` and `APP_PRIVATE_KEY`.
 
+3. If secrets are missing, regenerate from the App settings:
+    - Go to [knight-owl-dev org settings → GitHub Apps](https://github.com/organizations/knight-owl-dev/settings/apps)
+    - Select the automation App
+    - Note the **App ID**
+    - Generate a new **Private key** if needed
+    - Update the org secrets
+
+4. Manually trigger the apt repo update for the failed release:
     - Go to [knight-owl-dev/apt Actions](https://github.com/knight-owl-dev/apt/actions)
     - Run the "Update Repository" workflow
-    - Enter the version that failed (e.g., `0.2.0`)
-
-**Prevention:** Set a calendar reminder to refresh the token before expiration. Consider migrating
-to a GitHub App for automated token refresh (see [issue #99](https://github.com/knight-owl-dev/keystone-cli/issues/99)).
+    - Enter the version that failed (e.g., `keystone-cli:0.2.0`)
 
 #### Release workflow fails (test failure, build error, etc.)
 
