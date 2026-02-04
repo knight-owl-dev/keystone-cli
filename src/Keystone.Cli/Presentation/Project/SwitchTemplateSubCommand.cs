@@ -23,7 +23,7 @@ public class SwitchTemplateSubCommand(
         [Argument(Description = "The name of the new template to switch to"),
          NotPaddedWhitespace, Required(AllowEmptyStrings = false)]
         string newTemplateName,
-        [Option(Description = "The path to the project where the template should be switched"),
+        [Option('p', Description = "The path to the project where the template should be switched"),
          Path, NotPaddedWhitespace]
         string? projectPath = null
     )

@@ -31,6 +31,7 @@ keystone-cli/
 │       └── test-package.sh         # Test single .deb package installation
 ├── docs/
 │   ├── how-to/                     # Procedural guides
+│   │   ├── how-to-convention-tests.md # Convention enforcement via unit tests
 │   │   ├── how-to-handle-globalization.md # Globalization and locale handling
 │   │   ├── how-to-release.md       # Release process documentation
 │   │   ├── how-to-security.md      # Workflow and script security guide
@@ -211,21 +212,13 @@ The project follows clean architecture principles with three main layers:
 Cocona exposes method parameters as CLI options by default. To keep help output clean:
 
 - **Never** add `CancellationToken` as a command method parameter—it appears as
-  `--cancellation-token` in help output
-- Instead, inject `ICoconaAppContextAccessor` via constructor and access the token from context:
+  `--cancellation-token` in help output. Instead, inject `ICoconaAppContextAccessor`
+  via constructor and access the token from context.
+- **Always** add a short alias character to `[Option]` attributes (e.g., `[Option('t', ...)]`)
+  for consistency and discoverability.
 
-```csharp
-public class MyCommand(ICoconaAppContextAccessor contextAccessor)
-{
-    public async Task<int> RunAsync()
-    {
-        var cancellationToken = contextAccessor.Current?.CancellationToken ?? CancellationToken.None;
-        // use cancellationToken...
-    }
-}
-```
-
-This convention is enforced by `CoconaCommandMethodConventionsTests`.
+These conventions are enforced by `CoconaCommandMethodConventionsTests`. See
+[docs/how-to/how-to-convention-tests.md](docs/how-to/how-to-convention-tests.md) for details.
 
 ### Key Components
 
@@ -264,8 +257,8 @@ Framework-specific test infrastructure isolated from general test utilities:
 
 - `CoconaAppContextFactory` — Creates `CoconaAppContext` instances for testing commands
   that need `ICoconaAppContextAccessor`
-- `CoconaCommandMethodConventionsTests` — Enforces conventions (e.g., no `CancellationToken`
-  parameters in command methods)
+- `CoconaCommandMethodConventionsTests` — Enforces Cocona-specific conventions via reflection
+  (no `CancellationToken` parameters, short aliases required on options)
 
 ### Configuration
 

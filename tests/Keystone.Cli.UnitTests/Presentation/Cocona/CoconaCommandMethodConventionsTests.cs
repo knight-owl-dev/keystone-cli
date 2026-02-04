@@ -47,6 +47,37 @@ public class CoconaCommandMethodConventionsTests
         );
     }
 
+    /// <summary>
+    /// All options should have a short alias character for consistency and discoverability.
+    /// </summary>
+    [Test]
+    public void OptionParameters_ShouldHaveShortAlias()
+    {
+        MethodInfo[] commandMethods = [.. DiscoverCommandMethods().Distinct()];
+
+        string[] violations =
+        [
+            // OptionAttribute.ShortNames is IReadOnlyList<char> - empty means no short alias
+            ..commandMethods.SelectMany(method => method
+                .GetParameters()
+                .Where(p => p.GetCustomAttribute<OptionAttribute>() is { ShortNames.Count: 0 })
+                .Select(p => $"{method.DeclaringType!.Name}.{method.Name}: parameter {p.Name ?? "unknown"}")
+            ),
+        ];
+
+        Assert.That(
+            violations,
+            Is.Empty,
+            $"""
+            Options without short aliases found.
+            Add a short alias character (e.g., [Option('x', Description = "...")]).
+
+            Violations:
+            {string.Join(Environment.NewLine, violations.Select(v => $"- {v}"))}
+            """
+        );
+    }
+
     private static IEnumerable<MethodInfo> DiscoverCommandMethods()
     {
         Type[] controllerTypes =
