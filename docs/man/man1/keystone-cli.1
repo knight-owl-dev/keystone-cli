@@ -82,9 +82,9 @@ This helps you select the right template for your project workflow.
 .Sy Usage:
 .Nm
 .Cm new
-.Op Fl -template-name Ar string
-.Op Fl -project-path Ar string
-.Op Fl -include-git-files
+.Op Fl t , Fl -template-name Ar string
+.Op Fl p , Fl -project-path Ar string
+.Op Fl g , Fl -include-git-files
 .Op Fl h
 .Ar project-name
 
@@ -93,10 +93,10 @@ This helps you select the right template for your project workflow.
 .It Ar project-name
 The name of the new project. Also used as its root directory unless the project path is provided.
 
-.It Fl -template-name Ar string
+.It Fl t , Fl -template-name Ar string
 The template name to use for the new project.
 
-.It Fl -project-path Ar string
+.It Fl p , Fl -project-path Ar string
 The path where to create the new project.
 .Pp
 This can be a relative or absolute path. If provided, the project files are copied directly to the specified path
@@ -105,7 +105,7 @@ without adding the project name as a subdirectory.
 If not provided, by default, the project is created in a new directory named after the project name in the current
 working directory.
 
-.It Fl -include-git-files
+.It Fl g , Fl -include-git-files
 Include Git-related files (such as `.gitattributes` and `.gitignore`) in the new project.
 .Pp
 This is optional, as Keystone CLI does not enforce any version control system by default. Use this if you plan
@@ -128,7 +128,7 @@ The `project` command provides subcommands for managing existing Keystone projec
 .Sy Usage:
 .Nm
 .Cm project switch-template
-.Op Fl -project-path Ar string
+.Op Fl p , Fl -project-path Ar string
 .Op Fl h
 .Ar new-template-name
 
@@ -137,7 +137,7 @@ The `project` command provides subcommands for managing existing Keystone projec
 .It Ar new-template-name
 The name of the new template to switch to.
 
-.It Fl -project-path Ar string
+.It Fl p , Fl -project-path Ar string
 The path to the project where the template should be switched.
 .Pp
 This can be a relative or absolute path. If not provided, the current working directory is used.
@@ -167,11 +167,11 @@ To open the repository for the `hello-world` template in your browser:
 
 .Pp
 To create a new project named `my-book` using the `core-slim` template in the current directory:
-.Dl keystone-cli new --template-name core-slim my-book
+.Dl keystone-cli new -t core-slim my-book
 
 .Pp
 To create a new project named `my-book` using the `core` template in a specific directory and include Git files:
-.Dl keystone-cli new --template-name core --project-path /path/to/projects/my-book --include-git-files my-book
+.Dl keystone-cli new -t core -p /path/to/projects/my-book -g my-book
 
 .Pp
 To create a "Hello World" project named `sample` using the `hello-world` template in the current directory:
@@ -183,7 +183,7 @@ To switch the current project to use the `core-slim` template:
 
 .Pp
 To switch a project at a specific path to use the `core` template:
-.Dl keystone-cli project switch-template --project-path /path/to/my-project core
+.Dl keystone-cli project switch-template -p /path/to/my-project core
 
 .Sh ENVIRONMENT
 .Bl -tag -width indent

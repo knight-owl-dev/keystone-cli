@@ -24,13 +24,13 @@ public class NewCommandController(
         [Argument(Description = "The name of the new project, also used as its root directory unless the project path is provided"),
          Required(AllowEmptyStrings = false), NotPaddedWhitespace]
         string projectName,
-        [Option(Description = "The template name"),
+        [Option('t', Description = "The template name"),
          NotPaddedWhitespace]
         string? templateName = null,
-        [Option(Description = "The path where to create the new project"),
+        [Option('p', Description = "The path where to create the new project"),
          Path, NotPaddedWhitespace]
         string? projectPath = null,
-        [Option(Description = "Include Git-related files (e.g., .gitattributes, .gitignore) in the new project")]
+        [Option('g', Description = "Include Git-related files (e.g., .gitattributes, .gitignore) in the new project")]
         bool includeGitFiles = false
     )
     {
