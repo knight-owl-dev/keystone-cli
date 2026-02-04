@@ -12,6 +12,15 @@ public class CoconaCommandMethodConventionsTests
     private const string PresentationNamespace = "Keystone.Cli.Presentation";
 
     /// <summary>
+    /// Lazily discovers all Cocona command methods in the presentation layer
+    /// for shared use in tests.
+    /// </summary>
+    private static readonly Lazy<MethodInfo[]> LazyCommandMethods = new(
+        () => [.. DiscoverCommandMethods().Distinct()],
+        isThreadSafe: true
+    );
+
+    /// <summary>
     /// Cocona exposes method parameters as CLI options by default. <see cref="CancellationToken"/> parameters
     /// should not appear in help output as they are framework infrastructure, not user-actionable arguments.
     /// </summary>
@@ -23,11 +32,9 @@ public class CoconaCommandMethodConventionsTests
     [Test]
     public void CommandMethods_ShouldNotExposeCancellationTokenAsParameter()
     {
-        MethodInfo[] commandMethods = [.. DiscoverCommandMethods().Distinct()];
-
         string[] violations =
         [
-            ..commandMethods.SelectMany(method => method
+            ..LazyCommandMethods.Value.SelectMany(method => method
                 .GetParameters()
                 .Where(p => p.ParameterType == typeof(CancellationToken))
                 .Select(p => $"{method.DeclaringType!.Name}.{method.Name}({p.Name})")
@@ -53,12 +60,10 @@ public class CoconaCommandMethodConventionsTests
     [Test]
     public void OptionParameters_ShouldHaveShortAlias()
     {
-        MethodInfo[] commandMethods = [.. DiscoverCommandMethods().Distinct()];
-
         string[] violations =
         [
             // OptionAttribute.ShortNames is IReadOnlyList<char> - empty means no short alias
-            ..commandMethods.SelectMany(method => method
+            ..LazyCommandMethods.Value.SelectMany(method => method
                 .GetParameters()
                 .Where(p => p.GetCustomAttribute<OptionAttribute>() is { ShortNames.Count: 0 })
                 .Select(p => $"{method.DeclaringType!.Name}.{method.Name}: parameter {p.Name ?? "unknown"}")
