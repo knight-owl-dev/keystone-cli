@@ -80,15 +80,17 @@ Convention tests use reflection to discover command methods:
 2. Get methods with `[Command]` attribute
 3. Recursively resolve `[HasSubCommands]` targets and get their `*Async` methods
 
-This approach ensures new commands are automatically covered without updating the test.
+Discovery results are cached in a thread-safe `Lazy<MethodInfo[]>` field, so reflection runs
+once regardless of how many convention tests execute. This approach ensures new commands are
+automatically covered without updating the test.
 
 ## Adding New Convention Tests
 
 When adding a new convention test:
 
 1. Add a new test method to `CoconaCommandMethodConventionsTests.cs`
-2. Use the existing `DiscoverCommandMethods()` helper to find relevant methods
-3. Collect violations into a list/array
+2. Use `LazyCommandMethods.Value` to access the cached command methods
+3. Collect violations into a collection expression
 4. Assert the collection is empty with a helpful message explaining the fix
 5. Update this document with the new convention
 
@@ -101,11 +103,9 @@ Example structure:
 [Test]
 public void ConventionName_ShouldDoSomething()
 {
-    MethodInfo[] commandMethods = [.. DiscoverCommandMethods().Distinct()];
-
     string[] violations =
     [
-        ..commandMethods.SelectMany(method => /* find violations */)
+        ..LazyCommandMethods.Value.SelectMany(method => /* find violations */)
     ];
 
     Assert.That(
@@ -121,3 +121,6 @@ public void ConventionName_ShouldDoSomething()
     );
 }
 ```
+
+The `LazyCommandMethods` field caches the discovered methods for reuse across tests, avoiding
+redundant reflection overhead.
