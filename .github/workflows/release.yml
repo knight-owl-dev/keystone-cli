@@ -177,11 +177,21 @@ jobs:
             dist/**/keystone-cli_${{ needs.validate.outputs.version }}_*.deb
             artifacts/release/checksums.txt
 
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: knight-owl-dev
+          repositories: |
+            apt
+            homebrew-tap
+
       - name: Trigger apt repository update
         uses: peter-evans/repository-dispatch@v4
         with:
-          # Fine-grained PAT scoped to knight-owl-dev/apt with Contents: Read and write
-          token: ${{ secrets.APT_REPO_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           repository: knight-owl-dev/apt
           event-type: release-published
           client-payload: '{"versions": "keystone-cli:${{ needs.validate.outputs.version }}"}'
@@ -189,8 +199,7 @@ jobs:
       - name: Trigger Homebrew tap update
         uses: peter-evans/repository-dispatch@v4
         with:
-          # Fine-grained PAT scoped to knight-owl-dev/homebrew-tap with Contents: Read and write
-          token: ${{ secrets.HOMEBREW_TAP_REPO_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           repository: knight-owl-dev/homebrew-tap
           event-type: release-published
           client-payload: '{"formulas": "keystone-cli:${{ needs.validate.outputs.version }}"}'
