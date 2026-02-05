@@ -41,6 +41,8 @@ keystone-cli info
 man keystone-cli
 ```
 
+Shell completions are installed automatically by Homebrew.
+
 ### Apt (Debian/Ubuntu)
 
 First, import the GPG signing key and add the repository:
@@ -62,6 +64,26 @@ After installation, verify that everything is working:
 ```bash
 keystone-cli info
 man keystone-cli
+```
+
+Shell completions are installed automatically to `/usr/share/bash-completion/completions/`
+and `/usr/share/zsh/vendor-completions/`.
+
+### Shell Completion (Manual Installation)
+
+If you installed from a tarball or built from source, enable shell completion by adding
+one of the following to your shell configuration:
+
+**Bash** (add to `~/.bashrc`):
+
+```bash
+eval "$(keystone-cli --completion bash)"
+```
+
+**Zsh** (add to `~/.zshrc`):
+
+```bash
+eval "$(keystone-cli --completion zsh)"
 ```
 
 ## Project Structure

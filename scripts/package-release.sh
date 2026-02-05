@@ -5,7 +5,7 @@ set -euo pipefail
 # Create release tarballs for distribution.
 #
 # This script packages the published keystone-cli binary, config, man page,
-# and LICENSE into a .tar.gz archive for each platform.
+# shell completion scripts, and LICENSE into a .tar.gz archive for each platform.
 #
 # Usage:
 #   ./scripts/package-release.sh [version] [rid]
@@ -24,6 +24,7 @@ set -euo pipefail
 #
 # Requirements:
 #   - Published binary: dotnet publish -c Release -r <rid>
+#   - Completion scripts: artifacts/completions/keystone-cli.bash and artifacts/completions/_keystone-cli
 #
 # Exit codes:
 #   0 - Archive(s) created successfully
@@ -120,6 +121,16 @@ package() {
     exit 1
   fi
 
+  if [[ ! -f "artifacts/completions/keystone-cli.bash" ]]; then
+    echo "ERROR: Bash completion script not found: artifacts/completions/keystone-cli.bash" >&2
+    exit 1
+  fi
+
+  if [[ ! -f "artifacts/completions/_keystone-cli" ]]; then
+    echo "ERROR: Zsh completion script not found: artifacts/completions/_keystone-cli" >&2
+    exit 1
+  fi
+
   local ARCHIVE="${OUT_DIR}/keystone-cli_${VERSION}_${RID}.tar.gz"
 
   echo "Packaging ${ARCHIVE} (RID: ${RID})"
@@ -129,6 +140,7 @@ package() {
     keystone-cli \
     appsettings.json \
     -C "$REPO_ROOT" LICENSE \
+    -C "$REPO_ROOT/artifacts/completions" keystone-cli.bash _keystone-cli \
     -C "$REPO_ROOT/docs/man/man1" keystone-cli.1
 
   if command -v shasum > /dev/null 2>&1; then

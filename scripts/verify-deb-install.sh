@@ -55,6 +55,11 @@ echo "=== Version check ==="
 keystone-cli --version
 
 echo ""
+echo "=== Checking shell completions ==="
+ls -la /usr/share/bash-completion/completions/keystone-cli
+ls -la /usr/share/zsh/vendor-completions/_keystone-cli
+
+echo ""
 echo "==========================================="
 echo "SUCCESS: Package verified"
 echo "==========================================="
