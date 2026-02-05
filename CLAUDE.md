@@ -55,6 +55,7 @@ keystone-cli/
 ├── CONTRIBUTING.md                 # Contribution guidelines
 ├── scripts/                        # Build and utility scripts
 │   ├── generate-checksums.sh       # SHA256 checksum generation for releases
+│   ├── generate-completions.sh     # Shell completion script generation
 │   ├── get-english-month-year.sh   # Locale-safe date for man page updates
 │   ├── get-tfm.sh                  # Extract target framework from Directory.Build.props
 │   ├── get-version.sh              # Extract version from csproj
@@ -328,6 +329,8 @@ SDK version from `global.json` for centralized version management.
 
 - **generate-checksums.sh**: Generates SHA256 checksums for release artifacts.
   Usage: `./scripts/generate-checksums.sh [dist-dir]`
+- **generate-completions.sh**: Generates bash and zsh shell completion scripts from a binary.
+  Usage: `./scripts/generate-completions.sh <binary-path> <output-dir>`
 - **get-english-month-year.sh**: Returns locale-safe English month and year for man page updates.
   Usage: `./scripts/get-english-month-year.sh`
 - **get-tfm.sh**: Extracts the target framework moniker from `Directory.Build.props`.
@@ -352,3 +355,32 @@ SDK version from `global.json` for centralized version management.
 
 For security best practices when modifying workflows or scripts, see
 [docs/how-to/how-to-security.md](docs/how-to/how-to-security.md).
+
+### Shell Completion
+
+The CLI supports shell completion for bash and zsh via Cocona's `EnableShellCompletionSupport`
+option in `Program.cs`. This adds `--completion bash` and `--completion zsh` flags.
+
+**How it works in releases:**
+
+1. The `release.yml` workflow generates completion scripts during the `validate` job by
+   building a linux-x64 binary and running `scripts/generate-completions.sh`
+2. Scripts are uploaded as a `completions` artifact and downloaded by `build-assets` jobs
+3. Tarballs include `keystone-cli.bash` and `_keystone-cli` at the root
+4. `.deb` packages install completions to system paths via `nfpm.yaml`:
+   - `/usr/share/bash-completion/completions/keystone-cli`
+   - `/usr/share/zsh/vendor-completions/_keystone-cli`
+5. Homebrew formula installs completions via `bash_completion.install` and `zsh_completion.install`
+
+**Local testing:**
+
+```bash
+# Build and test completion flags
+dotnet build
+dotnet run --project src/Keystone.Cli -- --completion bash
+dotnet run --project src/Keystone.Cli -- --completion zsh
+
+# Test completion in your shell
+source <(dotnet run --project src/Keystone.Cli -- --completion bash)
+keystone-cli <TAB>
+```

@@ -4,7 +4,7 @@ using Keystone.Cli.Presentation;
 using Microsoft.Extensions.Configuration;
 
 
-var builder = CoconaApp.CreateBuilder();
+var builder = CoconaApp.CreateBuilder(args, options => { options.EnableShellCompletionSupport = true; });
 
 var configDir = ConfigurationDirectoryResolver.Default.ResolveConfigDirectory();
 var env = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";

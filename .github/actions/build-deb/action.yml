@@ -4,6 +4,7 @@ description: |
 
   Prerequisites:
     - Published binaries must exist (run dotnet publish -c Release -r <rid> first)
+    - Shell completion scripts are generated automatically if not already present
 
   Produces artifact at:
     artifacts/release/keystone-cli_<version>_<arch>.deb
@@ -48,6 +49,17 @@ runs:
     - name: Install nfpm
       shell: bash
       run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+
+    - name: Generate shell completion scripts
+      shell: bash
+      env:
+        RID: ${{ inputs.rid }}
+      run: |
+        if [[ -f "artifacts/completions/keystone-cli.bash" ]]; then
+          echo "Completion scripts already exist, skipping generation"
+        else
+          bash ./scripts/generate-completions.sh "$(find artifacts/bin -name keystone-cli -path "*/${RID}/publish/*")" artifacts/completions
+        fi
 
     - name: Build .deb package
       shell: bash

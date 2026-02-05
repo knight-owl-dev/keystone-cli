@@ -22,3 +22,7 @@ contents:
   - dst: /usr/local/bin/keystone-cli
     type: symlink
     src: /opt/keystone-cli/keystone-cli
+  - src: artifacts/completions/keystone-cli.bash
+    dst: /usr/share/bash-completion/completions/keystone-cli
+  - src: artifacts/completions/_keystone-cli
+    dst: /usr/share/zsh/vendor-completions/_keystone-cli

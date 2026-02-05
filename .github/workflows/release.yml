@@ -44,6 +44,19 @@ jobs:
       - name: Run unit tests (gate release)
         run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
 
+      - name: Publish linux-x64 for completion generation
+        run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r linux-x64
+
+      - name: Generate shell completion scripts
+        run: bash ./scripts/generate-completions.sh "$(find artifacts/bin -name keystone-cli -path '*/linux-x64/publish/*')" artifacts/completions
+
+      - name: Upload completions artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: completions
+          path: artifacts/completions/
+          if-no-files-found: error
+
   build-assets:
     name: Build assets (${{ matrix.rid }})
     needs: validate
@@ -72,6 +85,12 @@ jobs:
 
       - name: Setup .NET
         uses: ./.github/actions/setup-dotnet
+
+      - name: Download completions artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: completions
+          path: artifacts/completions
 
       - name: Publish (${{ matrix.rid }})
         env:

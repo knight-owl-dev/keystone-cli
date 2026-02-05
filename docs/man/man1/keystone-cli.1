@@ -1,4 +1,4 @@
-.Dd January 2026
+.Dd February 2026
 .Dt KEYSTONE-CLI 1
 .Os
 
@@ -12,6 +12,7 @@
 .Op Fl h
 .Op Fl -help
 .Op Fl -version
+.Op Fl -completion Ar shell
 
 .Sh DESCRIPTION
 .Nm
@@ -36,6 +37,9 @@ Manages projects, including switching templates.
 Show help message.
 .It Fl -version
 Show version.
+.It Fl -completion Ar shell
+Generate shell completion script for the specified shell (bash or zsh).
+Output the script to stdout; source it in your shell configuration.
 .El
 
 .Sh COMMAND DETAILS
@@ -184,6 +188,14 @@ To switch the current project to use the `core-slim` template:
 .Pp
 To switch a project at a specific path to use the `core` template:
 .Dl keystone-cli project switch-template -p /path/to/my-project core
+
+.Pp
+To enable bash completion (add to ~/.bashrc):
+.Dl eval "$(keystone-cli --completion bash)"
+
+.Pp
+To enable zsh completion (add to ~/.zshrc):
+.Dl eval "$(keystone-cli --completion zsh)"
 
 .Sh ENVIRONMENT
 .Bl -tag -width indent
