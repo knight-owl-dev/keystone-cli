@@ -64,6 +64,11 @@ public class PandocFileProjectModelStoreTests
             ["footer-copyright"] = new YamlScalar("auto"),
             ["description"] = new YamlScalar("A test book description"),
             ["keywords"] = new YamlArray(["test", "book", "example"]),
+            ["cover-image"] = new YamlScalar("./assets/cover.png"),
+            ["papersize"] = new YamlScalar("a4"),
+            ["geometry"] = new YamlScalar("margin=1in"),
+            ["fontsize"] = new YamlScalar("12pt"),
+            ["fontfamily"] = new YamlScalar("libertine"),
         };
 
         using var cancellationTokenSource = new CancellationTokenSource();
@@ -91,6 +96,11 @@ public class PandocFileProjectModelStoreTests
             Assert.That(actual.FooterCopyright, Is.EqualTo("auto"));
             Assert.That(actual.Description, Is.EqualTo("A test book description"));
             Assert.That(actual.Keywords, Is.EqualTo(["test", "book", "example"]));
+            Assert.That(actual.CoverImage, Is.EqualTo("./assets/cover.png"));
+            Assert.That(actual.LatexPapersize, Is.EqualTo("a4"));
+            Assert.That(actual.LatexGeometry, Is.EqualTo("margin=1in"));
+            Assert.That(actual.LatexFontsize, Is.EqualTo("12pt"));
+            Assert.That(actual.LatexFontfamily, Is.EqualTo("libertine"));
         }
     }
 
@@ -131,6 +141,11 @@ public class PandocFileProjectModelStoreTests
             Assert.That(actual.Lang, Is.Null);
             Assert.That(actual.FooterCopyright, Is.Null);
             Assert.That(actual.Description, Is.Null);
+            Assert.That(actual.CoverImage, Is.Null);
+            Assert.That(actual.LatexPapersize, Is.Null);
+            Assert.That(actual.LatexGeometry, Is.Null);
+            Assert.That(actual.LatexFontsize, Is.Null);
+            Assert.That(actual.LatexFontfamily, Is.Null);
         }
     }
 
@@ -151,6 +166,11 @@ public class PandocFileProjectModelStoreTests
             FooterCopyright = "disabled",
             Description = "Test description for saving",
             Keywords = ["save", "test"],
+            CoverImage = "./assets/cover.png",
+            LatexPapersize = "a4",
+            LatexGeometry = "margin=1in",
+            LatexFontsize = "12pt",
+            LatexFontfamily = "libertine",
         };
 
         using var cancellationTokenSource = new CancellationTokenSource();
@@ -173,6 +193,11 @@ public class PandocFileProjectModelStoreTests
                 && dict["footer-copyright"] == new YamlScalar("disabled")
                 && dict["description"] == new YamlScalar("Test description for saving")
                 && dict["keywords"] == new YamlArray(new[] { "save", "test" })
+                && dict["cover-image"] == new YamlScalar("./assets/cover.png")
+                && dict["papersize"] == new YamlScalar("a4")
+                && dict["geometry"] == new YamlScalar("margin=1in")
+                && dict["fontsize"] == new YamlScalar("12pt")
+                && dict["fontfamily"] == new YamlScalar("libertine")
             ),
             cancellationToken
         );
@@ -203,6 +228,11 @@ public class PandocFileProjectModelStoreTests
                 && dict["footer-copyright"] == YamlScalar.Null
                 && dict["description"] == YamlScalar.Null
                 && dict["keywords"] == YamlScalar.Null
+                && dict["cover-image"] == YamlScalar.Null
+                && dict["papersize"] == YamlScalar.Null
+                && dict["geometry"] == YamlScalar.Null
+                && dict["fontsize"] == YamlScalar.Null
+                && dict["fontfamily"] == YamlScalar.Null
             ),
             Arg.Any<CancellationToken>()
         );
@@ -227,6 +257,11 @@ public class PandocFileProjectModelStoreTests
                 && dict["footer-copyright"] == null
                 && dict["description"] == null
                 && dict["keywords"] == null
+                && dict["cover-image"] == null
+                && dict["papersize"] == null
+                && dict["geometry"] == null
+                && dict["fontsize"] == null
+                && dict["fontfamily"] == null
             )
         ).Returns(expectedHash);
 
@@ -253,6 +288,11 @@ public class PandocFileProjectModelStoreTests
             FooterCopyright = "custom copyright",
             Description = "Hash test description",
             Keywords = ["hash", "test", "keywords"],
+            CoverImage = "./assets/cover.png",
+            LatexPapersize = "a4",
+            LatexGeometry = "margin=1in",
+            LatexFontsize = "12pt",
+            LatexFontfamily = "libertine",
         };
 
         var contentHashService = Substitute.For<IContentHashService>();
@@ -266,6 +306,11 @@ public class PandocFileProjectModelStoreTests
                 && dict["footer-copyright"] == "custom copyright"
                 && dict["description"] == "Hash test description"
                 && dict["keywords"] == "hash,test,keywords"
+                && dict["cover-image"] == "./assets/cover.png"
+                && dict["papersize"] == "a4"
+                && dict["geometry"] == "margin=1in"
+                && dict["fontsize"] == "12pt"
+                && dict["fontfamily"] == "libertine"
             )
         ).Returns(expectedHash);
 

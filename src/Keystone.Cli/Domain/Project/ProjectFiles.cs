@@ -6,14 +6,13 @@ namespace Keystone.Cli.Domain.Project;
 public static class ProjectFiles
 {
     /// <summary>
-    /// The <c>.env</c> file.
+    /// The <c>project.conf</c> file.
     /// </summary>
     /// <remarks>
-    /// This file defines the basic metadata for a book project. Keystone uses it
-    /// to populate document headers, filenames, and publishing settings before building
-    /// books inside a Docker container.
+    /// This file defines the operational project settings for a book project. Keystone uses it
+    /// to configure project identity and Docker settings before building books inside a Docker container.
     /// </remarks>
-    public const string EnvFileName = ".env";
+    public const string ProjectConfFileName = "project.conf";
 
     /// <summary>
     /// The <c>publish.txt</c> file.

@@ -9,7 +9,7 @@ namespace Keystone.Cli.Application.Data;
 /// </summary>
 /// <remarks>
 /// Each implementation is responsible for reading and writing a subset of <see cref="ProjectModel"/> data
-/// from a specific file, such as <c>.env</c>, <c>pandoc.yaml</c>, <c>sync.json</c>, or <c>publish.txt</c>.
+/// from a specific file, such as <c>project.conf</c>, <c>pandoc.yaml</c>, <c>sync.json</c>, or <c>publish.txt</c>.
 /// </remarks>
 public interface IProjectModelStore
 {

@@ -25,7 +25,7 @@ public record ProjectModel(string ProjectPath)
     /// Note: This is not the title of your book, but the name of the project.
     /// </para>
     /// <para>
-    /// Sourced from the <c>KEYSTONE_PROJECT</c> key in <c>.env</c> file.
+    /// Sourced from the <c>KEYSTONE_PROJECT</c> key in <c>project.conf</c> file.
     /// </para>
     /// </remarks>
     /// <example>
@@ -45,7 +45,7 @@ public record ProjectModel(string ProjectPath)
     /// Maps to the <c>epub-cover-image</c> Pandoc metadata field (EPUB only).
     /// </para>
     /// <para>
-    /// Sourced from the <c>KEYSTONE_COVER_IMAGE</c> key in <c>.env</c> file.
+    /// Sourced from the <c>cover-image</c> property in <c>pandoc.yaml</c>.
     /// </para>
     /// </remarks>
     /// <example>
@@ -62,7 +62,7 @@ public record ProjectModel(string ProjectPath)
     /// Leave empty to use the LaTeX default (usually letter or a4).
     /// </para>
     /// <para>
-    /// Sourced from the <c>KEYSTONE_LATEX_PAPERSIZE</c> key in <c>.env</c> file.
+    /// Sourced from the <c>papersize</c> property in <c>pandoc.yaml</c>.
     /// </para>
     /// </remarks>
     /// <example>
@@ -81,7 +81,7 @@ public record ProjectModel(string ProjectPath)
     /// Leave empty to use the LaTeX default (margin=1in).
     /// </para>
     /// <para>
-    /// Sourced from the <c>KEYSTONE_LATEX_GEOMETRY</c> key in <c>.env</c> file.
+    /// Sourced from the <c>geometry</c> property in <c>pandoc.yaml</c>.
     /// </para>
     /// </remarks>
     /// <example>
@@ -97,7 +97,7 @@ public record ProjectModel(string ProjectPath)
     /// Accepted values: 10pt, 11pt, 12pt. Leave empty to use the LaTeX default (10pt).
     /// </para>
     /// <para>
-    /// Sourced from the <c>KEYSTONE_LATEX_FONTSIZE</c> key in <c>.env</c> file.
+    /// Sourced from the <c>fontsize</c> property in <c>pandoc.yaml</c>.
     /// </para>
     /// </remarks>
     /// <example>
@@ -114,7 +114,7 @@ public record ProjectModel(string ProjectPath)
     /// Leave empty to use the default LaTeX font (Computer Modern).
     /// </para>
     /// <para>
-    /// Sourced from the <c>KEYSTONE_LATEX_FONTFAMILY</c> key in <c>.env</c> file.
+    /// Sourced from the <c>fontfamily</c> property in <c>pandoc.yaml</c>.
     /// </para>
     /// </remarks>
     /// <example>
@@ -132,7 +132,7 @@ public record ProjectModel(string ProjectPath)
     /// Defines the Compose project namespace. By default, it's prefixed with "keystone-" for clarity and conflict avoidance.
     /// </para>
     /// <para>
-    /// Sourced from the <c>KEYSTONE_DOCKER_COMPOSE_PROJECT</c> key in <c>.env</c> file.
+    /// Sourced from the <c>KEYSTONE_DOCKER_COMPOSE_PROJECT</c> key in <c>project.conf</c> file.
     /// </para>
     /// </remarks>
     /// <example>
@@ -148,7 +148,7 @@ public record ProjectModel(string ProjectPath)
     /// Used when building the Docker image. By default, matches the Compose project name, but can be overridden.
     /// </para>
     /// <para>
-    /// Sourced from the <c>KEYSTONE_DOCKER_IMAGE</c> key in <c>.env</c> file.
+    /// Sourced from the <c>KEYSTONE_DOCKER_IMAGE</c> key in <c>project.conf</c> file.
     /// </para>
     /// </remarks>
     /// <example>

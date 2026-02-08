@@ -26,6 +26,11 @@ public class PandocFileProjectModelStore(
     private const string KeyFooterCopyright = "footer-copyright";
     private const string KeyDescription = "description";
     private const string KeyKeywords = "keywords";
+    private const string KeyCoverImage = "cover-image";
+    private const string KeyPapersize = "papersize";
+    private const string KeyGeometry = "geometry";
+    private const string KeyFontsize = "fontsize";
+    private const string KeyFontfamily = "fontfamily";
 
     /// <inheritdoc />
     public async Task<ProjectModel> LoadAsync(ProjectModel model, CancellationToken cancellationToken = default)
@@ -51,6 +56,11 @@ public class PandocFileProjectModelStore(
             FooterCopyright = YamlSerializationHelpers.GetScalarValueOrDefault(yamlData, KeyFooterCopyright),
             Description = YamlSerializationHelpers.GetScalarValueOrDefault(yamlData, KeyDescription),
             Keywords = YamlSerializationHelpers.GetArrayValueOrDefault(yamlData, KeyKeywords),
+            CoverImage = YamlSerializationHelpers.GetScalarValueOrDefault(yamlData, KeyCoverImage),
+            LatexPapersize = YamlSerializationHelpers.GetScalarValueOrDefault(yamlData, KeyPapersize),
+            LatexGeometry = YamlSerializationHelpers.GetScalarValueOrDefault(yamlData, KeyGeometry),
+            LatexFontsize = YamlSerializationHelpers.GetScalarValueOrDefault(yamlData, KeyFontsize),
+            LatexFontfamily = YamlSerializationHelpers.GetScalarValueOrDefault(yamlData, KeyFontfamily),
         };
     }
 
@@ -71,6 +81,11 @@ public class PandocFileProjectModelStore(
             [KeyFooterCopyright] = YamlSerializationHelpers.CreateYamlScalar(model.FooterCopyright),
             [KeyDescription] = YamlSerializationHelpers.CreateYamlScalar(model.Description),
             [KeyKeywords] = YamlSerializationHelpers.CreateYamlArray(model.Keywords),
+            [KeyCoverImage] = YamlSerializationHelpers.CreateYamlScalar(model.CoverImage),
+            [KeyPapersize] = YamlSerializationHelpers.CreateYamlScalar(model.LatexPapersize),
+            [KeyGeometry] = YamlSerializationHelpers.CreateYamlScalar(model.LatexGeometry),
+            [KeyFontsize] = YamlSerializationHelpers.CreateYamlScalar(model.LatexFontsize),
+            [KeyFontfamily] = YamlSerializationHelpers.CreateYamlScalar(model.LatexFontfamily),
         };
 
         return yamlFileSerializer.SaveAsync(pandocFilePath, yamlData, cancellationToken);
@@ -91,6 +106,11 @@ public class PandocFileProjectModelStore(
             [KeyFooterCopyright] = model.FooterCopyright,
             [KeyDescription] = model.Description,
             [KeyKeywords] = model.Keywords != null ? string.Join(",", model.Keywords) : null,
+            [KeyCoverImage] = model.CoverImage,
+            [KeyPapersize] = model.LatexPapersize,
+            [KeyGeometry] = model.LatexGeometry,
+            [KeyFontsize] = model.LatexFontsize,
+            [KeyFontfamily] = model.LatexFontfamily,
         };
 
         return contentHashService.ComputeFromKeyValues(pandocValues);
