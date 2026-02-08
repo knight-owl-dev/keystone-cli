@@ -42,10 +42,8 @@ public record ProjectModel(string ProjectPath)
     /// It should be a valid image format (e.g., PNG, JPG).
     /// </para>
     /// <para>
-    /// Maps to the <c>epub-cover-image</c> Pandoc metadata field (EPUB only).
-    /// </para>
-    /// <para>
     /// Sourced from the <c>cover-image</c> property in <c>pandoc.yaml</c>.
+    /// Used only when building EPUB output.
     /// </para>
     /// </remarks>
     /// <example>

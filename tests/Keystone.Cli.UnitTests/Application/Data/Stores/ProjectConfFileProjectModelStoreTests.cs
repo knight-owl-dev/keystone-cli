@@ -45,7 +45,7 @@ public class ProjectConfFileProjectModelStoreTests
     }
 
     [Test]
-    public async Task LoadAsync_ProjectConfFileExists_ReturnsModelWithEnvironmentValuesAsync()
+    public async Task LoadAsync_ProjectConfFileExists_ReturnsModelWithProjectConfValuesAsync()
     {
         const string projectPath = "/test/project";
         var projectConfFilePath = Path.Combine(projectPath, "project.conf");
@@ -143,7 +143,7 @@ public class ProjectConfFileProjectModelStoreTests
     }
 
     [Test]
-    public async Task SaveAsync_AllProperties_SavesAllEnvironmentValuesAsync()
+    public async Task SaveAsync_AllProperties_SavesAllProjectConfValuesAsync()
     {
         const string projectPath = "/test/project";
         var projectConfFilePath = Path.Combine(projectPath, "project.conf");
