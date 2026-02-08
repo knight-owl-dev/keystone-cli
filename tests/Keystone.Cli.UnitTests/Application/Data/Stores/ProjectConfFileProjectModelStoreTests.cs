@@ -11,9 +11,9 @@ namespace Keystone.Cli.UnitTests.Application.Data.Stores;
 
 [TestFixture, Parallelizable(ParallelScope.All)]
 [SuppressMessage("ReSharper", "StringLiteralTypo")]
-public class EnvFileProjectModelStoreTests
+public class ProjectConfFileProjectModelStoreTests
 {
-    private static EnvFileProjectModelStore Ctor(
+    private static ProjectConfFileProjectModelStore Ctor(
         IContentHashService? contentHashService = null,
         IFileSystemService? fileSystemService = null,
         IEnvironmentFileSerializer? environmentFileSerializer = null
@@ -25,7 +25,7 @@ public class EnvFileProjectModelStoreTests
         );
 
     [Test]
-    public async Task LoadAsync_EnvFileDoesNotExist_ReturnsModelUnchangedAsync()
+    public async Task LoadAsync_ProjectConfFileDoesNotExist_ReturnsModelUnchangedAsync()
     {
         const string projectPath = "/test/project";
 
@@ -35,7 +35,7 @@ public class EnvFileProjectModelStoreTests
         };
 
         var fileSystemService = Substitute.For<IFileSystemService>();
-        fileSystemService.FileExists(Arg.Is<string>(path => path.EndsWith(".env"))).Returns(false);
+        fileSystemService.FileExists(Arg.Is<string>(path => path.EndsWith("project.conf"))).Returns(false);
 
         var sut = Ctor(fileSystemService: fileSystemService);
 
@@ -45,10 +45,10 @@ public class EnvFileProjectModelStoreTests
     }
 
     [Test]
-    public async Task LoadAsync_EnvFileExists_ReturnsModelWithEnvironmentValuesAsync()
+    public async Task LoadAsync_ProjectConfFileExists_ReturnsModelWithProjectConfValuesAsync()
     {
         const string projectPath = "/test/project";
-        var envFilePath = Path.Combine(projectPath, ".env");
+        var projectConfFilePath = Path.Combine(projectPath, "project.conf");
         var model = new ProjectModel(projectPath);
 
         using var cancellationTokenSource = new CancellationTokenSource();
@@ -57,20 +57,15 @@ public class EnvFileProjectModelStoreTests
         var envValues = new Dictionary<string, string?>
         {
             ["KEYSTONE_PROJECT"] = "test-project",
-            ["KEYSTONE_COVER_IMAGE"] = "./assets/cover.png",
-            ["KEYSTONE_LATEX_PAPERSIZE"] = "a4",
-            ["KEYSTONE_LATEX_GEOMETRY"] = "margin=1in",
-            ["KEYSTONE_LATEX_FONTSIZE"] = "12pt",
-            ["KEYSTONE_LATEX_FONTFAMILY"] = "libertine",
             ["KEYSTONE_DOCKER_COMPOSE_PROJECT"] = "keystone-test-project",
             ["KEYSTONE_DOCKER_IMAGE"] = "keystone-test-project",
         };
 
         var fileSystemService = Substitute.For<IFileSystemService>();
-        fileSystemService.FileExists(envFilePath).Returns(true);
+        fileSystemService.FileExists(projectConfFilePath).Returns(true);
 
         var environmentFileSerializer = Substitute.For<IEnvironmentFileSerializer>();
-        environmentFileSerializer.LoadAsync(envFilePath, cancellationToken).Returns(envValues);
+        environmentFileSerializer.LoadAsync(projectConfFilePath, cancellationToken).Returns(envValues);
 
         var sut = Ctor(fileSystemService: fileSystemService, environmentFileSerializer: environmentFileSerializer);
 
@@ -79,39 +74,29 @@ public class EnvFileProjectModelStoreTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(actual.ProjectName, Is.EqualTo("test-project"));
-            Assert.That(actual.CoverImage, Is.EqualTo("./assets/cover.png"));
-            Assert.That(actual.LatexPapersize, Is.EqualTo("a4"));
-            Assert.That(actual.LatexGeometry, Is.EqualTo("margin=1in"));
-            Assert.That(actual.LatexFontsize, Is.EqualTo("12pt"));
-            Assert.That(actual.LatexFontfamily, Is.EqualTo("libertine"));
             Assert.That(actual.DockerComposeProject, Is.EqualTo("keystone-test-project"));
             Assert.That(actual.DockerImage, Is.EqualTo("keystone-test-project"));
         }
     }
 
     [Test]
-    public async Task LoadAsync_EmptyEnvFile_ResetsPropertiesAsync()
+    public async Task LoadAsync_EmptyProjectConfFile_ResetsPropertiesAsync()
     {
         const string projectPath = "/test/project";
-        var envFilePath = Path.Combine(projectPath, ".env");
+        var projectConfFilePath = Path.Combine(projectPath, "project.conf");
 
         var model = new ProjectModel(projectPath)
         {
             ProjectName = "existing-project",
-            CoverImage = "./assets/existing-cover.png",
-            LatexPapersize = "letter",
-            LatexGeometry = "margin=1in",
-            LatexFontsize = "10pt",
-            LatexFontfamily = "times",
             DockerComposeProject = "keystone-existing-project",
             DockerImage = "keystone-existing-project",
         };
 
         var fileSystemService = Substitute.For<IFileSystemService>();
-        fileSystemService.FileExists(envFilePath).Returns(true);
+        fileSystemService.FileExists(projectConfFilePath).Returns(true);
 
         var environmentFileSerializer = Substitute.For<IEnvironmentFileSerializer>();
-        environmentFileSerializer.LoadAsync(envFilePath).Returns(new Dictionary<string, string?>());
+        environmentFileSerializer.LoadAsync(projectConfFilePath).Returns(new Dictionary<string, string?>());
 
         var sut = Ctor(fileSystemService: fileSystemService, environmentFileSerializer: environmentFileSerializer);
 
@@ -120,11 +105,6 @@ public class EnvFileProjectModelStoreTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(actual.ProjectName, Is.Null);
-            Assert.That(actual.CoverImage, Is.Null);
-            Assert.That(actual.LatexPapersize, Is.Null);
-            Assert.That(actual.LatexGeometry, Is.Null);
-            Assert.That(actual.LatexFontsize, Is.Null);
-            Assert.That(actual.LatexFontfamily, Is.Null);
             Assert.That(actual.DockerComposeProject, Is.Null);
             Assert.That(actual.DockerImage, Is.Null);
         }
@@ -134,22 +114,21 @@ public class EnvFileProjectModelStoreTests
     public async Task LoadAsync_EmptyAndWhiteSpaceStringValues_PreservesAllValuesAsync()
     {
         const string projectPath = "/test/project";
-        var envFilePath = Path.Combine(projectPath, ".env");
+        var projectConfFilePath = Path.Combine(projectPath, "project.conf");
         var model = new ProjectModel(projectPath);
 
         var envValues = new Dictionary<string, string?>
         {
             ["KEYSTONE_PROJECT"] = "",
-            ["KEYSTONE_COVER_IMAGE"] = null,
-            ["KEYSTONE_LATEX_PAPERSIZE"] = "   ",
-            ["KEYSTONE_LATEX_GEOMETRY"] = "margin=1in",
+            ["KEYSTONE_DOCKER_COMPOSE_PROJECT"] = null,
+            ["KEYSTONE_DOCKER_IMAGE"] = "   ",
         };
 
         var fileSystemService = Substitute.For<IFileSystemService>();
-        fileSystemService.FileExists(envFilePath).Returns(true);
+        fileSystemService.FileExists(projectConfFilePath).Returns(true);
 
         var environmentFileSerializer = Substitute.For<IEnvironmentFileSerializer>();
-        environmentFileSerializer.LoadAsync(envFilePath).Returns(envValues);
+        environmentFileSerializer.LoadAsync(projectConfFilePath).Returns(envValues);
 
         var sut = Ctor(fileSystemService: fileSystemService, environmentFileSerializer: environmentFileSerializer);
 
@@ -158,26 +137,20 @@ public class EnvFileProjectModelStoreTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(actual.ProjectName, Is.Empty, "Empty string");
-            Assert.That(actual.CoverImage, Is.Null, "Null string");
-            Assert.That(actual.LatexPapersize, Is.EqualTo("   "), "White-space only");
-            Assert.That(actual.LatexGeometry, Is.EqualTo("margin=1in"), "Non-empty string");
+            Assert.That(actual.DockerComposeProject, Is.Null, "Null string");
+            Assert.That(actual.DockerImage, Is.EqualTo("   "), "White-space only");
         }
     }
 
     [Test]
-    public async Task SaveAsync_AllProperties_SavesAllEnvironmentValuesAsync()
+    public async Task SaveAsync_AllProperties_SavesAllProjectConfValuesAsync()
     {
         const string projectPath = "/test/project";
-        var envFilePath = Path.Combine(projectPath, ".env");
+        var projectConfFilePath = Path.Combine(projectPath, "project.conf");
 
         var model = new ProjectModel(projectPath)
         {
             ProjectName = "test-project",
-            CoverImage = "./assets/cover.png",
-            LatexPapersize = "a4",
-            LatexGeometry = "margin=1in",
-            LatexFontsize = "12pt",
-            LatexFontfamily = "libertine",
             DockerComposeProject = "keystone-test-project",
             DockerImage = "keystone-test-project",
         };
@@ -191,14 +164,9 @@ public class EnvFileProjectModelStoreTests
         await sut.SaveAsync(model, cancellationToken);
 
         await environmentFileSerializer.Received(1).SaveAsync(
-            envFilePath,
+            projectConfFilePath,
             Arg.Is<IDictionary<string, string?>>(dict =>
                 dict["KEYSTONE_PROJECT"] == "test-project"
-                && dict["KEYSTONE_COVER_IMAGE"] == "./assets/cover.png"
-                && dict["KEYSTONE_LATEX_PAPERSIZE"] == "a4"
-                && dict["KEYSTONE_LATEX_GEOMETRY"] == "margin=1in"
-                && dict["KEYSTONE_LATEX_FONTSIZE"] == "12pt"
-                && dict["KEYSTONE_LATEX_FONTFAMILY"] == "libertine"
                 && dict["KEYSTONE_DOCKER_COMPOSE_PROJECT"] == "keystone-test-project"
                 && dict["KEYSTONE_DOCKER_IMAGE"] == "keystone-test-project"
             ),
@@ -210,16 +178,11 @@ public class EnvFileProjectModelStoreTests
     public async Task SaveAsync_NullProperties_SavesNullValuesAsync()
     {
         const string projectPath = "/test/project";
-        var envFilePath = Path.Combine(projectPath, ".env");
+        var projectConfFilePath = Path.Combine(projectPath, "project.conf");
 
         var model = new ProjectModel(projectPath)
         {
             ProjectName = null,
-            CoverImage = null,
-            LatexPapersize = null,
-            LatexGeometry = null,
-            LatexFontsize = null,
-            LatexFontfamily = null,
             DockerComposeProject = null,
             DockerImage = null,
         };
@@ -230,7 +193,7 @@ public class EnvFileProjectModelStoreTests
         await sut.SaveAsync(model);
 
         await environmentFileSerializer.Received(1).SaveAsync(
-            envFilePath,
+            projectConfFilePath,
             Arg.Is<IDictionary<string, string?>>(dict => dict.All(kvp => kvp.Value == null)),
             Arg.Any<CancellationToken>()
         );
@@ -245,11 +208,6 @@ public class EnvFileProjectModelStoreTests
         var model = new ProjectModel(projectPath)
         {
             ProjectName = "test-project",
-            CoverImage = "./assets/cover.png",
-            LatexPapersize = "a4",
-            LatexGeometry = "margin=1in",
-            LatexFontsize = "12pt",
-            LatexFontfamily = "libertine",
             DockerComposeProject = "keystone-test-project",
             DockerImage = "keystone-test-project",
         };
@@ -258,11 +216,6 @@ public class EnvFileProjectModelStoreTests
         contentHashService.ComputeFromKeyValues(
             Arg.Is<IDictionary<string, string?>>(dict =>
                 dict["KEYSTONE_PROJECT"] == "test-project"
-                && dict["KEYSTONE_COVER_IMAGE"] == "./assets/cover.png"
-                && dict["KEYSTONE_LATEX_PAPERSIZE"] == "a4"
-                && dict["KEYSTONE_LATEX_GEOMETRY"] == "margin=1in"
-                && dict["KEYSTONE_LATEX_FONTSIZE"] == "12pt"
-                && dict["KEYSTONE_LATEX_FONTFAMILY"] == "libertine"
                 && dict["KEYSTONE_DOCKER_COMPOSE_PROJECT"] == "keystone-test-project"
                 && dict["KEYSTONE_DOCKER_IMAGE"] == "keystone-test-project"
             )
@@ -284,11 +237,6 @@ public class EnvFileProjectModelStoreTests
         var model = new ProjectModel(projectPath)
         {
             ProjectName = null,
-            CoverImage = null,
-            LatexPapersize = null,
-            LatexGeometry = null,
-            LatexFontsize = null,
-            LatexFontfamily = null,
             DockerComposeProject = null,
             DockerImage = null,
         };

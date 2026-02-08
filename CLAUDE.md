@@ -235,7 +235,7 @@ The CLI works with Keystone templates from GitHub repositories:
 
 Multiple storage implementations for project configuration:
 
-- `EnvFileProjectModelStore`: Environment file-based storage
+- `ProjectConfFileProjectModelStore`: Project configuration file-based storage
 - `PandocFileProjectModelStore`: Pandoc configuration storage
 - `PublishFileProjectModelStore`: Publishing configuration storage
 - `SyncFileProjectModelStore`: Synchronization configuration storage

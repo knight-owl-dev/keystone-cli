@@ -43,7 +43,7 @@ public static class DependenciesInstaller
             .AddSingleton<IProjectModelPolicyEnforcer, ProjectModelPolicyEnforcer>()
             .AddSingleton<IProjectModelRepository, ProjectModelRepository>()
             .AddSingleton<IProjectService, ProjectService>()
-            .AddSingleton<IProjectModelStore, EnvFileProjectModelStore>()
+            .AddSingleton<IProjectModelStore, ProjectConfFileProjectModelStore>()
             .AddSingleton<IProjectModelStore, PandocFileProjectModelStore>()
             .AddSingleton<IProjectModelStore, PublishFileProjectModelStore>()
             .AddSingleton<IProjectModelStore, SyncFileProjectModelStore>()
