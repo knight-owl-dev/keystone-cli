@@ -41,7 +41,9 @@ keystone-cli info
 man keystone-cli
 ```
 
-Shell completions are installed automatically by Homebrew.
+Shell completions are installed automatically by Homebrew. If completions are not
+working, see [Shell Completion](#shell-completion-manual-installation) for
+troubleshooting.
 
 ### Apt (Debian/Ubuntu)
 
@@ -85,6 +87,28 @@ eval "$(keystone-cli --completion bash)"
 ```bash
 eval "$(keystone-cli --completion zsh)"
 ```
+
+> **Note (Bash):** Bash requires the `bash-completion` package for completions installed
+> by package managers (Homebrew, Apt). If completions are not working, install it and
+> source it in your `~/.bashrc`:
+>
+> ```bash
+> [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+> ```
+>
+> The `--completion` flag above bypasses this requirement by loading completions directly.
+>
+> **Note (Zsh):** Zsh requires the completion system to be initialized. If completions are
+> not working, ensure your `~/.zshrc` includes the following (before any `eval` completion
+> lines):
+>
+> ```zsh
+> autoload -Uz compinit
+> compinit
+> ```
+>
+> Frameworks like Oh My Zsh handle this automatically. Both notes apply to all installation
+> methods, including Homebrew and Apt.
 
 ## Project Structure
 

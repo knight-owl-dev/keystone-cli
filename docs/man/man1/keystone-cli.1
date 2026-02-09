@@ -192,10 +192,32 @@ To switch a project at a specific path to use the `core` template:
 .Pp
 To enable bash completion (add to ~/.bashrc):
 .Dl eval "$(keystone-cli --completion bash)"
+.Pp
+Note: bash requires the
+.Sy bash-completion
+package for completions installed by package managers (Homebrew, Apt).
+If completions are not working, install it and source it in your
+.Pa ~/.bashrc :
+.Bd -literal -offset indent
+[[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+.Ed
+.Pp
+The
+.Fl -completion
+flag above bypasses this requirement by loading completions directly.
 
 .Pp
 To enable zsh completion (add to ~/.zshrc):
 .Dl eval "$(keystone-cli --completion zsh)"
+.Pp
+Note: zsh requires the completion system to be initialized.
+If completions are not working, ensure your
+.Pa ~/.zshrc
+contains:
+.Bd -literal -offset indent
+autoload -Uz compinit
+compinit
+.Ed
 
 .Sh ENVIRONMENT
 .Bl -tag -width indent
