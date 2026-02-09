@@ -195,15 +195,24 @@ To enable bash completion (add to ~/.bashrc):
 .Pp
 Note: bash requires the
 .Sy bash-completion
-package for completions installed by package managers (Homebrew, Apt).
+package for completions installed by package managers.
 If completions are not working, install it and source it in your
-.Pa ~/.bashrc :
+.Pa ~/.bashrc .
+.Pp
+For Homebrew (macOS/Linux):
 .Bd -literal -offset indent
 [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
 .Ed
 .Pp
+For Apt (Debian/Ubuntu):
+.Bd -literal -offset indent
+if [ -f /usr/share/bash-completion/bash_completion ]; then
+  . /usr/share/bash-completion/bash_completion
+fi
+.Ed
+.Pp
 The
-.Fl -completion
+.Sy --completion
 flag above bypasses this requirement by loading completions directly.
 
 .Pp

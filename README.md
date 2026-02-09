@@ -89,11 +89,21 @@ eval "$(keystone-cli --completion zsh)"
 ```
 
 > **Note (Bash):** Bash requires the `bash-completion` package for completions installed
-> by package managers (Homebrew, Apt). If completions are not working, install it and
-> source it in your `~/.bashrc`:
+> by package managers. If completions are not working, install it and source it in your
+> `~/.bashrc`:
+>
+> **Homebrew (macOS/Linux):**
 >
 > ```bash
 > [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+> ```
+>
+> **Apt (Debian/Ubuntu):**
+>
+> ```bash
+> if [ -f /usr/share/bash-completion/bash_completion ]; then
+>   . /usr/share/bash-completion/bash_completion
+> fi
 > ```
 >
 > The `--completion` flag above bypasses this requirement by loading completions directly.
