@@ -1,10 +1,11 @@
 # Makefile for keystone-cli development tasks
 #
 # Usage:
+#   make man        View the man page
 #   make lint       Run all linters (shell scripts and workflows)
 #   make lint-fix   Auto-fix shell script formatting
 
-.PHONY: help lint lint-fix lint-dotnet lint-dotnet-fix lint-shfmt lint-shfmt-fix lint-shellcheck lint-actionlint lint-markdown
+.PHONY: help man lint lint-fix lint-dotnet lint-dotnet-fix lint-shfmt lint-shfmt-fix lint-shellcheck lint-actionlint lint-markdown
 
 .DEFAULT_GOAL := help
 
@@ -19,6 +20,9 @@ help: ## Show available targets
 	@echo ""
 	@echo "Targets:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
+
+man: ## View the man page
+	@mandoc docs/man/man1/keystone-cli.1
 
 lint: lint-dotnet lint-shfmt lint-shellcheck lint-actionlint lint-markdown ## Run all linters
 	@echo "All checks passed"
