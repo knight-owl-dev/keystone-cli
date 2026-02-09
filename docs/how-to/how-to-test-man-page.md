@@ -12,6 +12,14 @@ To read the [mdoc(7)](https://man.openbsd.org/mdoc.7) documentation in your term
 man 7 mdoc
 ```
 
+## Using `make`
+
+The quickest way to view the man page:
+
+```bash
+make man
+```
+
 ## Using `mandoc`
 
 To test the generated man page locally:
