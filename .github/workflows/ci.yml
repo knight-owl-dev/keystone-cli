@@ -10,39 +10,21 @@ permissions:
   contents: read
 
 jobs:
-  lint:
+  lint-dotnet:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-
       - uses: ./.github/actions/setup-dotnet
-
       - name: Check C# formatting (dotnet format)
         run: dotnet format --verify-no-changes
 
-      - name: Setup actionlint
-        uses: raven-actions/actionlint@v2
-
-      - name: Setup shfmt
-        uses: mfinelli/setup-shfmt@v4
-
-      - name: Check shell script formatting (shfmt)
-        run: shfmt -d -i 2 -ci -bn -sr scripts/ tests/
-
-      - name: Check shell scripts (shellcheck)
-        run: find scripts tests -name '*.sh' -type f -exec shellcheck --severity=warning {} +
-
-      - name: Check GitHub Actions workflows (actionlint)
-        run: actionlint
-
-      - name: Check Markdown files (markdownlint)
-        uses: DavidAnson/markdownlint-cli2-action@v22
-        with:
-          globs: |
-            *.md
-            docs/**/*.md
-            .github/**/*.md
-            .claude/**/*.md
+  lint:
+    runs-on: ubuntu-latest
+    container: ghcr.io/knight-owl-dev/ci-tools:latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Lint
+        run: make lint SKIP=lint-dotnet
 
   test:
     runs-on: ubuntu-latest
