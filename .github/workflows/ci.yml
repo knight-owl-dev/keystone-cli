@@ -15,8 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-dotnet
-      - name: Check C# formatting (dotnet format)
-        run: dotnet format --verify-no-changes
+      - name: Lint
+        run: make lint-dotnet
 
   lint:
     runs-on: ubuntu-latest
