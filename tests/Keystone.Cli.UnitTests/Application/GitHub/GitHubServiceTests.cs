@@ -118,7 +118,7 @@ public class GitHubServiceTests
 
         gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, cancellationToken)
-            .Returns(Task.FromResult(entryCollection));
+            .Returns(entryCollection);
 
         var sut = Ctor(
             fileSystemCopyService: fileSystemCopyService,
@@ -133,11 +133,9 @@ public class GitHubServiceTests
             cancellationToken: cancellationToken
         );
 
-        fileSystemCopyService.Received(1).Copy(
-            entryCollection,
-            destinationPath,
-            overwrite: false
-        );
+        fileSystemCopyService
+            .Received(1)
+            .Copy(entryCollection, destinationPath, overwrite: false);
     }
 
     [Test]
@@ -153,7 +151,7 @@ public class GitHubServiceTests
 
         gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(entryCollection));
+            .Returns(entryCollection);
 
         var sut = Ctor(
             fileSystemCopyService: fileSystemCopyService,
@@ -183,7 +181,7 @@ public class GitHubServiceTests
 
         gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(entryCollection));
+            .Returns(entryCollection);
 
         var sut = Ctor(
             fileSystemCopyService: fileSystemCopyService,
@@ -197,11 +195,9 @@ public class GitHubServiceTests
             overwrite: true
         );
 
-        fileSystemCopyService.Received(1).Copy(
-            entryCollection,
-            destinationPath,
-            overwrite: true
-        );
+        fileSystemCopyService
+            .Received(1)
+            .Copy(entryCollection, destinationPath, overwrite: true);
     }
 
     [Test]
@@ -218,7 +214,7 @@ public class GitHubServiceTests
 
         gitHubZipEntryCollectionFactory
             .CreateAsync(repositoryUrl, branchName, Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult(entryCollection));
+            .Returns(entryCollection);
 
         var sut = Ctor(
             fileSystemCopyService: fileSystemCopyService,
@@ -233,11 +229,8 @@ public class GitHubServiceTests
             predicate: predicate
         );
 
-        fileSystemCopyService.Received(1).Copy(
-            entryCollection,
-            destinationPath,
-            overwrite: false,
-            predicate
-        );
+        fileSystemCopyService
+            .Received(1)
+            .Copy(entryCollection, destinationPath, overwrite: false, predicate);
     }
 }
