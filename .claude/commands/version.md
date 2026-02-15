@@ -47,7 +47,7 @@ Run the locale-safe date script to get the current month and year:
 ./scripts/get-english-month-year.sh
 ```
 
-Update the first line of the man page to `.Dd <output>` (e.g., `.Dd January 2026`).
+Update the first line of the man page to `.Dd <output>` (e.g., `.Dd January 1, 2026`).
 
 **b) The VERSION section:**
 

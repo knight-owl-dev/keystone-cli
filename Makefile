@@ -2,10 +2,10 @@
 #
 # Usage:
 #   make man        View the man page
-#   make lint       Run all linters (shell scripts and workflows)
+#   make lint       Run all linters
 #   make lint-fix   Auto-fix shell script formatting
 
-.PHONY: help man lint lint-fix lint-dotnet lint-dotnet-fix lint-shfmt lint-shfmt-fix lint-shellcheck lint-actionlint lint-markdown
+.PHONY: help man lint lint-fix lint-dotnet lint-dotnet-fix lint-shfmt lint-shfmt-fix lint-shellcheck lint-actionlint lint-markdown lint-mandoc
 
 .DEFAULT_GOAL := help
 
@@ -16,7 +16,7 @@ SHELL_SCRIPTS := $(shell find scripts tests -name '*.sh' -type f)
 SHFMT_FLAGS := -i 2 -ci -bn -sr
 
 # All lint targets (order matches local developer workflow)
-LINT_TARGETS := lint-dotnet lint-shfmt lint-shellcheck lint-actionlint lint-markdown
+LINT_TARGETS := lint-dotnet lint-shfmt lint-shellcheck lint-actionlint lint-markdown lint-mandoc
 
 # Exclude specific targets: make lint SKIP=lint-dotnet
 SKIP :=
@@ -70,3 +70,6 @@ lint-markdown: ## Check Markdown file formatting
 	@echo "Checking Markdown files (markdownlint)..."
 	@markdownlint-cli2 "*.md" "docs/**/*.md" ".github/**/*.md" ".claude/**/*.md"
 	@echo "OK"
+
+lint-mandoc: ## Lint man pages (mandoc)
+	@echo "Linting man pages..." && mandoc -W warning docs/man/man1/*.1 > /dev/null && echo "OK"
