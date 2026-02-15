@@ -2,16 +2,17 @@
 set -euo pipefail
 
 #
-# Get the current month and year in English format.
+# Get the current month and year in English format for mandoc(7) man pages.
 #
-# Returns "Month YYYY" (e.g., "January 2025") regardless of system locale.
-# Used for updating man page dates consistently across different environments.
+# Returns "Month 1, YYYY" (e.g., "January 1, 2025") regardless of system locale.
+# Used for updating .Dd date tags in man pages consistently across environments.
+# The day is always 1 (first of the month) for reproducibility.
 #
 # Usage:
 #   ./scripts/get-english-month-year.sh
 #
 # Output:
-#   Prints "Month YYYY" to stdout (e.g., "January 2025")
+#   Prints "Month 1, YYYY" to stdout (e.g., "January 1, 2025")
 #
 # Exit codes:
 #   0 - Success
@@ -40,4 +41,4 @@ case "$month_num" in
     ;;
 esac
 
-echo "${month_name} ${year}"
+echo "${month_name} 1, ${year}"

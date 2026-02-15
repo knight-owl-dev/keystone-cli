@@ -25,7 +25,7 @@ public partial class ManPageDateTagTests
         "December",
     ];
 
-    [GeneratedRegex(@"^\.Dd ([A-Za-z]+) (\d{4})$")]
+    [GeneratedRegex(@"^\.Dd ([A-Za-z]+) 1, (\d{4})$")]
     private static partial Regex DdTagPattern();
 
     [Test]
@@ -49,7 +49,7 @@ public partial class ManPageDateTagTests
         Assert.That(
             match.Success,
             Is.True,
-            $"Line {lineNumber}: .Dd tag does not match expected pattern '.Dd Month YYYY'. Actual: '{ddLine}'"
+            $"Line {lineNumber}: .Dd tag does not match expected pattern '.Dd Month 1, YYYY'. Actual: '{ddLine}'"
         );
 
         var monthName = match.Groups[1].Value;

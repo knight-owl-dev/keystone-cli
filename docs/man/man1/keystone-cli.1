@@ -1,11 +1,9 @@
-.Dd February 2026
+.Dd February 1, 2026
 .Dt KEYSTONE-CLI 1
 .Os
-
 .Sh NAME
 .Nm keystone-cli
 .Nd initialize and manage Keystone-based projects from templates
-
 .Sh SYNOPSIS
 .Nm
 .Op Cm COMMAND
@@ -13,12 +11,10 @@
 .Op Fl -help
 .Op Fl -version
 .Op Fl -completion Ar shell
-
 .Sh DESCRIPTION
 .Nm
 is a command-line tool for creating and inspecting projects based on Keystone templates.
 It provides an easy way to bootstrap a new project, open template repositories, and inspect available metadata.
-
 .Sh COMMANDS
 .Bl -tag -width "project"
 .It Cm browse
@@ -30,7 +26,6 @@ Creates a new project from a template.
 .It Cm project
 Manages projects, including switching templates.
 .El
-
 .Sh OPTIONS
 .Bl -tag -width indent
 .It Fl h , Fl -help
@@ -41,47 +36,46 @@ Show version.
 Generate shell completion script for the specified shell (bash or zsh).
 Output the script to stdout; source it in your shell configuration.
 .El
-
 .Sh COMMAND DETAILS
-
 .Ss Cm browse
 .Sy Usage:
 .Nm
 .Cm browse
 .Op Fl h
 .Ar template-name
-
-.Pp
 .Bl -tag -width indent
 .It Ar template-name
 The name of the template to open in your default web browser.
-
 .It Fl h , Fl -help
 Show help message.
 .El
-
 .Pp
-The `browse` command opens the selected template's repository in your default browser, making it easy to explore
-documentation and resources online. You can also clone the repository from GitHub if needed. Note that the CLI copies
-the source code rather than performing a full `git clone`, with an option to include Git-related files.
-
+The
+.Cm browse
+command opens the selected template's repository in your default browser, making it easy to explore
+documentation and resources online.
+You can also clone the repository from GitHub if needed.
+Note that the CLI copies the source code rather than performing a full
+.Ql git clone ,
+with an option to include Git-related files.
 .Ss Cm info
 .Sy Usage:
 .Nm
 .Cm info
 .Op Fl h
-
-.Pp
 .Bl -tag -width indent
 .It Fl h , Fl -help
 Show help message.
 .El
-
 .Pp
-The `info` command lists all available Keystone templates, including their names and repository URLs.
-Use this command to discover templates you can use with other commands such as `browse` or `new`.
+The
+.Cm info
+command lists all available Keystone templates, including their names and repository URLs.
+Use this command to discover templates you can use with other commands such as
+.Cm browse
+or
+.Cm new .
 This helps you select the right template for your project workflow.
-
 .Ss Cm new
 .Sy Usage:
 .Nm
@@ -91,43 +85,52 @@ This helps you select the right template for your project workflow.
 .Op Fl g , Fl -include-git-files
 .Op Fl h
 .Ar project-name
-
-.Pp
 .Bl -tag -width indent
 .It Ar project-name
-The name of the new project. Also used as its root directory unless the project path is provided.
-
+The name of the new project.
+Also used as its root directory unless the project path is provided.
 .It Fl t , Fl -template-name Ar string
 The template name to use for the new project.
-
 .It Fl p , Fl -project-path Ar string
 The path where to create the new project.
 .Pp
-This can be a relative or absolute path. If provided, the project files are copied directly to the specified path
+This can be a relative or absolute path.
+If provided, the project files are copied directly to the specified path
 without adding the project name as a subdirectory.
 .Pp
 If not provided, by default, the project is created in a new directory named after the project name in the current
 working directory.
-
 .It Fl g , Fl -include-git-files
-Include Git-related files (such as `.gitattributes` and `.gitignore`) in the new project.
+Include Git-related files (such as
+.Pa .gitattributes
+and
+.Pa .gitignore )
+in the new project.
 .Pp
-This is optional, as Keystone CLI does not enforce any version control system by default. Use this if you plan
-to use Git for your project later, i.e., you're planning to run `git init` after creating the project. Alternatively,
-you may also consider using the `browse` command to clone the template repository directly from GitHub instead.
-
+This is optional, as Keystone CLI does not enforce any version control system by default.
+Use this if you plan to use Git for your project later, i.e., you're planning to run
+.Ql git init
+after creating the project.
+Alternatively, you may also consider using the
+.Cm browse
+command to clone the template repository directly from GitHub instead.
 .It Fl h , Fl -help
 Show help message.
 .El
-
 .Pp
-The `new` command creates a new project from a selected Keystone template. By default, it copies the template source
-code, but does not perform a full `git clone`. If you want to review the template documentation or clone the repository
-directly from GitHub, use the `browse` command first to open the template's repository in your browser.
-
+The
+.Cm new
+command creates a new project from a selected Keystone template.
+By default, it copies the template source code, but does not perform a full
+.Ql git clone .
+If you want to review the template documentation or clone the repository
+directly from GitHub, use the
+.Cm browse
+command first to open the template's repository in your browser.
 .Ss Cm project
-The `project` command provides subcommands for managing existing Keystone projects.
-
+The
+.Cm project
+command provides subcommands for managing existing Keystone projects.
 .Ss Cm project switch-template
 .Sy Usage:
 .Nm
@@ -135,60 +138,93 @@ The `project` command provides subcommands for managing existing Keystone projec
 .Op Fl p , Fl -project-path Ar string
 .Op Fl h
 .Ar new-template-name
-
-.Pp
 .Bl -tag -width indent
 .It Ar new-template-name
 The name of the new template to switch to.
-
 .It Fl p , Fl -project-path Ar string
 The path to the project where the template should be switched.
 .Pp
-This can be a relative or absolute path. If not provided, the current working directory is used.
-
+This can be a relative or absolute path.
+If not provided, the current working directory is used.
 .It Fl h , Fl -help
 Show help message.
 .El
-
 .Pp
-The `project switch-template` command switches an existing Keystone project to use a different template.
-This allows you to migrate projects between templates (e.g., from `core` to `core-slim`) while preserving
-your project's content and configuration.
-
+The
+.Cm project switch-template
+command switches an existing Keystone project to use a different template.
+This allows you to migrate projects between templates (e.g., from
+.Ql core
+to
+.Ql core-slim )
+while preserving your project's content and configuration.
+.Sh ENVIRONMENT
+.Bl -tag -width indent
+.It Ev KEYSTONE_CLI_CONFIG_DIR
+If set, specifies the directory containing the configuration file
+.Pa appsettings.json .
+This takes precedence over all other configuration locations.
+.El
+.Sh FILES
+.Nm
+searches for its configuration file
+.Pa appsettings.json
+in the following locations (first match wins):
+.Bl -enum -offset indent
+.It
+The directory specified by
+.Ev KEYSTONE_CLI_CONFIG_DIR .
+.It
+.Pa ~/.config/keystone-cli/
+.It
+.Pa /etc/keystone-cli/
+.It
+The directory containing the
+.Nm
+executable.
+.El
 .Sh EXAMPLES
-
-.Pp
 To list all available templates:
 .Dl keystone-cli info
-
 .Pp
 To open the repository for the default template in your browser:
 .Dl keystone-cli browse
-
 .Pp
-To open the repository for the `hello-world` template in your browser:
+To open the repository for the
+.Ql hello-world
+template in your browser:
 .Dl keystone-cli browse hello-world
-
 .Pp
-To create a new project named `my-book` using the `core-slim` template in the current directory:
+To create a new project named
+.Ql my-book
+using the
+.Ql core-slim
+template in the current directory:
 .Dl keystone-cli new -t core-slim my-book
-
 .Pp
-To create a new project named `my-book` using the `core` template in a specific directory and include Git files:
+To create a new project named
+.Ql my-book
+using the
+.Ql core
+template in a specific directory and include Git files:
 .Dl keystone-cli new -t core -p /path/to/projects/my-book -g my-book
-
 .Pp
-To create a "Hello World" project named `sample` using the `hello-world` template in the current directory:
+To create a "Hello World" project named
+.Ql sample
+using the
+.Ql hello-world
+template in the current directory:
 .Dl keystone-cli new --template-name hello-world sample
-
 .Pp
-To switch the current project to use the `core-slim` template:
+To switch the current project to use the
+.Ql core-slim
+template:
 .Dl keystone-cli project switch-template core-slim
-
 .Pp
-To switch a project at a specific path to use the `core` template:
+To switch a project at a specific path to use the
+.Ql core
+template:
 .Dl keystone-cli project switch-template -p /path/to/my-project core
-
 .Pp
 To enable bash completion (add to ~/.bashrc):
 .Dl eval "$(keystone-cli --completion bash)"
@@ -214,7 +250,6 @@ fi
 The
 .Sy --completion
 flag above bypasses this requirement by loading completions directly.
-
 .Pp
 To enable zsh completion (add to ~/.zshrc):
 .Dl eval "$(keystone-cli --completion zsh)"
@@ -227,67 +262,37 @@ contains:
 autoload -Uz compinit
 compinit
 .Ed
-
-.Sh ENVIRONMENT
-.Bl -tag -width indent
-.It Ev KEYSTONE_CLI_CONFIG_DIR
-If set, specifies the directory containing the configuration file
-.Pa appsettings.json .
-This takes precedence over all other configuration locations.
-.El
-
-.Sh FILES
-.Nm
-searches for its configuration file
-.Pa appsettings.json
-in the following locations (first match wins):
-.Bl -enum -offset indent
-.It
-The directory specified by
-.Ev KEYSTONE_CLI_CONFIG_DIR .
-.It
-.Pa ~/.config/keystone-cli/
-.It
-.Pa /etc/keystone-cli/
-.It
-The directory containing the
-.Nm
-executable.
-.El
-
 .Sh VERSION
 keystone-cli 0.2.2
-
 .Sh AUTHOR
 Knight Owl LLC
 .Pa https://github.com/knight-owl-dev/keystone-cli
-
 .Sh LICENSE
-This CLI is licensed under the MIT License. See
+This CLI is licensed under the MIT License.
+See
 .Pa LICENSE
 for details.
-
 .Sh TEMPLATES
 Keystone CLI works with official Keystone templates:
-
 .Bl -tag -width indent
 .It Pa keystone-template-core
 https://github.com/knight-owl-dev/keystone-template-core
 .Pp
 A minimalist, developer-grade template for writing and publishing books using open tools such as Markdown, Pandoc,
-LaTeX, GNU Make, and Docker. This terminal-first edition has no editor integrations and works with any text editor.
+LaTeX, GNU Make, and Docker.
+This terminal-first edition has no editor integrations and works with any text editor.
 .Pp
-Builds a Docker image with all dependencies locally. Ideal for developers who prefer a terminal workflow and want
+Builds a Docker image with all dependencies locally.
+Ideal for developers who prefer a terminal workflow and want
 full control over Pandoc integration.
-
 .It Pa keystone-template-core-slim
 https://github.com/knight-owl-dev/keystone-template-core-slim
 .Pp
-A developer-friendly book publishing template built on Keystone. The slim variant has a minimal project footprint
+A developer-friendly book publishing template built on Keystone.
+The slim variant has a minimal project footprint
 and uses a public Docker image for all dependencies.
 .Pp
 Ideal for quick setup and lightweight projects, with no need to build Docker images locally.
-
 .It Pa keystone-hello-world
 https://github.com/knight-owl-dev/keystone-hello-world
 .Pp
@@ -296,13 +301,10 @@ A "Hello World" sample project based on the core-slim template, showcasing Keyst
 Perfect for new users to explore the template structure, learn how to use the makefile, and understand content
 organization in Keystone projects.
 .El
-
 .Pp
 Templates are licensed separately under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 License.
-
 .Pp
 Use with other templates is possible, but may not be supported.
-
 .Sh SEE ALSO
-.Xr man 1 ,
-.Xr git 1
+.Xr git 1 ,
+.Xr man 1

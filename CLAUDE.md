@@ -117,8 +117,8 @@ The project uses strict code analysis:
 
 ### Linting
 
-C# code, shell scripts, GitHub Actions workflows, and Markdown files are checked in CI and
-can be validated locally.
+C# code, shell scripts, GitHub Actions workflows, Markdown files, and man pages are checked
+in CI and can be validated locally.
 
 ```bash
 # Run all linters (recommended)
@@ -133,6 +133,7 @@ make lint-shfmt       # Shell formatting
 make lint-shellcheck  # Shell static analysis
 make lint-actionlint  # GitHub Actions workflows
 make lint-markdown    # Markdown files
+make lint-mandoc      # Man page syntax
 ```
 
 Install tools:
@@ -142,6 +143,7 @@ Install tools:
 - **shellcheck**: `brew install shellcheck` (macOS) or `apt-get install shellcheck` (Debian/Ubuntu)
 - **actionlint**: `brew install actionlint` (macOS) or `go install github.com/rhysd/actionlint/cmd/actionlint@latest`
 - **markdownlint**: `brew install markdownlint-cli2` (macOS) or `npm install -g markdownlint-cli2`
+- **mandoc**: `brew install mandoc` (macOS) or `apt-get install mandoc` (Debian/Ubuntu)
 
 Configuration:
 
@@ -150,6 +152,7 @@ Configuration:
 - shellcheck: `.shellcheckrc` (bash dialect, stricter optional checks enabled)
 - actionlint: Uses shellcheck for `run:` blocks when available
 - markdownlint: `.markdownlint.json` (4-space list indent, line length disabled)
+- mandoc: Uses `-W warning` flag for syntax and style checks
 
 Shell code in GitHub workflow `run:` blocks should follow the same conventions—use
 `${VAR}` (braced) instead of `$VAR` for consistency with shellcheck's
@@ -331,7 +334,8 @@ SDK version from `global.json` for centralized version management.
   Usage: `./scripts/generate-checksums.sh [dist-dir]`
 - **generate-completions.sh**: Generates bash and zsh shell completion scripts from a binary.
   Usage: `./scripts/generate-completions.sh <binary-path> <output-dir>`
-- **get-english-month-year.sh**: Returns locale-safe English month and year for man page updates.
+- **get-english-month-year.sh**: Returns locale-safe English date for man page `.Dd` tags.
+  Output format: `Month 1, YYYY` (e.g., `January 1, 2025`).
   Usage: `./scripts/get-english-month-year.sh`
 - **get-tfm.sh**: Extracts the target framework moniker from `Directory.Build.props`.
   Usage: `./scripts/get-tfm.sh`
