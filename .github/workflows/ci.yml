@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Lint
-        run: make lint SKIP="lint-dotnet lint-mandoc"
+        run: make lint SKIP="lint-dotnet"
 
   test:
     runs-on: ubuntu-latest
