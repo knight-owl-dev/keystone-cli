@@ -55,4 +55,4 @@ docker run --rm \
   -v "${DEB_DIR}:/deb:ro" \
   -v "${REPO_ROOT}/scripts:/scripts:ro" \
   "${IMAGE}" \
-  bash /scripts/verify-deb-install.sh "/deb/${DEB_FILENAME}"
+  /scripts/verify-deb-install.sh "/deb/${DEB_FILENAME}"

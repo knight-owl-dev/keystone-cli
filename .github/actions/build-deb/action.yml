@@ -58,7 +58,7 @@ runs:
         if [[ -f "artifacts/completions/keystone-cli.bash" ]]; then
           echo "Completion scripts already exist, skipping generation"
         else
-          bash ./scripts/generate-completions.sh "$(find artifacts/bin -name keystone-cli -path "*/${RID}/publish/*")" artifacts/completions
+          ./scripts/generate-completions.sh "$(find artifacts/bin -name keystone-cli -path "*/${RID}/publish/*")" artifacts/completions
         fi
 
     - name: Build .deb package
@@ -68,7 +68,7 @@ runs:
         RID: ${{ inputs.rid }}
       run: |
         if [[ -n "$VERSION" ]]; then
-          bash ./scripts/package-deb.sh "$VERSION" "$RID"
+          ./scripts/package-deb.sh "$VERSION" "$RID"
         else
-          bash ./scripts/package-deb.sh "$RID"
+          ./scripts/package-deb.sh "$RID"
         fi
