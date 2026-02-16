@@ -26,7 +26,7 @@ set -euo pipefail
 #
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 if [[ $# -lt 1 ]]; then
   echo "Usage: $0 <path-to-deb> [image]"
@@ -40,20 +40,19 @@ fi
 DEB_FILE="$1"
 IMAGE="${2:-debian:bookworm-slim}"
 
-if [[ ! -f "$DEB_FILE" ]]; then
-  echo "ERROR: File not found: $DEB_FILE"
+if [[ ! -f "${DEB_FILE}" ]]; then
+  echo "ERROR: File not found: ${DEB_FILE}" >&2
   exit 1
 fi
 
-DEB_DIR="$(cd "$(dirname "$DEB_FILE")" && pwd)"
-DEB_FILENAME=$(basename "$DEB_FILE")
+DEB_DIR="$(cd "$(dirname "${DEB_FILE}")" && pwd)"
+DEB_FILENAME="$(basename "${DEB_FILE}")"
 
-echo "Testing .deb package: $DEB_FILE"
-echo "Image: $IMAGE"
-echo "==========================================="
+echo "Testing .deb package: ${DEB_FILE}"
+echo "Image: ${IMAGE}"
 
 docker run --rm \
-  -v "$DEB_DIR:/deb:ro" \
-  -v "$REPO_ROOT/scripts:/scripts:ro" \
-  "$IMAGE" \
-  bash /scripts/verify-deb-install.sh "/deb/$DEB_FILENAME"
+  -v "${DEB_DIR}:/deb:ro" \
+  -v "${REPO_ROOT}/scripts:/scripts:ro" \
+  "${IMAGE}" \
+  bash /scripts/verify-deb-install.sh "/deb/${DEB_FILENAME}"

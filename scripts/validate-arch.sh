@@ -21,12 +21,12 @@ fi
 
 ARCH="$1"
 
-case "$ARCH" in
+case "${ARCH}" in
   amd64 | arm64)
-    echo "$ARCH"
+    echo "${ARCH}"
     ;;
   *)
-    echo "ERROR: Invalid architecture: $ARCH" >&2
+    echo "ERROR: Invalid architecture: ${ARCH}" >&2
     echo "Supported architectures: amd64, arm64" >&2
     exit 1
     ;;

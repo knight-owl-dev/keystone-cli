@@ -22,7 +22,7 @@ set -euo pipefail
 month_num=$(date '+%m')
 year=$(date '+%Y')
 
-case "$month_num" in
+case "${month_num}" in
   01) month_name="January" ;;
   02) month_name="February" ;;
   03) month_name="March" ;;
@@ -36,7 +36,7 @@ case "$month_num" in
   11) month_name="November" ;;
   12) month_name="December" ;;
   *)
-    echo "ERROR: Unexpected month number: $month_num" >&2
+    echo "ERROR: Unexpected month number: ${month_num}" >&2
     exit 1
     ;;
 esac

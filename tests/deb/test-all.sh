@@ -25,13 +25,13 @@ set -euo pipefail
 #
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
-cd "$REPO_ROOT"
+cd "${REPO_ROOT}"
 
 # Detect host architecture
 HOST_ARCH=$(uname -m)
-case "$HOST_ARCH" in
+case "${HOST_ARCH}" in
   x86_64)
     HOST_DEB_ARCH="amd64"
     ;;
@@ -39,16 +39,13 @@ case "$HOST_ARCH" in
     HOST_DEB_ARCH="arm64"
     ;;
   *)
-    echo "Unknown host architecture: $HOST_ARCH"
+    echo "Unknown host architecture: ${HOST_ARCH}"
     exit 1
     ;;
 esac
 
 # Get version from csproj
 VERSION=$(./scripts/get-version.sh)
-echo "Building and testing keystone-cli v$VERSION"
-echo "Host architecture: $HOST_ARCH ($HOST_DEB_ARCH)"
-echo "==========================================="
 
 # Define build targets: RID|arch
 BUILD_TARGETS=(
@@ -59,30 +56,25 @@ BUILD_TARGETS=(
 # Test images to use
 TEST_IMAGES="debian:bookworm ubuntu:24.04"
 
-# Build all packages first
+echo "Building and testing keystone-cli v${VERSION}"
+echo "Host architecture: ${HOST_ARCH} (${HOST_DEB_ARCH})"
+
+# Build all packages
 echo ""
-echo "=== Building packages ==="
+echo "Building packages..."
 
 for target in "${BUILD_TARGETS[@]}"; do
   rid="${target%%|*}"
-  echo ""
-  echo "--- Building $rid ---"
 
-  echo "Publishing..."
-  dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r "$rid" -v quiet
+  echo ""
+  echo "Publishing ${rid}..."
+  dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r "${rid}" -v quiet
 
   echo "Packaging .deb..."
-  ./scripts/package-deb.sh "$VERSION" "$rid"
+  ./scripts/package-deb.sh "${VERSION}" "${rid}"
 done
 
-echo ""
-echo "=== Built packages ==="
-ls -la artifacts/release/*.deb
-
 # Test packages
-echo ""
-echo "=== Testing packages ==="
-
 FAILED=0
 TESTED=0
 
@@ -92,50 +84,40 @@ for target in "${BUILD_TARGETS[@]}"; do
 
   deb_file="artifacts/release/keystone-cli_${VERSION}_${arch}.deb"
 
-  if [[ ! -f "$deb_file" ]]; then
-    echo "ERROR: Package not found: $deb_file"
+  if [[ ! -f "${deb_file}" ]]; then
+    echo "ERROR: Package not found: ${deb_file}"
     FAILED=1
     continue
   fi
 
-  # Check if we can test this architecture
-  if [[ "$arch" != "$HOST_DEB_ARCH" ]]; then
+  if [[ "${arch}" != "${HOST_DEB_ARCH}" ]]; then
     echo ""
-    echo "--- Skipping $deb_file (requires $arch, host is $HOST_DEB_ARCH) ---"
-    echo "    To test cross-architecture, use QEMU emulation."
+    echo "Skipping ${deb_file} (requires ${arch}, host is ${HOST_DEB_ARCH})"
     continue
   fi
 
-  # Test on each image
-  for image in $TEST_IMAGES; do
+  for image in ${TEST_IMAGES}; do
     echo ""
-    echo "--- Testing $deb_file on $image ---"
+    echo "Testing ${deb_file} on ${image}..."
 
-    if ./tests/deb/test-package.sh "$deb_file" "$image"; then
-      echo "PASSED: $rid on $image"
+    if ./tests/deb/test-package.sh "${deb_file}" "${image}"; then
       TESTED=$((TESTED + 1))
     else
-      echo "FAILED: $rid on $image"
+      echo "FAILED: ${rid} on ${image}"
       FAILED=1
     fi
   done
 done
 
 echo ""
-echo "==========================================="
 
-if [[ $TESTED -eq 0 ]]; then
+if [[ ${TESTED} -eq 0 ]]; then
   echo "WARNING: No packages were tested."
-  echo "Built packages (untested):"
-  ls artifacts/release/*.deb
   exit 1
-elif [[ $FAILED -eq 0 ]]; then
-  echo "All tests passed! ($TESTED tests)"
-  echo ""
-  echo "Packages ready for release:"
-  ls artifacts/release/*.deb
+elif [[ ${FAILED} -eq 0 ]]; then
+  echo "All tests passed. (${TESTED} tested)"
   exit 0
 else
-  echo "Some tests failed. Check output above."
+  echo "Some tests failed."
   exit 1
 fi
