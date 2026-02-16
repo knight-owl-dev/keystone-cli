@@ -147,4 +147,4 @@ jobs:
           ARCH: ${{ matrix.arch }}
         run: |
           SAFE_ARCH="$(./scripts/validate-arch.sh "${ARCH}")"
-          bash ./scripts/verify-deb-install.sh ./deb/keystone-cli_*_"${SAFE_ARCH}".deb
+          ./scripts/verify-deb-install.sh ./deb/keystone-cli_*_"${SAFE_ARCH}".deb

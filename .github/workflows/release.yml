@@ -26,12 +26,10 @@ jobs:
 
       - name: Extract version from tag
         id: v
-        shell: bash
         run: |
           echo "version=${GITHUB_REF_NAME#v}" >> "${GITHUB_OUTPUT}"
 
       - name: Validate csproj version matches tag
-        shell: bash
         env:
           TAG_VERSION: ${{ steps.v.outputs.version }}
         run: |
@@ -48,7 +46,7 @@ jobs:
         run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r linux-x64
 
       - name: Generate shell completion scripts
-        run: bash ./scripts/generate-completions.sh "$(find artifacts/bin -name keystone-cli -path '*/linux-x64/publish/*')" artifacts/completions
+        run: ./scripts/generate-completions.sh "$(find artifacts/bin -name keystone-cli -path '*/linux-x64/publish/*')" artifacts/completions
 
       - name: Upload completions artifact
         uses: actions/upload-artifact@v6
@@ -98,11 +96,10 @@ jobs:
         run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r "${RID}"
 
       - name: Package tarball (${{ matrix.rid }})
-        shell: bash
         env:
           VERSION: ${{ needs.validate.outputs.version }}
           RID: ${{ matrix.rid }}
-        run: bash ./scripts/package-release.sh "${VERSION}" "${RID}"
+        run: ./scripts/package-release.sh "${VERSION}" "${RID}"
 
       - name: Upload tarball artifact
         uses: actions/upload-artifact@v6
@@ -162,7 +159,7 @@ jobs:
         env:
           VERSION: ${{ needs.validate.outputs.version }}
           ARCH: ${{ matrix.arch }}
-        run: bash ./scripts/verify-deb-install.sh "./deb/keystone-cli_${VERSION}_${ARCH}.deb"
+        run: ./scripts/verify-deb-install.sh "./deb/keystone-cli_${VERSION}_${ARCH}.deb"
 
   publish-release:
     name: Publish Release
@@ -182,7 +179,7 @@ jobs:
           path: dist
 
       - name: Generate checksums and release body
-        run: bash ./scripts/generate-checksums.sh dist
+        run: ./scripts/generate-checksums.sh dist
 
       - name: Create GitHub Release and upload assets
         uses: softprops/action-gh-release@v2

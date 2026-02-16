@@ -22,7 +22,6 @@ to script injection if the value contains shell metacharacters.
 
 ```yaml
 - name: Validate csproj version matches tag
-  shell: bash
   env:
     TAG_VERSION: ${{ steps.v.outputs.version }}
   run: |
@@ -154,7 +153,7 @@ esac
 
 ```bash
 SAFE_ARCH="$(./scripts/validate-arch.sh "$ARCH")"
-bash ./scripts/verify-deb-install.sh ./deb/keystone-cli_*_"$SAFE_ARCH".deb
+./scripts/verify-deb-install.sh ./deb/keystone-cli_*_"$SAFE_ARCH".deb
 ```
 
 ### Safe Variable Quoting
@@ -174,7 +173,7 @@ comment explaining why.
 ```bash
 # SAFE_ARCH is the validated architecture;
 # * is left unquoted for globbing and "$SAFE_ARCH" is quoted after the glob.
-bash ./scripts/verify-deb-install.sh ./deb/keystone-cli_*_"$SAFE_ARCH".deb
+./scripts/verify-deb-install.sh ./deb/keystone-cli_*_"$SAFE_ARCH".deb
 ```
 
 ### Defense in Depth

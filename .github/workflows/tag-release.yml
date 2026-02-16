@@ -18,27 +18,23 @@ jobs:
       - uses: ./.github/actions/setup-dotnet
 
       - name: Add github.com to known_hosts
-        shell: bash
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
       - name: Ensure origin uses SSH
-        shell: bash
         run: |
           git remote set-url origin git@github.com:Knight-Owl-Dev/keystone-cli.git
           git remote -v
 
       - name: Read version from csproj
         id: v
-        shell: bash
         run: echo "version=$(./scripts/get-version.sh)" >> "${GITHUB_OUTPUT}"
 
       - name: Run unit tests (gate tagging)
         run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
 
       - name: Ensure tag does not already exist
-        shell: bash
         env:
           VERSION: ${{ steps.v.outputs.version }}
         run: |
@@ -49,7 +45,6 @@ jobs:
           fi
 
       - name: Create and push tag
-        shell: bash
         env:
           VERSION: ${{ steps.v.outputs.version }}
         run: |
