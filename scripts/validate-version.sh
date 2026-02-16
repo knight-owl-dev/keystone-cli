@@ -24,10 +24,10 @@ VERSION="$1"
 
 # Semver pattern: MAJOR.MINOR.PATCH with optional -prerelease.identifier
 # Allows: 1.0.0, 0.2.0, 1.0.0-beta.1, 2.0.0-rc.1, 1.0.0-alpha
-if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?$ ]]; then
-  echo "ERROR: Invalid version format: $VERSION" >&2
+if [[ ! "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?$ ]]; then
+  echo "ERROR: Invalid version format: ${VERSION}" >&2
   echo "Expected: MAJOR.MINOR.PATCH (e.g., 1.0.0) or MAJOR.MINOR.PATCH-prerelease (e.g., 1.0.0-beta.1)" >&2
   exit 1
 fi
 
-echo "$VERSION"
+echo "${VERSION}"

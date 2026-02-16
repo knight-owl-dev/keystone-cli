@@ -70,38 +70,40 @@ fi
 cd "${REPO_ROOT}"
 
 # Default uses repo-relative path
-if [[ -z "$DIST_DIR" ]]; then
-  DIST_DIR="$REPO_ROOT/artifacts/release"
-  if [[ ! -d "$DIST_DIR" ]]; then
-    echo "ERROR: Directory not found: $DIST_DIR" >&2
+if [[ -z "${DIST_DIR}" ]]; then
+  DIST_DIR="${REPO_ROOT}/artifacts/release"
+  if [[ ! -d "${DIST_DIR}" ]]; then
+    echo "ERROR: Directory not found: ${DIST_DIR}" >&2
     exit 1
   fi
 fi
 
 OUT_DIR="artifacts/release"
 
-mkdir -p "$OUT_DIR"
+mkdir -p "${OUT_DIR}"
 
 # Find all release files (.tar.gz and .deb)
-files=$(cd "$DIST_DIR" && find . -maxdepth 3 -type f \( -name '*.tar.gz' -o -name '*.deb' \) -print | sed 's|^\./||')
+files=$(cd "${DIST_DIR}" && find . -maxdepth 3 -type f \( -name '*.tar.gz' -o -name '*.deb' \) -print | sed 's|^\./||')
 
-if [[ -z "$files" ]]; then
-  echo "ERROR: No release files found under $DIST_DIR/" >&2
+if [[ -z "${files}" ]]; then
+  echo "ERROR: No release files found under ${DIST_DIR}/" >&2
   exit 1
 fi
 
 echo "Release assets:"
-echo "$files" | sort
+echo "${files}" | sort
 
 # Compute checksums in GNU coreutils format (checksum first, compatible with sha256sum -c)
 # Output uses basenames only for cleaner checksums.txt
-(cd "$DIST_DIR" && sha256sum $files) | while read -r sum file; do
-  echo "$sum  $(basename "$file")"
-done | sort > "$OUT_DIR/checksums.txt"
+# Intentional word splitting on file list
+# shellcheck disable=SC2086
+(cd "${DIST_DIR}" && sha256sum ${files}) | while read -r sum file; do
+  echo "${sum}  $(basename "${file}")"
+done | sort > "${OUT_DIR}/checksums.txt"
 
 echo ""
-echo "$OUT_DIR/checksums.txt:"
-cat "$OUT_DIR/checksums.txt"
+echo "${OUT_DIR}/checksums.txt:"
+cat "${OUT_DIR}/checksums.txt"
 
 # Generate release body with markdown-formatted checksums
 {
@@ -109,13 +111,13 @@ cat "$OUT_DIR/checksums.txt"
   echo "## SHA256 Checksums"
   echo ""
   echo '```'
-  cat "$OUT_DIR/checksums.txt"
+  cat "${OUT_DIR}/checksums.txt"
   echo '```'
-} > "$OUT_DIR/release-body.md"
+} > "${OUT_DIR}/release-body.md"
 
 echo ""
-echo "$OUT_DIR/release-body.md:"
-cat "$OUT_DIR/release-body.md"
+echo "${OUT_DIR}/release-body.md:"
+cat "${OUT_DIR}/release-body.md"
 
 echo ""
 echo "Done."

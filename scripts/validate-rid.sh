@@ -33,24 +33,24 @@ fi
 
 RID="$1"
 
-if [[ "$LINUX_ONLY" == true ]]; then
-  case "$RID" in
+if [[ "${LINUX_ONLY}" == true ]]; then
+  case "${RID}" in
     linux-x64 | linux-arm64)
-      echo "$RID"
+      echo "${RID}"
       ;;
     *)
-      echo "ERROR: Invalid Linux RID: $RID" >&2
+      echo "ERROR: Invalid Linux RID: ${RID}" >&2
       echo "Supported Linux RIDs: linux-x64, linux-arm64" >&2
       exit 1
       ;;
   esac
 else
-  case "$RID" in
+  case "${RID}" in
     osx-arm64 | osx-x64 | linux-x64 | linux-arm64)
-      echo "$RID"
+      echo "${RID}"
       ;;
     *)
-      echo "ERROR: Invalid RID: $RID" >&2
+      echo "ERROR: Invalid RID: ${RID}" >&2
       echo "Supported RIDs: osx-arm64, osx-x64, linux-x64, linux-arm64" >&2
       exit 1
       ;;

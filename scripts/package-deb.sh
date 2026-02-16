@@ -75,16 +75,16 @@ fi
 
 TFM="$("${SCRIPT_DIR}/get-tfm.sh")"
 
-if [[ -z "$VERSION" ]]; then
+if [[ -z "${VERSION}" ]]; then
   VERSION="$("${SCRIPT_DIR}/get-version.sh")"
 fi
 
 # Validate version format for safe use in filenames
-VERSION="$("${SCRIPT_DIR}/validate-version.sh" "$VERSION")"
+VERSION="$("${SCRIPT_DIR}/validate-version.sh" "${VERSION}")"
 
 OUT_DIR="artifacts/release"
 
-mkdir -p "$OUT_DIR"
+mkdir -p "${OUT_DIR}"
 
 # Check for nfpm
 if ! command -v nfpm > /dev/null 2>&1; then
@@ -99,34 +99,34 @@ package() {
   local ARCH
 
   # Validate RID (--linux restricts to linux-x64, linux-arm64)
-  RID="$("${SCRIPT_DIR}/validate-rid.sh" --linux "$RID")"
+  RID="$("${SCRIPT_DIR}/validate-rid.sh" --linux "${RID}")"
 
   # Map RID to Debian architecture (validate-rid.sh --linux restricts values,
   # but we guard against unexpected RIDs for safety)
-  case "$RID" in
+  case "${RID}" in
     linux-x64) ARCH="amd64" ;;
     linux-arm64) ARCH="arm64" ;;
     *)
-      echo "ERROR: Unexpected RID: $RID" >&2
+      echo "ERROR: Unexpected RID: ${RID}" >&2
       exit 1
       ;;
   esac
 
   local PUBLISH_DIR="artifacts/bin/Keystone.Cli/Release/${TFM}/${RID}/publish"
 
-  if [[ ! -d "$PUBLISH_DIR" ]]; then
-    echo "ERROR: Publish directory not found: $PUBLISH_DIR" >&2
-    echo "Run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r $RID" >&2
+  if [[ ! -d "${PUBLISH_DIR}" ]]; then
+    echo "ERROR: Publish directory not found: ${PUBLISH_DIR}" >&2
+    echo "Run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r ${RID}" >&2
     exit 1
   fi
 
-  if [[ ! -f "$PUBLISH_DIR/keystone-cli" ]]; then
-    echo "ERROR: Expected binary not found: $PUBLISH_DIR/keystone-cli" >&2
+  if [[ ! -f "${PUBLISH_DIR}/keystone-cli" ]]; then
+    echo "ERROR: Expected binary not found: ${PUBLISH_DIR}/keystone-cli" >&2
     exit 1
   fi
 
-  if [[ ! -f "$PUBLISH_DIR/appsettings.json" ]]; then
-    echo "ERROR: Expected config not found: $PUBLISH_DIR/appsettings.json" >&2
+  if [[ ! -f "${PUBLISH_DIR}/appsettings.json" ]]; then
+    echo "ERROR: Expected config not found: ${PUBLISH_DIR}/appsettings.json" >&2
     exit 1
   fi
 
@@ -144,21 +144,21 @@ package() {
 
   echo "Building ${PACKAGE} (RID: ${RID}, ARCH: ${ARCH})"
 
-  ARCH="$ARCH" VERSION="$VERSION" RID="$RID" TFM="$TFM" \
-    nfpm package --packager deb --target "$PACKAGE"
+  ARCH="${ARCH}" VERSION="${VERSION}" RID="${RID}" TFM="${TFM}" \
+    nfpm package --packager deb --target "${PACKAGE}"
 
   if command -v shasum > /dev/null 2>&1; then
-    shasum -a 256 "$PACKAGE"
+    shasum -a 256 "${PACKAGE}"
   else
-    sha256sum "$PACKAGE"
+    sha256sum "${PACKAGE}"
   fi
 }
 
-if [[ -n "$RID" ]]; then
-  package "$RID"
+if [[ -n "${RID}" ]]; then
+  package "${RID}"
 else
   package linux-x64
   package linux-arm64
 fi
 
-echo "Done."
+echo "OK"

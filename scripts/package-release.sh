@@ -76,38 +76,38 @@ fi
 
 TFM="$("${SCRIPT_DIR}/get-tfm.sh")"
 
-if [[ -z "$VERSION" ]]; then
+if [[ -z "${VERSION}" ]]; then
   VERSION="$("${SCRIPT_DIR}/get-version.sh")"
 fi
 
 # Validate version format for safe use in filenames
-VERSION="$("${SCRIPT_DIR}/validate-version.sh" "$VERSION")"
+VERSION="$("${SCRIPT_DIR}/validate-version.sh" "${VERSION}")"
 
 OUT_DIR="artifacts/release"
 
-mkdir -p "$OUT_DIR"
+mkdir -p "${OUT_DIR}"
 
 package() {
   local RID="$1"
 
   # Validate RID format for safe use in paths
-  RID="$("${SCRIPT_DIR}/validate-rid.sh" "$RID")"
+  RID="$("${SCRIPT_DIR}/validate-rid.sh" "${RID}")"
 
   local PUBLISH_DIR="artifacts/bin/Keystone.Cli/Release/${TFM}/${RID}/publish"
 
-  if [[ ! -d "$PUBLISH_DIR" ]]; then
-    echo "ERROR: Publish directory not found: $PUBLISH_DIR" >&2
-    echo "Run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r $RID" >&2
+  if [[ ! -d "${PUBLISH_DIR}" ]]; then
+    echo "ERROR: Publish directory not found: ${PUBLISH_DIR}" >&2
+    echo "Run: dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r ${RID}" >&2
     exit 1
   fi
 
-  if [[ ! -f "$PUBLISH_DIR/keystone-cli" ]]; then
-    echo "ERROR: Expected binary not found: $PUBLISH_DIR/keystone-cli" >&2
+  if [[ ! -f "${PUBLISH_DIR}/keystone-cli" ]]; then
+    echo "ERROR: Expected binary not found: ${PUBLISH_DIR}/keystone-cli" >&2
     exit 1
   fi
 
-  if [[ ! -f "$PUBLISH_DIR/appsettings.json" ]]; then
-    echo "ERROR: Expected config not found: $PUBLISH_DIR/appsettings.json" >&2
+  if [[ ! -f "${PUBLISH_DIR}/appsettings.json" ]]; then
+    echo "ERROR: Expected config not found: ${PUBLISH_DIR}/appsettings.json" >&2
     exit 1
   fi
 
@@ -135,23 +135,23 @@ package() {
 
   echo "Packaging ${ARCHIVE} (RID: ${RID})"
 
-  tar -C "$PUBLISH_DIR" \
-    -czf "$ARCHIVE" \
+  tar -C "${PUBLISH_DIR}" \
+    -czf "${ARCHIVE}" \
     keystone-cli \
     appsettings.json \
-    -C "$REPO_ROOT" LICENSE \
-    -C "$REPO_ROOT/artifacts/completions" keystone-cli.bash _keystone-cli \
-    -C "$REPO_ROOT/docs/man/man1" keystone-cli.1
+    -C "${REPO_ROOT}" LICENSE \
+    -C "${REPO_ROOT}/artifacts/completions" keystone-cli.bash _keystone-cli \
+    -C "${REPO_ROOT}/docs/man/man1" keystone-cli.1
 
   if command -v shasum > /dev/null 2>&1; then
-    shasum -a 256 "$ARCHIVE"
+    shasum -a 256 "${ARCHIVE}"
   else
-    sha256sum "$ARCHIVE"
+    sha256sum "${ARCHIVE}"
   fi
 }
 
-if [[ -n "$RID" ]]; then
-  package "$RID"
+if [[ -n "${RID}" ]]; then
+  package "${RID}"
 else
   package osx-arm64
   package osx-x64
@@ -159,4 +159,4 @@ else
   package linux-arm64
 fi
 
-echo "Done."
+echo "OK"

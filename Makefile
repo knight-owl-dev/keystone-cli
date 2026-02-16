@@ -5,7 +5,8 @@
 #   make lint       Run all linters
 #   make lint-fix   Auto-fix shell script formatting
 
-.PHONY: help man lint lint-fix lint-dotnet lint-dotnet-fix lint-shfmt lint-shfmt-fix lint-shellcheck lint-actionlint lint-markdown lint-mandoc
+.PHONY: help man lint lint-fix lint-dotnet lint-dotnet-fix lint-shfmt lint-shfmt-fix \
+	lint-shellcheck lint-actionlint lint-markdown lint-mandoc test-package
 
 .DEFAULT_GOAL := help
 
@@ -58,7 +59,7 @@ lint-shfmt-fix: ## Fix shell script formatting
 
 lint-shellcheck: ## Run shellcheck on shell scripts
 	@echo "Running shellcheck..."
-	@shellcheck --severity=warning $(SHELL_SCRIPTS)
+	@shellcheck --severity=style $(SHELL_SCRIPTS)
 	@echo "OK"
 
 lint-actionlint: ## Validate GitHub Actions workflows
@@ -68,8 +69,11 @@ lint-actionlint: ## Validate GitHub Actions workflows
 
 lint-markdown: ## Check Markdown file formatting
 	@echo "Checking Markdown files (markdownlint)..."
-	@markdownlint-cli2 "*.md" "docs/**/*.md" ".github/**/*.md" ".claude/**/*.md"
+	@markdownlint-cli2 "**/*.md"
 	@echo "OK"
 
 lint-mandoc: ## Lint man pages (mandoc)
 	@echo "Linting man pages..." && mandoc -W warning docs/man/man1/*.1 > /dev/null && echo "OK"
+
+test-package: ## Build and test deb package locally
+	@./tests/deb/test-all.sh

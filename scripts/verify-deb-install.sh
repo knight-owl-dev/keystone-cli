@@ -23,43 +23,41 @@ fi
 
 DEB_FILE="$1"
 
-if [[ ! -f "$DEB_FILE" ]]; then
-  echo "ERROR: File not found: $DEB_FILE"
+if [[ ! -f "${DEB_FILE}" ]]; then
+  echo "ERROR: File not found: ${DEB_FILE}" >&2
   exit 1
 fi
 
-echo "=== Installing dependencies ==="
-apt-get update
-apt-get install -y man-db
+# Install the package (dependencies are declared in the .deb)
+apt-get update -qq > /dev/null
+apt-get install -y -qq man-db > /dev/null
+apt-get install -y -qq "${DEB_FILE}" > /dev/null
 
-echo ""
-echo "=== Installing package: $DEB_FILE ==="
-apt-get install -y "$DEB_FILE"
+# Verify
+echo -n "Binary exists at /opt/keystone-cli/keystone-cli..." \
+  && test -x /opt/keystone-cli/keystone-cli \
+  && echo " OK"
 
-echo ""
-echo "=== Verifying installation ==="
-which keystone-cli
-ls -la /opt/keystone-cli/
-ls -la /usr/local/bin/keystone-cli
+echo -n "Symlink exists at /usr/local/bin/keystone-cli..." \
+  && test -L /usr/local/bin/keystone-cli \
+  && echo " OK"
 
-echo ""
-echo "=== Running keystone-cli info ==="
-keystone-cli info
+echo -n "keystone-cli --version..." \
+  && keystone-cli --version > /dev/null \
+  && echo " OK"
 
-echo ""
-echo "=== Checking man page ==="
-man -w keystone-cli
+echo -n "keystone-cli info..." \
+  && keystone-cli info > /dev/null \
+  && echo " OK"
 
-echo ""
-echo "=== Version check ==="
-keystone-cli --version
+echo -n "man -w keystone-cli..." \
+  && man -w keystone-cli > /dev/null \
+  && echo " OK"
 
-echo ""
-echo "=== Checking shell completions ==="
-ls -la /usr/share/bash-completion/completions/keystone-cli
-ls -la /usr/share/zsh/vendor-completions/_keystone-cli
+echo -n "Bash completion exists..." \
+  && test -f /usr/share/bash-completion/completions/keystone-cli \
+  && echo " OK"
 
-echo ""
-echo "==========================================="
-echo "SUCCESS: Package verified"
-echo "==========================================="
+echo -n "Zsh completion exists..." \
+  && test -f /usr/share/zsh/vendor-completions/_keystone-cli \
+  && echo " OK"
