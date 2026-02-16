@@ -54,7 +54,7 @@ BUILD_TARGETS=(
 )
 
 # Test images to use
-TEST_IMAGES="debian:bookworm ubuntu:24.04"
+TEST_IMAGES=("debian:bookworm" "ubuntu:24.04")
 
 echo "Building and testing keystone-cli v${VERSION}"
 echo "Host architecture: ${HOST_ARCH} (${HOST_DEB_ARCH})"
@@ -96,7 +96,7 @@ for target in "${BUILD_TARGETS[@]}"; do
     continue
   fi
 
-  for image in ${TEST_IMAGES}; do
+  for image in "${TEST_IMAGES[@]}"; do
     echo ""
     echo "Testing ${deb_file} on ${image}..."
 
