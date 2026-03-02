@@ -90,7 +90,7 @@ jobs:
           rid: ${{ matrix.rid }}
 
       - name: Upload .deb artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: deb-${{ matrix.rid }}
           path: artifacts/release/keystone-cli_*.deb

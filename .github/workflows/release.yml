@@ -49,7 +49,7 @@ jobs:
         run: ./scripts/generate-completions.sh "$(find artifacts/bin -name keystone-cli -path '*/linux-x64/publish/*')" artifacts/completions
 
       - name: Upload completions artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: completions
           path: artifacts/completions/
@@ -102,7 +102,7 @@ jobs:
         run: ./scripts/package-release.sh "${VERSION}" "${RID}"
 
       - name: Upload tarball artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: dist-${{ matrix.rid }}
           path: artifacts/release/keystone-cli_${{ needs.validate.outputs.version }}_${{ matrix.rid }}.tar.gz
@@ -117,7 +117,7 @@ jobs:
 
       - name: Upload .deb artifact
         if: startsWith(matrix.rid, 'linux-')
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: deb-${{ matrix.rid }}
           path: artifacts/release/keystone-cli_*.deb
