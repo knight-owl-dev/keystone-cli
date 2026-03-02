@@ -136,7 +136,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Download .deb artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: deb-${{ matrix.rid }}
           path: deb

@@ -85,7 +85,7 @@ jobs:
         uses: ./.github/actions/setup-dotnet
 
       - name: Download completions artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: completions
           path: artifacts/completions
@@ -150,7 +150,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Download .deb artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: deb-linux-x64
           path: deb
@@ -174,7 +174,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: dist
 
