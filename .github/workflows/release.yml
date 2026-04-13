@@ -182,7 +182,7 @@ jobs:
         run: ./scripts/generate-checksums.sh dist
 
       - name: Create GitHub Release and upload assets
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: "keystone-cli v${{ needs.validate.outputs.version }}"
           generate_release_notes: true
