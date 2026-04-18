@@ -66,6 +66,9 @@ lint-actionlint: ## Validate GitHub Actions workflows
 	@echo "Checking GitHub Actions workflows (actionlint)..."
 	@actionlint .github/workflows/*.yml
 	@echo "OK"
+	@echo "Validating action pins..."
+	@validate-action-pins .github/actions/**/action.yml .github/workflows/*.yml
+	@echo "OK"
 
 lint-markdown: ## Check Markdown file formatting
 	@echo "Checking Markdown files (markdownlint)..."
