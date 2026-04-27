@@ -36,8 +36,8 @@
     <ItemGroup>
         <PackageReference Include="Cocona" Version="2.2.0"/>
         <PackageReference Include="JetBrains.Annotations" Version="2025.2.4"/>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.6"/>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.6"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.7"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.7"/>
         <PackageReference Include="YamlDotNet" Version="17.0.1"/>
     </ItemGroup>
 
