@@ -4,7 +4,9 @@
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <!-- CA1707: Test method names conventionally use underscores for readability -->
-        <NoWarn>$(NoWarn);CA1707</NoWarn>
+        <!-- VSTHRD103: NUnit's Assert.That/ThatAsync trip the analyzer's name-pairing
+             heuristic; Assert.That is a synchronous assertion, not a blocking call -->
+        <NoWarn>$(NoWarn);CA1707;VSTHRD103</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
