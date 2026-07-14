@@ -31,7 +31,7 @@ public class EnumerableAsyncExtensionsTests
 
         var func = Substitute.For<Func<int, int, CancellationToken, Task<int>>>();
         func.Invoke(Arg.Any<int>(), Arg.Any<int>(), cancellationToken)
-            .Returns(ci => Task.FromResult((int) ci[0] + (int) ci[1]));
+            .Returns(ci => Task.FromResult((int) ci[0]! + (int) ci[1]!));
 
         var actual = await source.AggregateAsync(0, func, cancellationToken);
 
@@ -46,7 +46,7 @@ public class EnumerableAsyncExtensionsTests
 
         var func = Substitute.For<Func<int, int, CancellationToken, Task<int>>>();
         func.Invoke(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
-            .Returns(ci => Task.FromResult((int) ci[0] * (int) ci[1]));
+            .Returns(ci => Task.FromResult((int) ci[0]! * (int) ci[1]!));
 
         var selector = Substitute.For<Func<int, string>>();
         selector.Invoke(6).Returns("six");

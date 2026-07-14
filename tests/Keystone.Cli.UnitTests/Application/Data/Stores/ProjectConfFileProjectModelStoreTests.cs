@@ -35,7 +35,7 @@ public class ProjectConfFileProjectModelStoreTests
         };
 
         var fileSystemService = Substitute.For<IFileSystemService>();
-        fileSystemService.FileExists(Arg.Is<string>(path => path.EndsWith("project.conf"))).Returns(false);
+        fileSystemService.FileExists(Arg.Is<string>(path => path!.EndsWith("project.conf"))).Returns(false);
 
         var sut = Ctor(fileSystemService: fileSystemService);
 
@@ -166,7 +166,7 @@ public class ProjectConfFileProjectModelStoreTests
         await environmentFileSerializer.Received(1).SaveAsync(
             projectConfFilePath,
             Arg.Is<IDictionary<string, string?>>(dict =>
-                dict["KEYSTONE_PROJECT"] == "test-project"
+                dict!["KEYSTONE_PROJECT"] == "test-project"
                 && dict["KEYSTONE_DOCKER_COMPOSE_PROJECT"] == "keystone-test-project"
                 && dict["KEYSTONE_DOCKER_IMAGE"] == "keystone-test-project"
             ),
@@ -194,7 +194,7 @@ public class ProjectConfFileProjectModelStoreTests
 
         await environmentFileSerializer.Received(1).SaveAsync(
             projectConfFilePath,
-            Arg.Is<IDictionary<string, string?>>(dict => dict.All(kvp => kvp.Value == null)),
+            Arg.Is<IDictionary<string, string?>>(dict => dict!.All(kvp => kvp.Value == null)),
             Arg.Any<CancellationToken>()
         );
     }
@@ -215,7 +215,7 @@ public class ProjectConfFileProjectModelStoreTests
         var contentHashService = Substitute.For<IContentHashService>();
         contentHashService.ComputeFromKeyValues(
             Arg.Is<IDictionary<string, string?>>(dict =>
-                dict["KEYSTONE_PROJECT"] == "test-project"
+                dict!["KEYSTONE_PROJECT"] == "test-project"
                 && dict["KEYSTONE_DOCKER_COMPOSE_PROJECT"] == "keystone-test-project"
                 && dict["KEYSTONE_DOCKER_IMAGE"] == "keystone-test-project"
             )
@@ -243,7 +243,7 @@ public class ProjectConfFileProjectModelStoreTests
 
         var contentHashService = Substitute.For<IContentHashService>();
         contentHashService
-            .ComputeFromKeyValues(Arg.Is<IDictionary<string, string?>>(dict => dict.All(kvp => kvp.Value == null)))
+            .ComputeFromKeyValues(Arg.Is<IDictionary<string, string?>>(dict => dict!.All(kvp => kvp.Value == null)))
             .Returns(expectedHash);
 
         var sut = Ctor(contentHashService: contentHashService);
