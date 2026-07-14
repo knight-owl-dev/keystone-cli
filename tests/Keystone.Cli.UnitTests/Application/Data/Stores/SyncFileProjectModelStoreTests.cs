@@ -202,7 +202,7 @@ public class SyncFileProjectModelStoreTests
         var model = new ProjectModel(projectPath);
 
         var contentHashService = Substitute.For<IContentHashService>();
-        contentHashService.ComputeFromKeyValues(Arg.Is<Dictionary<string, string?>>(dict => dict.Count == 0))
+        contentHashService.ComputeFromKeyValues(Arg.Is<Dictionary<string, string?>>(dict => dict!.Count == 0))
             .Returns(expectedHash);
 
         var sut = Ctor(contentHashService: contentHashService);
@@ -236,7 +236,7 @@ public class SyncFileProjectModelStoreTests
         var contentHashService = Substitute.For<IContentHashService>();
         contentHashService.ComputeFromKeyValues(
             Arg.Is<Dictionary<string, string?>>(dict =>
-                dict["source"] == "keystone"
+                dict!["source"] == "keystone"
                 && dict["branch"] == "slim"
                 && dict["commit"] == "6589f5b0f0cd98689946f0398f81aa737d657741"
                 && dict["template"] == "keystone-template-core-slim"

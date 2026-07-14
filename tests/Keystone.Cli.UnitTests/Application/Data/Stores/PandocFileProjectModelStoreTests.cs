@@ -185,7 +185,7 @@ public class PandocFileProjectModelStoreTests
         await yamlFileSerializer.Received(1).SaveAsync(
             expectedPandocFilePath,
             Arg.Is<IDictionary<string, YamlValue>>(dict =>
-                dict["title"] == new YamlScalar("Save Test Book")
+                dict!["title"] == new YamlScalar("Save Test Book")
                 && dict["subtitle"] == new YamlScalar("Testing Save")
                 && dict["author"] == new YamlScalar("Test Author")
                 && dict["date"] == new YamlScalar("auto")
@@ -220,7 +220,7 @@ public class PandocFileProjectModelStoreTests
         await yamlFileSerializer.Received(1).SaveAsync(
             expectedPandocFilePath,
             Arg.Is<IDictionary<string, YamlValue>>(dict =>
-                dict["title"] == YamlScalar.Null
+                dict!["title"] == YamlScalar.Null
                 && dict["subtitle"] == YamlScalar.Null
                 && dict["author"] == YamlScalar.Null
                 && dict["date"] == YamlScalar.Null
@@ -249,7 +249,7 @@ public class PandocFileProjectModelStoreTests
         var contentHashService = Substitute.For<IContentHashService>();
         contentHashService.ComputeFromKeyValues(
             Arg.Is<Dictionary<string, string?>>(dict =>
-                dict["title"] == null
+                dict!["title"] == null
                 && dict["subtitle"] == null
                 && dict["author"] == null
                 && dict["date"] == null
@@ -298,7 +298,7 @@ public class PandocFileProjectModelStoreTests
         var contentHashService = Substitute.For<IContentHashService>();
         contentHashService.ComputeFromKeyValues(
             Arg.Is<Dictionary<string, string?>>(dict =>
-                dict["title"] == "Hash Test Book"
+                dict!["title"] == "Hash Test Book"
                 && dict["subtitle"] == "Testing Hashing"
                 && dict["author"] == "Hash Author"
                 && dict["date"] == "2025-01-15"

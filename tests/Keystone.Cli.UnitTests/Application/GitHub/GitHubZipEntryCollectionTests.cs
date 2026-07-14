@@ -113,7 +113,7 @@ public class GitHubZipEntryCollectionTests
         sut.ExtractToFile(entry: targetFileEntry, destinationFileName);
 
         extractToFileHandler.Received(1).Invoke(
-            Arg.Is<ZipArchiveEntry>(zipEntry => zipEntry.Name == targetFileEntry.Name),
+            Arg.Is<ZipArchiveEntry>(zipEntry => zipEntry!.Name == targetFileEntry.Name),
             destinationFileName,
             overwrite: true
         );

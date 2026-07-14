@@ -101,7 +101,7 @@ public class PublishFileProjectModelStoreTests
 
         await textFileSerializer.Received(1).SaveLinesAsync(
             publishFilePath,
-            Arg.Is<IEnumerable<string>>(lines => !lines.Any()),
+            Arg.Is<IEnumerable<string>>(lines => lines!.Any() == false),
             cancellationToken
         );
     }
@@ -128,7 +128,7 @@ public class PublishFileProjectModelStoreTests
 
         await textFileSerializer.Received(1).SaveLinesAsync(
             publishFilePath,
-            Arg.Is<IEnumerable<string>>(lines => lines.SequenceEqual(contentFilePaths)),
+            Arg.Is<IEnumerable<string>>(lines => lines!.SequenceEqual(contentFilePaths)),
             cancellationToken
         );
     }
@@ -147,7 +147,7 @@ public class PublishFileProjectModelStoreTests
         var contentHashService = Substitute.For<IContentHashService>();
 
         contentHashService
-            .ComputeFromLines(Arg.Is<IEnumerable<string>>(lines => !lines.Any()))
+            .ComputeFromLines(Arg.Is<IEnumerable<string>>(lines => lines!.Any() == false))
             .Returns(expectedHash);
 
         var sut = Ctor(contentHashService: contentHashService);
@@ -172,7 +172,7 @@ public class PublishFileProjectModelStoreTests
         var contentHashService = Substitute.For<IContentHashService>();
 
         contentHashService
-            .ComputeFromLines(Arg.Is<IEnumerable<string>>(lines => lines.SequenceEqual(contentFilePaths)))
+            .ComputeFromLines(Arg.Is<IEnumerable<string>>(lines => lines!.SequenceEqual(contentFilePaths)))
             .Returns(expectedHash);
 
         var sut = Ctor(contentHashService: contentHashService);
