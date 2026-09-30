@@ -65,7 +65,7 @@ public class BrowseCommandTests
 
         Assert.That(
             logger.CapturedLogEntries,
-            Has.Some.Matches<LogEntry>(entry => entry.Is(LogLevel.Information, repositoryUrl))
+            Has.Some.Matches<LogEntry>(entry => entry!.Is(LogLevel.Information, repositoryUrl))
         );
     }
 }
