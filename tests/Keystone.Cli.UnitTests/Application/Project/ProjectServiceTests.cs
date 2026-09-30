@@ -58,7 +58,7 @@ public class ProjectServiceTests
         Assert.That(
             logger.CapturedLogEntries,
             Has.Some.Matches<LogEntry>(entry =>
-                entry.Is(LogLevel.Information, $"Creating project '{projectName}' from {repositoryUrl} in {fullPath}")
+                entry!.Is(LogLevel.Information, $"Creating project '{projectName}' from {repositoryUrl} in {fullPath}")
             )
         );
     }
@@ -249,7 +249,7 @@ public class ProjectServiceTests
             Assert.That(
                 logger.CapturedLogEntries,
                 Has.Some.Matches<LogEntry>(entry =>
-                    entry.Is(LogLevel.Information, $"Project '{projectName}' already uses {repositoryUrl} template, no change made")
+                    entry!.Is(LogLevel.Information, $"Project '{projectName}' already uses {repositoryUrl} template, no change made")
                 )
             );
         }
@@ -365,7 +365,7 @@ public class ProjectServiceTests
             Assert.That(
                 logger.CapturedLogEntries,
                 Has.Some.Matches<LogEntry>(entry =>
-                    entry.Is(LogLevel.Information, $"Switching project '{projectName}' to use {repositoryUrl} template in {fullPath}")
+                    entry!.Is(LogLevel.Information, $"Switching project '{projectName}' to use {repositoryUrl} template in {fullPath}")
                 )
             );
         }
