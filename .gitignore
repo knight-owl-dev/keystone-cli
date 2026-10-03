@@ -12,3 +12,5 @@ _ReSharper.*
 *.userprefs
 *DS_Store
 *.sln.ide
+
+.scratch/

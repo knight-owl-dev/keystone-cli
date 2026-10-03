@@ -1,17 +1,17 @@
 name: CI
 
+# No push run: main's ruleset admits only up-to-date, green PRs, so it would
+# re-test the same tree.
 on:
   workflow_dispatch:  # Manual trigger runs all jobs
   pull_request:
-  push:
-    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
   lint-dotnet:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04-arm
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-dotnet
@@ -19,15 +19,15 @@ jobs:
         run: make lint-dotnet
 
   lint:
-    runs-on: ubuntu-latest
-    container: ghcr.io/knight-owl-dev/ci-tools:latest
+    runs-on: ubuntu-26.04-arm
+    container: ghcr.io/knight-owl-dev/ci-tools:v1.6.1@sha256:822d75b014b3de9859297439df2d31b3a761a293db5d0b1874cd18c77f03068f
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Lint
         run: make lint SKIP="lint-dotnet"
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -37,7 +37,7 @@ jobs:
         run: dotnet test ./tests/Keystone.Cli.UnitTests/Keystone.Cli.UnitTests.csproj -c Release
 
   changes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04-arm
     permissions:
       pull-requests: read
     outputs:
@@ -67,10 +67,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: ubuntu-latest
+          - runner: ubuntu-26.04
             arch: amd64
             rid: linux-x64
-          - runner: ubuntu-24.04-arm
+          - runner: ubuntu-26.04-arm
             arch: arm64
             rid: linux-arm64
 
@@ -107,22 +107,22 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: ubuntu-latest
+          - runner: ubuntu-26.04
             arch: amd64
             rid: linux-x64
             distro: debian
             image: debian:bookworm
-          - runner: ubuntu-latest
+          - runner: ubuntu-26.04
             arch: amd64
             rid: linux-x64
             distro: ubuntu
             image: ubuntu:24.04
-          - runner: ubuntu-24.04-arm
+          - runner: ubuntu-26.04-arm
             arch: arm64
             rid: linux-arm64
             distro: debian
             image: debian:bookworm
-          - runner: ubuntu-24.04-arm
+          - runner: ubuntu-26.04-arm
             arch: arm64
             rid: linux-arm64
             distro: ubuntu

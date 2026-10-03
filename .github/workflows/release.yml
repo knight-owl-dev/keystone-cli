@@ -8,7 +8,7 @@ on:
 jobs:
   validate:
     name: Validate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
 
@@ -66,13 +66,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: macos-latest
+          - runner: macos-26
             rid: osx-arm64
-          - runner: macos-latest
+          - runner: macos-26
             rid: osx-x64
-          - runner: ubuntu-latest
+          - runner: ubuntu-26.04
             rid: linux-x64
-          - runner: ubuntu-latest
+          - runner: ubuntu-26.04
             rid: linux-arm64
 
     steps:
@@ -126,7 +126,7 @@ jobs:
   test-deb:
     name: Test .deb (${{ matrix.distro }})
     needs: [validate, build-assets]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     container: ${{ matrix.image }}
@@ -164,7 +164,7 @@ jobs:
   publish-release:
     name: Publish Release
     needs: [validate, build-assets, test-deb]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04-arm
 
     permissions:
       contents: write
