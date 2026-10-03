@@ -19,7 +19,10 @@ The .NET SDK version is defined in [`global.json`](../../global.json). This file
 - **CI builds** — The composite action at [`.github/actions/setup-dotnet`](
   ../../.github/actions/setup-dotnet/action.yml) reads from `global.json`
 
-This ensures local and CI builds use the same SDK version.
+This ensures local and CI builds use the same SDK version. `rollForward: latestPatch` keeps CI on
+the exact pin (`setup-dotnet` would float a `latestFeature` pin to the newest feature band) while
+letting local builds use a later patch. Renovate moves the pin within a major; a new major waits for
+approval on the dependency dashboard, since it takes the TFM change below.
 
 ### Target Framework (Directory.Build.props)
 
@@ -45,13 +48,14 @@ When upgrading to a new .NET version, update these files:
 
 ### 1. global.json
 
-Update the `version` field in [`global.json`](../../global.json):
+Approve the SDK major on the dependency dashboard, or set the `version` field in
+[`global.json`](../../global.json) by hand to an exact SDK version:
 
 ```json
 {
     "sdk": {
-        "version": "11.0.x",
-        "rollForward": "latestFeature"
+        "version": "11.0.100",
+        "rollForward": "latestPatch"
     }
 }
 ```

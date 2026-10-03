@@ -46,11 +46,13 @@ keystone-cli/
 │   │   └── setup-dotnet/           # Shared .NET setup
 │   ├── ISSUE_TEMPLATE/             # Issue templates
 │   ├── workflows/                  # GitHub Actions
-│   │   ├── ci.yml                  # CI pipeline (tests on PR/push)
+│   │   ├── ci.yml                  # CI pipeline (tests on PRs)
 │   │   ├── release.yml             # Release build and publish
+│   │   ├── renovate.yml            # Scheduled Renovate run
 │   │   └── tag-release.yml         # Manual tag creation workflow
-│   ├── dependabot.yml              # Dependency update automation
+│   ├── actionlint.yaml             # Runner labels actionlint lacks
 │   ├── pull_request_template.md    # PR template
+│   ├── renovate.jsonc              # Dependency update configuration
 │   └── release.yml                 # Release notes configuration
 ├── CONTRIBUTING.md                 # Contribution guidelines
 ├── scripts/                        # Build and utility scripts
@@ -306,7 +308,8 @@ This project uses squash merges. Follow the conventions in
 All workflows use a shared composite action (`.github/actions/setup-dotnet`) that reads the
 SDK version from `global.json` for centralized version management.
 
-- **ci.yml**: Runs unit tests on PRs and pushes to main
+- **ci.yml**: Runs lint and unit tests on PRs
+- **renovate.yml**: Weekly self-hosted Renovate run under the org App
 - **tag-release.yml**: Manual workflow to create a version tag from csproj version
 - **release.yml**: Triggered by `v*.*.*` tags; validates version, builds multi-platform
   binaries, packages tarballs and .deb files, generates checksums, and publishes GitHub Release
@@ -321,8 +324,8 @@ SDK version from `global.json` for centralized version management.
 
 ### GitHub Configuration
 
-- **dependabot.yml**: Automated dependency updates for NuGet packages and GitHub Actions;
-  runs weekly on Mondays with minor/patch updates grouped to reduce PR noise
+- **renovate.jsonc**: Renovate configuration covering NuGet, the `global.json` SDK, SHA-pinned
+  actions, the ci-tools container, and runner labels; minor/patch updates are grouped
 - **release.yml** (in `.github/`): Configures auto-generated release notes categories
   (Breaking Changes, Security, Enhancements, Bug Fixes, Documentation, Dependencies)
 - **pull_request_template.md**: PR template enforcing outcome-focused descriptions and

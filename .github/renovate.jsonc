@@ -1,0 +1,82 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+  // config:recommended is not extended: its presets address ecosystems this
+  // repo does not have.
+  "extends": ["docker:pinDigests"],
+
+  "dependencyDashboard": true,
+
+  // Commit subjects here are plain imperative sentences.
+  "semanticCommits": "disabled",
+
+  // No `schedule` here: renovate.yml's cron owns when this runs.
+  "prConcurrentLimit": 5,
+
+  // A weekly run under the default hourly cap leaves every update past the
+  // second for next week; prConcurrentLimit already bounds the CI load.
+  "prHourlyLimit": 0,
+
+  "customManagers": [
+    {
+      // The github-runners manager reads `runs-on:` alone, so matrix legs
+      // would be stranded when a new image lands. The capture groups mirror
+      // what that manager extracts: depName "ubuntu", currentValue "26.04-arm".
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.github/workflows/.+\\.ya?ml$/"],
+      "matchStrings": ["runner: (?<depName>ubuntu|macos)-(?<currentValue>\\S+)"],
+      "datasourceTemplate": "github-runners",
+      "autoReplaceStringTemplate": "runner: {{depName}}-{{newValue}}"
+    },
+    {
+      // nfpm, installed by build-deb. depName is the module path, short of /cmd/.
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.github/actions/.+/action\\.ya?ml$/"],
+      "matchStrings": ["go install (?<depName>[^@\\s]+?)/cmd/[^@\\s]+@(?<currentValue>v\\S+)"],
+      "datasourceTemplate": "go"
+    }
+  ],
+
+  "packageRules": [
+    {
+      "matchDatasources": ["nuget"],
+      "labels": ["dependencies", ".NET"]
+    },
+    {
+      "matchDatasources": ["nuget"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "NuGet (minor and patch)"
+    },
+
+    // global.json's SDK. A major is a TFM change (docs/how-to/how-to-upgrade-dotnet.md),
+    // which a global.json-only PR cannot complete.
+    {
+      "matchDatasources": ["dotnet-version"],
+      "labels": ["dependencies", ".NET"]
+    },
+    {
+      "matchDatasources": ["dotnet-version"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+
+    {
+      "matchManagers": ["github-actions"],
+      "matchDepTypes": ["action"],
+      "labels": ["dependencies", "github-actions"]
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "matchDepTypes": ["action"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "actions (minor and patch)"
+    },
+
+    // Matched by datasource, not manager: the custom managers above supply
+    // runner legs and nfpm.
+    {
+      "matchDatasources": ["github-runners", "docker", "golang-version", "go"],
+      "labels": ["dependencies", "github-actions"]
+    }
+  ]
+}

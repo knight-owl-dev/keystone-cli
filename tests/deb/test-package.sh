@@ -13,8 +13,8 @@ set -euo pipefail
 #
 # Examples:
 #   ./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.10_amd64.deb
-#   ./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.10_arm64.deb debian:bookworm-slim
-#   ./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.10_amd64.deb ubuntu:24.04
+#   ./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.10_arm64.deb debian:trixie-slim
+#   ./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.10_amd64.deb ubuntu:26.04
 #
 # Requirements:
 #   - Docker must be installed and running
@@ -33,12 +33,12 @@ if [[ $# -lt 1 ]]; then
   echo ""
   echo "Examples:"
   echo "  $0 artifacts/release/keystone-cli_0.1.10_amd64.deb"
-  echo "  $0 artifacts/release/keystone-cli_0.1.10_arm64.deb ubuntu:24.04"
+  echo "  $0 artifacts/release/keystone-cli_0.1.10_arm64.deb ubuntu:26.04"
   exit 1
 fi
 
 DEB_FILE="$1"
-IMAGE="${2:-debian:bookworm-slim}"
+IMAGE="${2:-debian:trixie-slim}"
 
 if [[ ! -f "${DEB_FILE}" ]]; then
   echo "ERROR: File not found: ${DEB_FILE}" >&2
