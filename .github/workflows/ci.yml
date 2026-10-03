@@ -110,23 +110,23 @@ jobs:
           - runner: ubuntu-26.04
             arch: amd64
             rid: linux-x64
-            distro: debian
-            image: debian:bookworm
+            distro: debian-trixie
+            image: debian:trixie
           - runner: ubuntu-26.04
             arch: amd64
             rid: linux-x64
-            distro: ubuntu
-            image: ubuntu:24.04
+            distro: ubuntu-26.04
+            image: ubuntu:26.04
           - runner: ubuntu-26.04-arm
             arch: arm64
             rid: linux-arm64
-            distro: debian
-            image: debian:bookworm
+            distro: debian-trixie
+            image: debian:trixie
           - runner: ubuntu-26.04-arm
             arch: arm64
             rid: linux-arm64
-            distro: ubuntu
-            image: ubuntu:24.04
+            distro: ubuntu-26.04
+            image: ubuntu:26.04
 
     steps:
       - name: Checkout (for verify script)

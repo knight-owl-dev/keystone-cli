@@ -27,6 +27,13 @@
       "matchStrings": ["runner: (?<depName>ubuntu|macos)-(?<currentValue>\\S+)"],
       "datasourceTemplate": "github-runners",
       "autoReplaceStringTemplate": "runner: {{depName}}-{{newValue}}"
+    },
+    {
+      // nfpm, installed by build-deb. depName is the module path, short of /cmd/.
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.github/actions/.+/action\\.ya?ml$/"],
+      "matchStrings": ["go install (?<depName>[^@\\s]+?)/cmd/[^@\\s]+@(?<currentValue>v\\S+)"],
+      "datasourceTemplate": "go"
     }
   ],
 
@@ -65,10 +72,10 @@
       "groupName": "actions (minor and patch)"
     },
 
-    // Matched by datasource, not manager: the matrix legs come from the custom
-    // manager above.
+    // Matched by datasource, not manager: the custom managers above supply
+    // runner legs and nfpm.
     {
-      "matchDatasources": ["github-runners", "docker"],
+      "matchDatasources": ["github-runners", "docker", "golang-version", "go"],
       "labels": ["dependencies", "github-actions"]
     }
   ]

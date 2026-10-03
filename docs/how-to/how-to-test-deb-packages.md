@@ -48,11 +48,11 @@ To test a specific `.deb` file:
 dotnet publish ./src/Keystone.Cli/Keystone.Cli.csproj -c Release -r linux-x64
 ./scripts/package-deb.sh 0.1.9 linux-x64
 
-# Test on default image (debian:bookworm-slim)
+# Test on default image (debian:trixie-slim)
 ./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.9_amd64.deb
 
 # Test on a specific image
-./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.9_amd64.deb ubuntu:24.04
+./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.9_amd64.deb ubuntu:26.04
 ./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.9_amd64.deb debian:bullseye
 ```
 
@@ -78,7 +78,7 @@ To test on distributions not in the default suite:
 ```bash
 # Debian variants
 ./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.9_amd64.deb debian:bullseye
-./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.9_amd64.deb debian:trixie
+./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.9_amd64.deb debian:bookworm
 
 # Ubuntu variants
 ./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.9_amd64.deb ubuntu:22.04
@@ -99,7 +99,7 @@ To test cross-architecture packages, you need Docker with QEMU emulation:
 docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
 # Now you can test arm64 packages on x64 host (slow but works)
-./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.9_arm64.deb debian:bookworm
+./tests/deb/test-package.sh artifacts/release/keystone-cli_0.1.9_arm64.deb debian:trixie
 ```
 
 ## CI Integration
@@ -108,7 +108,7 @@ The release workflow (`release.yml`) includes a `test-deb` job that automaticall
 before publishing. This job:
 
 - Runs after `build-assets`
-- Tests on Debian bookworm and Ubuntu 24.04
+- Tests on Debian trixie and Ubuntu 26.04
 - Blocks `publish-release` if tests fail
 
 ## Troubleshooting
@@ -127,7 +127,7 @@ Check for missing runtime dependencies. Common issues:
 Run the test interactively to debug:
 
 ```bash
-docker run --rm -it -v "$(pwd)/artifacts/release:/deb:ro" debian:bookworm bash
+docker run --rm -it -v "$(pwd)/artifacts/release:/deb:ro" debian:trixie bash
 
 # Inside container
 apt-get update

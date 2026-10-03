@@ -135,11 +135,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - distro: debian-bookworm
-            image: debian:bookworm
+          - distro: debian-trixie
+            image: debian:trixie
             arch: amd64
-          - distro: ubuntu-24.04
-            image: ubuntu:24.04
+          - distro: ubuntu-26.04
+            image: ubuntu:26.04
             arch: amd64
 
     steps:
