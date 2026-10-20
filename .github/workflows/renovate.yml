@@ -30,7 +30,7 @@ jobs:
         # Needs contents:write (push the update branch), pull-requests:write
         # (open the PR) and issues:write (the dependency dashboard is an issue).
         # A PR opened with GITHUB_TOKEN would not trigger CI.
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
           client-id: ${{ vars.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
@@ -38,7 +38,7 @@ jobs:
 
       - name: Run Renovate
         # The image itself rather than renovatebot/github-action, a wrapper.
-        uses: docker://ghcr.io/renovatebot/renovate:44.153.1@sha256:aadab41c19f874602e37a8635ff2a58e5ba69d3e57911f25dc0385f825613e39
+        uses: docker://ghcr.io/renovatebot/renovate:44.168.3@sha256:97c420859145ceb942be5c7cd3f30187a8e7e023240d15ae32d39a6c5431f1e6
         env:
           RENOVATE_TOKEN: ${{ steps.app-token.outputs.token }}
           RENOVATE_REPOSITORIES: ${{ github.repository }}
