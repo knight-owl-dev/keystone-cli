@@ -69,7 +69,11 @@ Update the `<TargetFramework>` element in [`Directory.Build.props`](../../Direct
 <TargetFramework>net11.0</TargetFramework>
 ```
 
-### 3. CLAUDE.md (Optional)
+### 3. Microsoft.Extensions packages
+
+Approve the `Microsoft.Extensions` major on the dependency dashboard; its major tracks the .NET major.
+
+### 4. CLAUDE.md (Optional)
 
 If the Framework and Dependencies section in [`CLAUDE.md`](../../CLAUDE.md) mentions a specific
 .NET version, update it to match.
