@@ -1,8 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
 
-  // config:recommended is not extended: its presets address ecosystems this
-  // repo does not have.
+  // config:recommended is not extended. Of its presets, only group:monorepos
+  // bears on this repo; the Microsoft.Extensions rule below replaces it.
   "extends": ["docker:pinDigests"],
 
   "dependencyDashboard": true,
